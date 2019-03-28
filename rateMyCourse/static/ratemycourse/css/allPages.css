@@ -1,0 +1,7 @@
+form label.error{
+color: Red;
+}
+
+form input.error{
+border:solid 1px red;
+}

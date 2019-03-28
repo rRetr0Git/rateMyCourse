@@ -1,0 +1,45 @@
+<a class="btn text-white btn-primary" href="javascript:void(0)"
+data-toggle="dropdown" id="navLogin"><i class="fa d-inline fa-lg fa-user-circle-o mr-1"></i> 登录/注册</a>
+<div class="dropdown-menu dropdown-menu-right">
+  <div class="container px-3 py-2" style="width:260px;">
+    <!--form id="formLogin" onsubmit="return Func_signIn()" novalidate-->
+    <form id="formLogin" novalidate method="POST" action="/signIn/">
+      <label>登录</label>
+      <div class="form-group">
+        <!--input id="username" type="text" placeholder="用户名"
+         pattern="^[a-z,A-Z,0-9,_]{6,15}$" data-valid-min="6"
+         class="form-control" name="username" required-->
+         <input id="username" type="text" placeholder="用户名"
+          class="form-control" name="username">
+         <div class="help-block with-errors"></div>
+      </div>
+      <div class="form-group">
+        <input id="password" type="password" placeholder="密码" class="form-control has-warning" name="password" required>
+        <small class="invalid-feedback">
+          密码不能为空
+        </small>
+      </div>
+      <input type="submit" id="btnLogin" class="btn btn-primary" value="登录">
+     </form>
+    <div class="dropdown-divider"></div>
+    <form class="mt-2" action="signUpTrigger" method="post">
+      <a href="javascript:void(0)" id="btnNewUser" data-toggle="collapse" data-target="#formRegister" class="">新用户注册</a>
+    </form>
+    <form id="formRegister" class="form in collapse mt-2" style="height: auto;" novalidate>
+      <div class="form-group has-success">
+        <input id="inputEmail" name="inputEmail" type="email" placeholder="Email" class="form-control form-control-success" name="email" required>
+      </div>
+      <div class="form-group">
+        <input id="inputUsername" name="inputUsername" type="text" placeholder="用户名"
+        pattern="^[a-z,A-Z,0-9,_]{6,15}$" data-valid-min="6" title="Choose a username" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <input id="inputPassword" name="inputPassword" type="password" placeholder="密码" class="form-control" name="password" required>
+      </div>
+      <div class="form-group">
+        <input id="inputVerify" name="inputVerify" type="password" placeholder="确认密码" class="form-control" required>
+      </div>
+      <input type="submit" class="btn btn-primary" value="注册"> </form>
+  </div>
+</div>
+</div>

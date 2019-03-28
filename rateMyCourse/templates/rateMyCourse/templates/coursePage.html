@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/css/bootstrap.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/css/allPages.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/css/coursePage.css" type="text/css">
+</head>
+<body>
+  @import "commonNavbar.html"
+  <div class="py-5">
+    <div class="container py-5">
+      <div class="text-center text-dark">
+        <h1 class="lead display-4">{{course_name}}</h1>
+      </div>
+      <div style="width:100%; margin-top:86px">
+        <table style="width:100%; margin:auto">
+          <tbody>
+            <tr>
+              <td style="width:33%">
+                <p class="text-dark text-center">学分</p>
+              </td>
+              <td style="width:33%">
+                <p class="text-dark text-center">开课专业</p>
+              </td>
+              <td style="width:33%">
+                <p class="text-dark text-center">课程类别</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p class="text-dark text-center" style="margin-top:8px">{{course_credit}}</p>
+              </td>
+              <td>
+                <p class="text-dark text-center" style="margin-top:8px">{{course_profession}}</p>
+              </td>
+              <td>
+                <p class="text-dark text-center" style="margin-top:8px">{{course_type}}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="container py-5">
+    <div class="row" style="width:100%;">
+      <div style="width:76%">
+          <div class="row show-grid" style="width:100%;margin-left:16px">
+              <div class="col-md-8"><h3 class="text-dark"> 总分：{{course_scores}}</h3></div>
+              <div class="col-md-4" ><a class="btn btn-lg btn-default" id="toComment" href="rate">撰写评价</a></div>
+        </div>
+        <table style="width:80%; margin-top:16px; margin-left:32px">
+          <tbody>
+            <tr>
+              <td>
+                <p>{{detail1}}</p>
+              </td>
+              <td>
+                <p>{{detail2}}</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>{{detail3}}</p>
+              </td>
+              <td>
+                <p>{{detail4}}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="text-center" style="border-left:1px #e4e4e4 solid; width:23%;">
+        <div class="text-dark text-center" style="margin-top:54px">
+          <a href="{{course_website}}">
+            <p class="text-dark">课程网站</p>
+          </a>
+          <a href="{{profession_website}}">
+            <p style="margin-top:32px;" class="text-dark">学院官网</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="container py-5">
+    <div id="commentDiv" style="margin-left:32px"></div>
+  </div>
+  <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="../../static/ratemycourse/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+  <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>
+  <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+  <script src="../../static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+  <script src="../../static/ratemycourse/javascript/coursePage.js"></script>
+</body>
+
+</html>

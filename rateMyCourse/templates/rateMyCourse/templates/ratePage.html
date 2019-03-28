@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="../../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/css/bootstrap.min.css" type="text/css">
+  <link rel="stylesheet" href="../../../static/ratemycourse/css/allPages.css" type="text/css">
+</head>
+
+<body>
+  @import "commonNavbar.html"
+  <div class="container">
+    <div class="row w-100 my-1" style="background:#cccccc">
+      <div class="col-md-12 text-white">
+        <h1 class="display-3 mb-4 text-dark" id="courseName">{{course.name}}</h1>
+        <p class="lead mb-5 text-dark">{{course.school}}-&gt;{{course.department}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row w-100 my-1" style="background:#eeeeee">
+      <div class="col-md-2">
+        <p class="lead my-2 text-dark">开课学期</p>
+      </div>
+      <div class="col-md-10">
+        <div class="btn-group">
+          <a class="btn dropdown-toggle btn-outline-dark px-5" data-toggle="dropdown" href="javascript:void(0)" id="buttonSelectTerm">选择学期</a>
+          <div class="dropdown-menu" id="termList">
+            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2015年秋季</a>
+            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2016年春季</a>
+            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2016年秋季</a>
+            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2017年春季</a>
+            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2017年秋季</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row w-100 my-1" style="background:#eeeeee">
+      <div class="col-md-2">
+        <p class="lead my-2 text-dark">授课教师</p>
+      </div>
+      <div class="col-md-10">
+        <div class="btn-group">
+          <a class="btn dropdown-toggle btn-outline-dark px-5" data-toggle="dropdown" href="javascript:void(0)" id="buttonSelectTeacher">选择教师</a>
+          <div class="dropdown-menu" id="teacherList"> </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row w-100 my-1" style="background:#eeeeee">
+      <div class="col-md-2">
+        <p class="lead my-2 text-dark">{{aspect1}}</p>
+      </div>
+      <div class="col-md-10">
+        <div class="btn-group text-dark my-1">
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B11" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B12" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B13" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B14" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B15" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row w-100 my-1" style="background:#eeeeee">
+      <div class="col-md-2">
+        <p class="lead my-2 text-dark">{{aspect2}}</p>
+      </div>
+      <div class="col-md-10">
+        <div class="btn-group text-dark my-1">
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B21" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B22" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B23" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B24" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B25" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row w-100 my-1" style="background:#eeeeee">
+      <div class="col-md-2">
+        <p class="lead my-2 text-dark">{{aspect3}}</p>
+      </div>
+      <div class="col-md-10">
+        <div class="btn-group text-dark my-1">
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B31" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B32" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B33" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B34" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B35" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+        </div>
+      </div>
+    </div>
+    <div class="row w-100 my-1" style="background:#eeeeee">
+      <div class="col-md-2">
+        <p class="lead my-2 text-dark">{{aspect4}}</p>
+      </div>
+      <div class="col-md-10">
+        <div class="btn-group text-dark my-1">
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B41" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B42" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B43" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B44" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+          <a class="fa fa-star-o text-dark btn btn-sm" aria-hidden="true" style="font-size:32px" id="B45" onclick="chooseScore(this.id)" href="javascript:void(0)"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row w-100 my-1" style="background:#eeeeee">
+      <div class="col-md-2">
+        <p class="lead my-2 text-dark">写评价</p>
+      </div>
+      <div class="col-md-10"> <textarea class="w-50 form-control-sm" rows="10" id="writeCommentText">  </textarea> </div>
+    </div>
+  </div>
+  <br>
+  <div class="container">
+    <div class="row w-100 my-1" style="background:#cccccc">
+      <div class="col-md-2">
+        <input type="button" value="提交" class="btn  btn-outline-dark w-100" style="background:#00ddff" onclick="return Func_submit()"> </div>
+      <div class="col-md-10">
+        <lable>是否匿名</lable>
+        <input id="anonymous" type="checkbox" value="true" class="mx-2"> </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="../../../static/ratemycourse/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+    <script src="../../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>
+    <script src="../../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+    <script src="../../../static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+    <script src="../../../static/ratemycourse/javascript/ratePage.js"></script>
+  </div>
+</body>
+
+</html>

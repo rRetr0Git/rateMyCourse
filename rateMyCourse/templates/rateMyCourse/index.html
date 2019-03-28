@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/css/bootstrap.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/css/allPages.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/css/index.css" type="text/css">
+</head>
+
+<body>
+  <div style="padding-top:70px">
+    <!-- Space used to modify navbar with fixed-top style-->
+  </div>
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
+    <div class="container" id="navbarContainer">
+      <a class="navbar-brand" href="/">公客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+       data-target="#navbar2SupportedContent" aria-controls="navbar2SupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse text-center justify-content-end"
+      id="navbar2SupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link mr-1" href="javascript:void(0)" data-toggle="modal"
+            data-target="#contactModal" style="outline:none;">
+              <i class="fa d-inline fa-lg fa-envelope-o mr-1"></i> 联系我们</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <div class="dropdown open" id="menuLogin">
+            <a class="btn text-white btn-primary" href="javascript:void(0)"
+            data-toggle="dropdown" id="navLogin">
+            <i class="fa d-inline fa-lg fa-user-circle-o mr-1"></i>
+            登录/注册</a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <div class="container px-3 py-2" style="width:260px;">
+                <form id="formLogin" novalidate method="POST" action="/signIn/">
+                  <label>登录</label>
+                  <div class="form-group">
+                     <input id="username" type="text" placeholder="用户名"
+                      class="form-control" name="username">
+                     <div class="help-block with-errors"></div>
+                  </div>
+                  <div class="form-group">
+                    <input id="password" type="password" placeholder="密码" class="form-control has-warning" name="password" required>
+                    <small class="invalid-feedback">
+                      密码不能为空
+                    </small>
+                  </div>
+                  <input type="submit" id="btnLogin" class="btn btn-primary" value="登录">
+                 </form>
+                <div class="dropdown-divider"></div>
+                <form class="mt-2" action="signUpTrigger" method="post">
+                  <a href="javascript:void(0)" id="btnNewUser" data-toggle="collapse" data-target="#formRegister" class="">新用户注册</a>
+                </form>
+                <form id="formRegister" class="form in collapse mt-2" style="height: auto;" novalidate>
+                  <div class="form-group has-success">
+                    <input id="inputEmail" name="inputEmail" type="email" placeholder="Email" class="form-control form-control-success" name="email" required>
+                  </div>
+                  <div class="form-group">
+                    <input id="inputUsername" name="inputUsername" type="text" placeholder="用户名"
+                    pattern="^[a-z,A-Z,0-9,_]{6,15}$" data-valid-min="6" title="Choose a username" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <input id="inputPassword" name="inputPassword" type="password" placeholder="密码" class="form-control" name="password" required>
+                  </div>
+                  <div class="form-group">
+                    <input id="inputVerify" name="inputVerify" type="password" placeholder="确认密码" class="form-control" required>
+                  </div>
+                  <input type="submit" class="btn btn-primary" value="注册"> </form>
+              </div>
+            </div>
+          </div>
+          <div class="dropdown" id="menuUser">
+            <a class="btn text-white btn-primary" href="javascript:void(0)" data-toggle="dropdown" id="navUser"></a>
+            <div class="dropdown-menu" style="padding:17px;">
+              <a href="javascript:void(0)" id="buttonLogOut" class="dropdown-item btn btn-primary school" onclick="Func_signOut()">注销</a>
+            </div>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="py-5 text-center opaque-overlay" style="background-image: url('../../static/ratemycourse/images/indexPageBackground1.png');">
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-md-12 text-white">
+          <h1 class="display-3 mb-4">公客</h1>
+          <p class="lead mb-5">为大学选课排忧解难</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-5 text-center bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 p-4">
+          <div class="row">
+            <div class="col-md-12"> <i class="fa fa-university" style="font-size:93pt"></i></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="dropdown open">
+                <a class="btn btn-light btn-lg dropdown-toggle my-1" href="." data-toggle="dropdown" id="buttonSelectSchool">选择学校</a>
+                <div class="dropdown-menu" id="schoolList">
+                  <!--Action needed-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 p-4">
+          <div class="row">
+            <div class="col-md-12"> <i class="fa fa-paint-brush" style="font-size:93pt"></i></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="btn-group">
+                <a class="btn btn-light btn-lg dropdown-toggle disabled my-1" data-toggle="dropdown" id="buttonSelectDepartment" href="javascript:void(0)">选择专业</a>
+                <div class="dropdown-menu scrollable-menu" id="departmentList" role="menu">
+                  <!--Added by index.js-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 p-4">
+          <div class="row">
+            <div class="col-md-12"> <i class="fa fa-search" style="font-size:93pt;"></i> </div>
+          </div>
+          <!--img class="img-fluid d-block rounded-circle mx-auto" src="https://pingendo.github.io/templates/sections/assets/test_carlito.jpg"-->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="dropdown open">
+                <a class="btn btn-light btn-lg my-1" href="javascript:void(0)" data-toggle="dropdown" id="buttonSearchCourse">搜索课程</a>
+                <div class="dropdown-menu">
+                  <div class="container" style="width=400px">
+                    <div class="input-group">
+                      <span class="input-group-addon">
+                        <i class="fa fa-search"></i>
+                      </span>
+                      <input id="searchboxCourse" class="form-control input-lg"
+                      type="text" placeholder="请输入课程名" autocomplete="off">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev"> <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a>
+            <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next"> <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span> </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-white bg-secondary">
+      <div class="container">
+        <div class="row">
+          <div class="p-4 col-md-4">
+            <h2 class="mb-4">Flamenco
+              <br> </h2>
+            <p class="text-white">六人小型开发团队</p>
+          </div>
+          <div class="p-4 col-md-4">
+            <h2 class="mb-4">关于我们</h2>
+            <ul class="list-unstyled">
+              <a href="http://www.cnblogs.com/Flamenco/p/7662953.html" class="text-white">弗朗明戈舞步团队</a>
+              <br>
+              <br> </ul>
+          </div>
+          <div class="p-4 col-md-4">
+            <h2 class="mb-4">联系方式</h2>
+            <p>
+              <a href="javascript:void(0)" class="text-white" data-toggle="modal" data-target="#contactModal">
+                <i class="fa d-inline mr-2 fa-qq text"></i>公客们</a>
+            </p>
+            <p>
+              <a href="mailto:flamenquer@163.com" class="text-white">
+                <i class="fa d-inline mr-2 text fa-envelope-o"></i>flamenquer@163.com</a>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <p class="text-center text-white">© Copyright 2017 Flamenco - All rights reserved. </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- modals-->
+  <div class="modal fade" id="contactModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"> 公客们 </h5>
+          <a class="close" href="javascript:void(0)" data-dismiss="modal" aria-label="Close" style="outline:none;">
+            <span aria-hidden="true">&times;</span>
+          </a>
+        </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="modal-body text-center">
+                <img src="../../static/ratemycourse/images/conquerorsQR.png"/>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="../../static/ratemycourse/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+  <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>
+  <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+  <script src="../../static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+  <script src="../../static/ratemycourse/javascript/login.js"></script>
+  <script src="../../static/ratemycourse/javascript/index.js"></script>
+</body>
+</html>

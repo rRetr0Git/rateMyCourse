@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/css/bootstrap.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/css/allPages.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/css/index.css" type="text/css">
+</head>
+
+<body>
+  @import "indexNavbar.html"
+  <div class="py-5 text-center opaque-overlay" style="background-image: url('../../static/ratemycourse/images/indexPageBackground1.png');">
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-md-12 text-white">
+          <h1 class="display-3 mb-4">公客</h1>
+          <p class="lead mb-5">为大学选课排忧解难</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-5 text-center bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 p-4">
+          <div class="row">
+            <div class="col-md-12"> <i class="fa fa-university" style="font-size:93pt"></i></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="dropdown open">
+                <a class="btn btn-light btn-lg dropdown-toggle my-1" href="." data-toggle="dropdown" id="buttonSelectSchool">选择学校</a>
+                <div class="dropdown-menu" id="schoolList">
+                  <!--Action needed-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 p-4">
+          <div class="row">
+            <div class="col-md-12"> <i class="fa fa-paint-brush" style="font-size:93pt"></i></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="btn-group">
+                <a class="btn btn-light btn-lg dropdown-toggle disabled my-1" data-toggle="dropdown" id="buttonSelectDepartment" href="javascript:void(0)">选择专业</a>
+                <div class="dropdown-menu scrollable-menu" id="departmentList" role="menu">
+                  <!--Added by index.js-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 p-4">
+          <div class="row">
+            <div class="col-md-12"> <i class="fa fa-search" style="font-size:93pt;"></i> </div>
+          </div>
+          <!--img class="img-fluid d-block rounded-circle mx-auto" src="https://pingendo.github.io/templates/sections/assets/test_carlito.jpg"-->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="dropdown open">
+                <a class="btn btn-light btn-lg my-1" href="javascript:void(0)" data-toggle="dropdown" id="buttonSearchCourse">搜索课程</a>
+                <div class="dropdown-menu">
+                  <div class="container" style="width=400px">
+                    <div class="input-group">
+                      <span class="input-group-addon">
+                        <i class="fa fa-search"></i>
+                      </span>
+                      <input id="searchboxCourse" class="form-control input-lg"
+                      type="text" placeholder="请输入课程名" autocomplete="off">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev"> <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a>
+            <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next"> <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span> </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-white bg-secondary">
+      <div class="container">
+        <div class="row">
+          <div class="p-4 col-md-4">
+            <h2 class="mb-4">Flamenco
+              <br> </h2>
+            <p class="text-white">六人小型开发团队</p>
+          </div>
+          <div class="p-4 col-md-4">
+            <h2 class="mb-4">关于我们</h2>
+            <ul class="list-unstyled">
+              <a href="http://www.cnblogs.com/Flamenco/p/7662953.html" class="text-white">弗朗明戈舞步团队</a>
+              <br>
+              <br> </ul>
+          </div>
+          <div class="p-4 col-md-4">
+            <h2 class="mb-4">联系方式</h2>
+            <p>
+              <a href="javascript:void(0)" class="text-white" data-toggle="modal" data-target="#contactModal">
+                <i class="fa d-inline mr-2 fa-qq text"></i>公客们</a>
+            </p>
+            <p>
+              <a href="mailto:flamenquer@163.com" class="text-white">
+                <i class="fa d-inline mr-2 text fa-envelope-o"></i>flamenquer@163.com</a>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <p class="text-center text-white">© Copyright 2017 Flamenco - All rights reserved. </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="../../static/ratemycourse/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+  <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>
+  <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+  <script src="../../static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+  <script src="../../static/ratemycourse/javascript/login.js"></script>
+  <script src="../../static/ratemycourse/javascript/index.js"></script>
+</body>
+
+</html>

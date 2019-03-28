@@ -1,0 +1,22 @@
+#toComment {
+    width: 150px;
+    height: 48px;
+    margin: auto;
+    background-color: white;
+    border-color: #bfbfbf;
+    border-radius: 20px;
+}
+
+
+#search{
+    border-radius: 20px;   
+    margin-right: 16px;
+}
+
+
+
+.userName{
+  text-align:center;
+  margin-left: 32px;
+  margin-top: 48px;
+}

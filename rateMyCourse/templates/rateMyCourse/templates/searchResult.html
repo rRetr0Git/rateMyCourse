@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/css/bootstrap.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/ratemycourse/css/allPages.css" type="text/css">
+</head>
+
+<body>
+  @import "commonNavbar.html"
+  <div class="container">
+    <p id="count">搜索到{{count}}门课程</p> {% for course in courses %}
+    <div class="container" id="course{{forloop.counter}}">
+      <div class="row" style="background:#eeeeee">
+        <a href="/course/{{course.ID}}" style="text-decoration:none;font-size:50px;color:#000000; width:62%;">{{course.name}}</a>
+      </div>
+      <div class="row" style="background:#eeeeee">
+        <div class="col-md-3 text-md-left text-center align-self-center my-4"> 学校
+          <p>{{course.school}}</p>
+        </div>
+        <div class="col-md-3 text-md-left text-center align-self-center my-4"> 专业
+          <p>{{course.department}}</p>
+        </div>
+        <div class="col-md-3 text-md-left text-center align-self-center my-4"> 类型
+          <p>{{course.type}}</p>
+        </div>
+        <div class="col-md-3 text-md-left text-center align-self-center my-4"> 学分
+          <p>{{course.credit}}</p>
+        </div>
+      </div>
+      <div class="row" style="background:#eeeeee">
+        <ic class="fa fa-star-o text-dark" id="ic{{forloop.counter}}1" aria-hidden="true" style="font-size:32px;"></ic>
+        <ic class="fa fa-star-o text-dark" id="ic{{forloop.counter}}2" aria-hidden="true" style="font-size:32px;"></ic>
+        <ic class="fa fa-star-o text-dark" id="ic{{forloop.counter}}3" aria-hidden="true" style="font-size:32px;"></ic>
+        <ic class="fa fa-star-o text-dark" id="ic{{forloop.counter}}4" aria-hidden="true" style="font-size:32px;"></ic>
+        <ic class="fa fa-star-o text-dark" id="ic{{forloop.counter}}5" aria-hidden="true" style="font-size:32px;"></ic>
+        <div class="mx-3" style="font-size:15px;color:#CCBBCC"> 评价数：{{course.ratenumber}} </div>
+      </div>
+      <br> </div> {% endfor %}
+    <ul id="c_pagination" class="pagination"> {% for page in pages %}
+      <li class="page-item">
+        <a class="page-link " id="p{{page.number}}" onclick="toPage({{page.number}})" href="javascript:void(0)">{{page.number}}</a>
+      </li> {% endfor %} </ul>
+  </div>
+  <div class="row">
+    <div class="col-md-12 mt-3">
+      <p class="text-center text-dark my-5">© Copyright 2017 Flamenco - All rights reserved. </p>
+    </div>
+  </div>
+  <script>
+    function toPage(p){
+       for(i=1;i<=parseInt({{count}});i++){
+           var s="#course".concat(i.toString());
+           if(i>(parseInt(p)-1)*10&&i<=parseInt(p)*10){
+               $(s).show()
+           }else{
+               $(s).hide()
+           }
+       }
+       for(i=1;i<=parseInt({{count}})/10+1;i++){
+           var s="#p".concat(i.toString());
+           if(i==parseInt(p)){
+               $(s).removeClass("page-link ");
+               $(s).addClass("page-link bg-info text-dark");
+           }else{
+               $(s).removeClass("page-link bg-info text-dark");
+               $(s).addClass("page-link");
+           }
+       }
+    }
+
+    window.onload = function() {
+      var count=0;
+
+      {% for course in courses %}
+          count++;
+          var i=0;
+          for(i=1;i<=parseInt("{{course.rateScore}}");i++)
+          {
+            var s="#ic".concat("{{forloop.counter}}".concat(i.toString()));
+            $(s).removeClass("fa fa-star-o text-dark");
+            $(s).addClass("fa fa-star text-warning");
+
+          }
+          for(i=5;i>parseInt("{{course.rateScore}}");i--)
+          {
+            var s="#ic".concat("{{forloop.counter}}".concat(i.toString()));
+            $(s).removeClass("fa fa-star text-warning");
+            $(s).addClass("fa fa-star-o text-dark");
+
+          }
+      {% endfor %}
+      toPage("1");
+    }
+  </script>
+  <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="../../static/ratemycourse/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+  <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>
+  <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+  <script src="../../static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+  <script src="../../static/ratemycourse/javascript/searchResult.js"></script>
+</body>
+
+</html>
