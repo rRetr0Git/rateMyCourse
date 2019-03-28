@@ -78,17 +78,12 @@ WSGI_APPLICATION = 'stupidSE.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ratemycourse',
+        'USER': 'stupidSE',
+        'PASSWORD': 'xxx',
+        'HOST': '127.0.0.1',
     }
-
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'ratemycourse',
-    #     'USER': 'root',
-    #     'PASSWORD': 'stupidSE',
-    #     'HOST': '127.0.0.1',
-    # }
 }
 
 
