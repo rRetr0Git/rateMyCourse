@@ -6,4 +6,6 @@
 .idea
 settings.py
 .DS_Store
-.xml
+__pycache__
+migrations
+db.sqlite3
