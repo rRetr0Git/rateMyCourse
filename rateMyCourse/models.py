@@ -1,27 +1,28 @@
 #-*- coding: UTF-8 -*-
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+import uuid
 # Create your models here.
 
 class School(models.Model):
     # attributes
-    id = models.UUIDField(primary_key=True,editable=False)
+    id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     name = models.CharField(max_length=30)
-    status = models.IntegerField(default=0)
+    status = models.IntegerField(default=0) # status状态，正常0，无效1
 
     def __str__(self):
-    	return self.name
+        return self.name
 
 class Course(models.Model):
     # attributes
-    id = models.UUIDField(primary_key=True,editable=False)
+    id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     name = models.CharField(max_length=20)
     website = models.URLField(null=True)
     description = models.CharField(max_length=200, null=True)
-    type = models.CharField(max_length=10,null=True)
+    type = models.CharField(max_length=10,null=True) # 选修课，必修课
     status = models.IntegerField(default=0)
     def __str__(self):
-    	return self.name
+        return self.name
 
 class CourseRate(models.Model):
     # attributes
@@ -32,10 +33,10 @@ class CourseRate(models.Model):
         editable=False
     )
     score = models.FloatField(default=3.0)
-    homework = models.FloatField(default=3.0)#作业量
-    difficulty = models.FloatField(default=3.0)#难易度
-    knowledge = models.FloatField(default=3.0)#收获度
-    satisfaction = models.FloatField(default=3.0)#满意度
+    homework = models.FloatField(default=3.0) # 作业量
+    difficulty = models.FloatField(default=3.0) # 难易度
+    knowledge = models.FloatField(default=3.0) # 收获度
+    satisfaction = models.FloatField(default=3.0) # 满意度
     rateCount = models.IntegerField(default=0)
 
 class CourseKeyWord(models.Model):
@@ -54,7 +55,7 @@ class CourseKeyWord(models.Model):
 
 class User(models.Model):
     # attributes
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     username = models.CharField(max_length=20, unique=True) # 用户名不可重复
     password = models.CharField(max_length=50)
     isTeacher = models.BooleanField(default=False)
@@ -62,21 +63,21 @@ class User(models.Model):
     departmentName = models.CharField(max_length=20,null=True)
     img = models.URLField(blank=True,null=True)
     def __str__(self):
-    	return self.username
+        return self.username
 
 class Teacher(models.Model):
     # attributes
-    id = models.UUIDField(primary_key=True,editable=False)
+    id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     name = models.CharField(max_length=10)
     website = models.URLField(null=True)
     img = models.URLField(null=True)
     status = models.IntegerField(default=0)
     def __str__(self):
-    	return self.name
+        return self.name
 
 class Comment(models.Model):
     # attributes
-    id = models.UUIDField(primary_key=True,editable=False)
+    id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     anonymous = models.BooleanField(default=False)
     content = models.CharField(max_length=2000)
     time = models.DateTimeField()
@@ -92,7 +93,7 @@ class Comment(models.Model):
     knowledge = models.IntegerField(default=3)  # 收获度
     satisfaction = models.IntegerField(default=3)  # 满意度
     def __str__(self):
-    	return self.content
+        return self.content
 
 class SchoolCourse(models.Model):
     schoolId = models.ForeignKey(
