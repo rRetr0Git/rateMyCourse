@@ -2,7 +2,49 @@
 
 基于Python的高级Web开发框架，支持python2.7及以上
 
+## 创建项目后常用指令
+
+### 启动项目
+
+``` python
+python manage.py runserver [xxxx]端口可选，缺省默认8000
+```
+
+### admin
+
+``` python
+python manage.py createsuperuser
+
+修改settings.py中LANGUAGE_CODE='zh_Hans'
+
+修改admin.py
+from . import models
+admin.site.register(models.Article)
+```
+
+访问localhost:8000/admin
+
+### 删除数据库
+
+migrations文件夹只留__init__.py
+
+删除mysql里的database，创建空database：
+
+```
+drop database xxx;
+create database xxx;
+```
+
+在django中
+
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
 ## 创建项目
+
+### 创建初始项目
 
 ``` python
 django-admin startproject xxx
@@ -18,7 +60,7 @@ settings.py：总配置文件，可更换数据库
 
 \_\_init__.py：声明模块
 
-## 创建应用
+### 创建应用
 
 ``` python
 python manage.py startapp xxx
@@ -37,7 +79,7 @@ test.py：自动化测试模块
 
 views.py：执行响应的逻辑代码
 
-## 创建响应
+### 创建响应
 
 ``` python
 编辑views.py
@@ -57,7 +99,7 @@ urlpatterns = [
 ]
 ```
 
-## 编辑模板
+### 编辑模板
 
 ``` python
 在app下创建templates文件夹，其下创建app名文件夹
@@ -96,7 +138,7 @@ import pymysql
 pymysql.install_as_MySQLdb()
 ```
 
-## 数据库
+### 数据库
 建立database
 
 ``` mysql
@@ -140,24 +182,6 @@ models.Article.objects.all().delete() # 删除所有
 render(request, 'xxx.html', {'article':article}) # 将数据返回给html
 
 编辑html添加{{article}}
-```
-
-## admin
-
-``` python
-python manage.py createsuperuser
-
-修改settings.py中LANGUAGE_CODE='zh_Hans'
-
-修改admin.py
-from . import models
-admin.site.register(models.Article)
-```
-
-## 启动项目
-
-``` python
-python manage.py runserver [xxxx]端口可选，缺省默认8000
 ```
 
 ## 访问URL
