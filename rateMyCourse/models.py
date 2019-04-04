@@ -16,7 +16,8 @@ class School(models.Model):
 class Course(models.Model):
     # attributes
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=200)
+    department = models.CharField(max_length=30, null=True)
     website = models.URLField(null=True)
     description = models.CharField(max_length=200, null=True)
     type = models.CharField(max_length=10,null=True) # 选修课，必修课
@@ -68,7 +69,7 @@ class User(models.Model):
 class Teacher(models.Model):
     # attributes
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
     website = models.URLField(null=True)
     img = models.URLField(null=True)
     status = models.IntegerField(default=0)
