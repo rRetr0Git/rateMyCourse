@@ -30,7 +30,7 @@ def signUp(request):
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get username or mail or password',
+            'errormessage': 'can not get username, mail or password',
             }))
     try:
         User(username=username, mail=mail, password=password).save()
@@ -154,7 +154,7 @@ def coursePage(request, course_number):
         'detail3': '课程难度：%.1f'%(x[2]),
         'detail4': '课程收获：%.1f'%(x[3]),
         'course_website': courses[0].website if courses[0].website != '' else '.',
-        'profession_website': couses[0].department.website if courses[0].department.website != '' else '.',
+        'profession_website': courses[0].department.website if courses[0].department.website != '' else '.',
         })
 
 def ratePage(request, course_number):
@@ -189,7 +189,7 @@ def signIn(request):
         except Exception:
             return HttpResponse(json.dumps({
             'statCode': -2,
-            'errormessage': 'username or mail mot exists',
+            'errormessage': 'username or mail doesn\'t exists',
             }))
     if(password != u.password):
         return HttpResponse(json.dumps({
@@ -199,7 +199,7 @@ def signIn(request):
     else:
         return HttpResponse(json.dumps({
             'statCode': 0,
-            'username': username,
+            'username': u.username,
             }))
 
 def getSchool(request):
