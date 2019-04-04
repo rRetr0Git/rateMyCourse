@@ -101,11 +101,12 @@ git push origin xx
 # 创建feature分支
 任意分支下git checkout -b wwj develop
 
-# 每次有代码更新，在feature分支提交
+# 每次有代码更新，在feature分支提交，只commit不push
 git commit -m "xxx"
 
 # 完成该阶段工作，合并到develop分支，并删除wwj分支
 git checkout develop
+git pull
 git merge --no-ff wwj
 git branch -d wwj
 git push origin develop
@@ -124,7 +125,6 @@ git push origin develop
 ```
 # 创建release分支
 任意分支下git checkout -b release-0.1 develop
-git commit -a -m "Bumped version number to 0.1"
 
 # 在release分支下fix bug
 git branch -a
@@ -136,9 +136,10 @@ git push origin release
 # 把release分支合并到master分支和develop分支
 git checkout master
 git merge --no-ff release-0.1
-git tag -a 0.1
+git tag 0.1
 git checkout develop
 git merge --no-ff release-0.1
 git branch -d release-0.1
+git push --tags
 ```
 
