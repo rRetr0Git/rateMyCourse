@@ -19,7 +19,7 @@
     - 在terminal输入以下指令进入manage.py shell
         - python manage.py shell
     - 输入以下指令运行入库脚本
-        - exec(open('Data.py').read())
+        - exec(open('Data.py', 'r', encoding='UTF-8').read())
         
     
 
