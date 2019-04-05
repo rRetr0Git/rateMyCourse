@@ -17,7 +17,7 @@ class Course(models.Model):
     # attributes
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     name = models.CharField(max_length=200)
-    department = models.CharField(max_length=30, null=True)
+    department = models.CharField(max_length=30)
     website = models.URLField(null=True)
     description = models.CharField(max_length=200, null=True)
     type = models.CharField(max_length=10,null=True) # 选修课，必修课
@@ -39,6 +39,9 @@ class CourseRate(models.Model):
     knowledge = models.FloatField(default=3.0) # 收获度
     satisfaction = models.FloatField(default=3.0) # 满意度
     rateCount = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.id) + " " + str(self.score)
 
 class CourseKeyWord(models.Model):
     # attributes
@@ -108,6 +111,8 @@ class SchoolCourse(models.Model):
     )
     class Meta:
         unique_together = ("schoolId", "courseId")
+    def __str__(self):
+        return str(self.schoolId)+" "+str(self.courseId)
 
 
 class CourseTeacher(models.Model):
@@ -121,6 +126,8 @@ class CourseTeacher(models.Model):
     )
     class Meta:
         unique_together = ("courseId", "teacherId")
+    def __str__(self):
+        return str(self.courseId) + " " + str(self.teacherId)
 
 
 class CommentUserCourse(models.Model):

@@ -1,5 +1,7 @@
 # git分支管理
 
+大家只需要进行feature分支部分的操作，即新建feature分支、commit多次，merge到develop即可，其他部分有专人处理。
+
 ## 常用指令
 
 + 推荐使用git bash进行git操作。
@@ -141,5 +143,6 @@ git checkout develop
 git merge --no-ff release-0.1
 git branch -d release-0.1
 git push --tags
+git push
 ```
 

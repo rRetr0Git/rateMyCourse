@@ -211,24 +211,28 @@ def getSchool(request):
 def getDepartment(request):
     try:
         school = School.objects.get(name=request.GET['school'])
+        department = [c.courseId.department for c in SchoolCourse.objects.filter(schoolId=school.id).distinct()]
     except Exception as err:
         return HttpResponse(json.dumps({
             'error': 'school not found'
             }))
     return HttpResponse(json.dumps({
-        'department': [d.name for d in school.department_set.all()]
+        'department': list(set([d for d in department]))
         }))
 
 def getCourse(request):
     try:
+        print("world")
         school = School.objects.get(name=request.GET['school'])
         department = school.department_set.get(name=request.GET['department'])
+        course = Course.objects.filter(school=school, department=department).distinct()
+        print(course)
     except Exception as err:
         return HttpResponse(json.dumps({
             'error': 'school or department not found'
             }))
     return HttpResponse(json.dumps({
-        'course': [c.name for c in department.course_set.all()]
+        'course': [c.name for c in course]
         }))
 
 def getComment(request):
