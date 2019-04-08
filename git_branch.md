@@ -104,11 +104,12 @@ git push origin xx
 任意分支下git checkout -b wwj develop
 
 # 每次有代码更新，在feature分支提交，只commit不push
+git add xxx
 git commit -m "xxx"
 
 # 完成该阶段工作，合并到develop分支，并删除wwj分支
 git checkout develop
-git pull
+git pull origin develop
 git merge --no-ff wwj
 git branch -d wwj
 git push origin develop

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_list_or_404
 from rateMyCourse.models import *
+from django.db.models import Q
 import json
 from urllib import request, parse
 from django.http import HttpResponse
@@ -84,6 +85,21 @@ def solrSearch(keywords, school, department):
     t = json.loads(t)
     return [i['course_number'] for i in t['response']['docs']]
 
+
+def simpleSearch(school, department, keywords):
+    if school == None:
+        courselist = Course.objects.filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+    else:
+        if department == None:
+            school = School.objects.get(name=school)
+            courseidlist = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school.id)]
+            courselist = Course.objects.filter(Q(id__in = courseidlist) & (Q(name__icontains=keywords) | Q(type__icontains=keywords)))
+        else:
+            school = School.objects.get(name=school)
+            courseidlist = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school)]
+            courselist = Course.objects.filter(Q(id__in = courseidlist) & (Q(department__icontains=department) & (Q(name__icontains=keywords) | Q(type__icontains=keywords))))
+    return courselist
+
 def search(request):
     addHitCount()
     keywords = request.GET['keywords']
@@ -95,10 +111,10 @@ def search(request):
         department = request.GET['department']
     else:
         department = None
-    courselist = solrSearch(keywords, school, department)
     courses = []
     pages = []
-    for i, c_number in enumerate(courselist):
+    '''
+        for i, c_number in enumerate(courselist):
         if(c_number in courselist[:i]):
             continue
         cs = Course.objects.filter(number=c_number)
@@ -113,7 +129,19 @@ def search(request):
             'rateScore': sum(x) / len(x),
             'ratenumber': sum([i.comment_set.count() for i in cs])
             })
-
+    '''
+    courselist = simpleSearch(school,department,keywords)
+    for index,course in enumerate(courselist):
+        courses.append({
+            'name': course.name,
+            'ID': course.id,
+            'type': course.type,
+            'credit': 5,
+            'school': school,
+            'department': course.department,
+            'rateScore': 5,
+            'ratenumber': 5
+        })
     pn=int(len(courses)/10)+1
     for i in range(pn):
         pages.append({'number': i+1})
@@ -140,21 +168,22 @@ def getAvgScore(courses):
 
 def coursePage(request, course_number):
     addHitCount()
-    courses = get_list_or_404(Course, number=course_number)
+    #courses = get_list_or_404(Course, number=course_number)
+    courses = Course.objects.filter(id=course_number)
     # courses = Course.objects.filter(number=course_number)
-    x = getAvgScore(courses)
+    #x = getAvgScore(courses)
     return render(request, "rateMyCourse/coursePage.html", {
         'course_name': courses[0].name,
-        'course_credit': courses[0].credit,
-        'course_profession': courses[0].department.name,
-        'course_type': courses[0].coursetype,
-        'course_scores': '%.1f'%(sum(x) / 4),
-        'detail1': '有趣程度：%.1f'%(x[0]),
-        'detail2': '充实程度：%.1f'%(x[1]),
-        'detail3': '课程难度：%.1f'%(x[2]),
-        'detail4': '课程收获：%.1f'%(x[3]),
+        'course_credit': 5,
+        'course_profession': courses[0].department,
+        'course_type': courses[0].type,
+        'course_scores': '%.1f'%5.0,
+        'detail1': '有趣程度：%.1f'%5.0,
+        'detail2': '充实程度：%.1f'%5.0,
+        'detail3': '课程难度：%.1f'%5.0,
+        'detail4': '课程收获：%.1f'%5.0,
         'course_website': courses[0].website if courses[0].website != '' else '.',
-        'profession_website': courses[0].department.website if courses[0].department.website != '' else '.',
+        'profession_website': "https://baidu.com",
         })
 
 def ratePage(request, course_number):
