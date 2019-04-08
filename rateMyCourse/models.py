@@ -130,7 +130,7 @@ class CourseTeacher(models.Model):
         return str(self.courseId) + " " + str(self.teacherId)
 
 
-class CommentUserCourse(models.Model):
+class CommentUserCourseTeacher(models.Model):
     commentId = models.ForeignKey(
         Comment,
         on_delete=models.CASCADE,
@@ -143,8 +143,12 @@ class CommentUserCourse(models.Model):
         Course,
         on_delete=models.CASCADE,
     )
+    teacherId = models.ForeignKey(
+        Teacher,
+        on_delete=models.CASCADE,
+    )
     class Meta:
-        unique_together = ("commentId", "userId","courseId")
+        unique_together = ("commentId", "userId","courseId","teacherId")
 
 
 class HitCount(models.Model):
