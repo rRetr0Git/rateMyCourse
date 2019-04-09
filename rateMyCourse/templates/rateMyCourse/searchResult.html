@@ -79,7 +79,7 @@
 </nav>
 
   <div class="container">
-    <p id="count">搜索到{{count}}门课程</p> {% for course in courses %}
+    <p id="count">搜索到 {{count}} 门课程</p> {% for course in courses %}
     <div class="container" id="course{{forloop.counter}}">
       <div class="row" style="background:#eeeeee">
         <a href="/course/{{course.ID}}" style="text-decoration:none;font-size:50px;color:#000000; width:62%;">{{course.name}}</a>
@@ -90,6 +90,9 @@
         </div>
         <div class="col-md-3 text-md-left text-center align-self-center my-4"> 专业
           <p>{{course.department}}</p>
+        </div>
+        <div class="col-md-3 text-md-left text-center align-self-center my-4"> 教师
+          <p>{{course.teacher}}</p>
         </div>
         <div class="col-md-3 text-md-left text-center align-self-center my-4"> 类型
           <p>{{course.type}}</p>

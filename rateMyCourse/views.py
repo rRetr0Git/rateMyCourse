@@ -132,16 +132,19 @@ def search(request):
     '''
     courselist = simpleSearch(school,department,keywords)
     for index,course in enumerate(courselist):
-        courses.append({
-            'name': course.name,
-            'ID': course.id,
-            'type': course.type,
-            'credit': 5,
-            'school': school,
-            'department': course.department,
-            'rateScore': 5,
-            'ratenumber': 5
-        })
+        allcourse = CourseTeacher.objects.filter(courseId=course.id)
+        for onecourse in allcourse:
+            courses.append({
+                'name': course.name,
+                'ID': course.id,
+                'teacher':onecourse.teacherId.name,
+                'type': course.type,
+                'credit': 5,
+                'school': school,
+                'department': course.department,
+                'rateScore': 5,
+                'ratenumber': 5
+            })
     pn=int(len(courses)/10)+1
     for i in range(pn):
         pages.append({'number': i+1})
