@@ -369,6 +369,14 @@ def submitComment(request):
 
 def userInfo(request):
     name = request.GET['name']
-    user = User.objects.filter(username = name)
-    return render(request, "rateMyCourse/userInfo.html")
+    user = User.objects.get(username = name)
+    commentList=[]
+    return render(request, "rateMyCourse/userInfo.html",{
+	    'username':name,
+	    'isTeacher':user.isTeacher,
+	    'schoolName':user.schoolName,
+	    'departmentName':user.departmentName,
+	    'img':user.img,
+	    'commentList':commentList,
+    })
 
