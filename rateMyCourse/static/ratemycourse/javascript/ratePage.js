@@ -222,6 +222,7 @@ function Func_submit() {
     traditional: true,
     data: {
       'username': $.cookie('username'),
+      'teacherName':$('#buttonSelectTeacher').text(),
       'anonymous': document.getElementById('anonymous').checked,
       'courseId':window.location.pathname.split('/')[2],
       'comment': $('#writeCommentText').val(),

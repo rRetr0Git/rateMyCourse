@@ -196,10 +196,10 @@ def ratePage(request, courseId):
                 'school': courses[0].description,
                 'department': courses[0].department,
             },
-            'aspect1': '有趣程度',
-            'aspect2': '充实程度',
-            'aspect3': '课程难度',
-            'aspect4': '课程收获',
+            'aspect1': '作业量',
+            'aspect2': '难度',
+            'aspect3': '知识量',
+            'aspect4': '满意度',
         })
 
 def signIn(request):
@@ -290,7 +290,6 @@ def getComment(request):
         }))
 
 def getTeachers(request):
-    print(1)
     try:
         teachers = CourseTeacher.objects.filter(courseId=request.GET['courseId'])
     except Exception:
@@ -300,9 +299,8 @@ def getTeachers(request):
             }))
     tList = []
     for t in teachers:
-        tList.append([
-            t.teacherId.name for t in teachers
-            ])
+        print(t)
+        tList.append(t.teacherId.name)
     return HttpResponse(json.dumps({
         'statCode': 0,
         'teachers': tList,
@@ -326,46 +324,36 @@ def submitComment(request):
     addHitCount()
     try:
         username = request.POST['username']
-        comment = request.POST['comment']
+        content = request.POST['comment']
         rate = request.POST.getlist('rate')
         for i, j in enumerate(rate):
             rate[i] = int(j)
         courseId = request.POST['courseId']
         anonymous = request.POST['anonymous']
-        teacher = request.POST.getlist('teacher')
+        teacherName = request.POST['teacherName']
     except Exception as err:
         return HttpResponse(json.dumps({
             'statCode': -1,
             'errormessage': 'post information not complete! ',
-            }))
-    cset = Course.objects.filter(number=courseId)
-    # print(rate, teacher)
-    for t in teacher:
-        cset = cset.filter(teacher_set__name=t)
-    # print(cset)
-    # assert(len(cset) == 1)
-    crs = cset[0]
-    # print(anonymous)
-    Comment(
+        }))
+    course = Course.objects.get(id=courseId)
+    teacher = Teacher.objects.get(name=teacherName)
+    user = User.objects.get(username=username)
+    comment = Comment(
         anonymous=True if anonymous == 'true' else False,
-        content=comment,
+        content=content,
         time=timezone.now(),
-        user=User.objects.get(username=username),
-        course=crs,
-        term=term,
-        total_score = sum(rate) / len(rate),
-        ).save()
-    Rate(
-        user=User.objects.get(username=username),
-        course=crs,
-        A_score=rate[0],
-        B_score=rate[1],
-        C_score=rate[2],
-        D_score=rate[3],
-        ).save()
+        homework = rate[0],
+        difficulty=rate[1],
+        knowledge=rate[2],
+        satisfaction=rate[3]
+    )
+    comment.save()
+    cuct = CommentUserCourseTeacher(commentId=comment,userId=user,courseId=course,teacherId=teacher)
+    cuct.save()
     return HttpResponse(json.dumps({
         'statCode': 0,
-        }))
+    }))
 
 def userInfo(request):
     name = request.GET['name']
