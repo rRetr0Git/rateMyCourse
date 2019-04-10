@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="../../static/ratemycourse/css/allPages.css" type="text/css">
+    <link rel="stylesheet" href="../../static/ratemycourse/css/index.css" type="text/css">
+</head>
+
+<body>
+<div style="padding-top:70px">
+    <!-- Space used to modify navbar with fixed-top style-->
+</div>
+<nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">公客</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar2SupportedContent" aria-controls="navbar2SupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+        <div class="collapse navbar-collapse text-center justify-content-end" id="navbar2SupportedContent">
+
+            <ul class="nav navbar-nav navbar-right">
+                <div class="container px-3 py-2" style="width:260px;">
+                    <li>
+                        <a id="modal-788570" href="#modal-container-788570" role="button" class="btn text-white btn-primary" data-toggle="modal">修改信息</a>
+                        <a class="btn text-white btn-primary" href="#">注销</a>
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-6 column">
+        </div>
+        <div class="col-md-6 column">
+            <p class="text-right">
+                <br>
+                <br>
+            </p>
+
+            <!--修改信息模态框-->
+            <div class="modal fade" id="modal-container-788570" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">
+                                修改个人信息
+                            </h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form">
+                                <div class="form-group">
+                                    <label for="nick">昵称</label>
+                                    <input type="text" class="form-control" id="nick" placeholder="请输入昵称">
+                                </div>
+                                <div class="form-group">
+                                    <label for="school">请选择所在学院</label>
+                                    <br>
+                                    <select class="btn btn-light btn-lg dropdown-toggle disabled my-1"  title="请选择所在学院" data-live-search="true" id="school" data-size="10">
+                                        <option>计算机学院</option>
+                                        <option>高等理工学院</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="way">请选择所在专业</label>
+                                    <br>
+                                    <select class="btn btn-light btn-lg dropdown-toggle disabled my-1"  title="请选择所在专业" data-live-search="true" id="way" data-size="10">
+                                        <option>计算机科学与技术</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="year">请选择入学学年</label><br>
+                                    <select class="btn btn-light btn-lg dropdown-toggle disabled my-1"  title="请选择入学学年" data-live-search="true" id="year" data-size="10">
+                                        <option>2015</option>
+                                        <option>2016</option>
+                                        <option>2017</option>
+                                        <option>2018</option>
+                                        <option>2019</option>
+                                        <option>2020</option>
+                                        <option>2021</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputfile">上传头像</label><br>
+                                    <input type="file" id="inputfile">
+                                </div>
+                                <!--<div class="checkbox">-->
+                                <!--<label>-->
+                                <!--<input type="checkbox">确定修改-->
+                                <!--</label>-->
+                                <!--</div>-->
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> <button type="button" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row clearfix">
+        <div class="col-md-5 column">
+            <br>
+            <br>
+            <p class="text-center">
+                <strong>昵称：</strong>ErrorOverflow    <strong>点评质量：</strong>贼棒
+            </p>
+            <p  class="text-center">
+                <img alt="140x140" width="140" height="140" src="components/lemon.jpg" class="img-rounded"/>
+            </p>
+            <br>
+            <p class="text-center">
+                <strong>学院：计算机学院</strong>
+            </p>
+            <p class="text-center">
+                <strong>专业：计算机科学与技术</strong>
+            </p>
+            <p class="text-center">
+                <strong>年份：2016</strong>
+            </p>
+        </div>
+        <div class="col-md-7 column">
+            <p class="text-center">
+                <strong>近期点评</strong>
+            </p>
+            <div class="row pre-scrollable">
+                <table class="table text-center">
+                    <thead>
+                    <tr>
+                        <th style="width: 100px">
+                            点评时间
+                        </th>
+                        <th style="width: 300px">
+                            课程
+                        </th>
+                        <th style="width: 100px">
+                            点评内容
+                        </th>
+                        <th style="width: 100px">
+                            详情
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            01/04/2012
+                        </td>
+                        <td>
+                            大数据与人工智能实训与图象处理与模式识别
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    <tr class="success">
+                        <td>
+                            01/04/2012
+                        </td>
+                        <td>
+                            软件工程
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    <tr class="error">
+                        <td>
+                            02/04/2012
+                        </td>
+                        <td>
+                            软件工程
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    <tr class="warning">
+                        <td>
+                            03/04/2012
+                        </td>
+                        <td>
+                            软件工程
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    <tr class="info">
+                        <td>
+                            04/04/2012
+                        </td>
+                        <td>
+                            软件工程
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    <tr class="info">
+                        <td>
+                            04/04/2012
+                        </td>
+                        <td>
+                            软件工程
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    <tr class="info">
+                        <td>
+                            04/04/2012
+                        </td>
+                        <td>
+                            软件工程
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    <tr class="info">
+                        <td>
+                            04/04/2012
+                        </td>
+                        <td>
+                            软件工程
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    <tr class="info">
+                        <td>
+                            04/04/2012
+                        </td>
+                        <td>
+                            软件工程
+                        </td>
+                        <td>
+                            Good
+                        </td>
+                        <td>
+                            <a href="#">点评页</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../../static/ratemycourse/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+<script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>
+<script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+<script src="../../static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+<script src="../../static/ratemycourse/javascript/login.js"></script>
+<script src="../../static/ratemycourse/javascript/index.js"></script>
+</body>
+</html>
