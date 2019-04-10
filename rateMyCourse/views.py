@@ -77,13 +77,13 @@ def solrSearch(keywords, school, department):
         keys['school_name'] = school
     if(department != None):
         keys['department_name'] = department
-    keys['course_name'] = keywords
+    keys['courseId'] = keywords
     s = ' '.join([
         '+' + key + ':\"' + keys[key] + '\"' for key in keys
     ])
     t = request.urlopen(url%parse.quote(s)).read().decode('utf-8')
     t = json.loads(t)
-    return [i['course_number'] for i in t['response']['docs']]
+    return [i['courseId'] for i in t['response']['docs']]
 
 
 def simpleSearch(school, department, keywords):
@@ -169,11 +169,9 @@ def getAvgScore(courses):
             x[i] /= count
     return x
 
-def coursePage(request, course_number):
+def coursePage(request, courseId):
     addHitCount()
-    #courses = get_list_or_404(Course, number=course_number)
-    courses = Course.objects.filter(id=course_number)
-    # courses = Course.objects.filter(number=course_number)
+    courses = Course.objects.filter(id=courseId)
     #x = getAvgScore(courses)
     return render(request, "rateMyCourse/coursePage.html", {
         'course_name': courses[0].name,
@@ -189,9 +187,9 @@ def coursePage(request, course_number):
         'profession_website': "https://baidu.com",
         })
 
-def ratePage(request, course_number):
+def ratePage(request, courseId):
     addHitCount()
-    courses = Course.objects.filter(id=course_number)
+    courses = Course.objects.filter(id=courseId)
     return render(request, "rateMyCourse/ratePage.html", {
             'course': {
                 'name': courses[0].name,
@@ -269,11 +267,11 @@ def getCourse(request):
 
 def getComment(request):
     try:
-        courses = Course.objects.filter(number=request.GET['course_number'])
+        courses = Course.objects.filter(number=request.GET['courseId'])
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get course_number or course_number not exists',
+            'errormessage': 'can not get courseId or courseId not exists',
             }))
     cmtList = []
     for c in courses:
@@ -294,11 +292,11 @@ def getComment(request):
 def getTeachers(request):
     print(1)
     try:
-        teachers = CourseTeacher.objects.filter(courseId=request.GET['course_id'])
+        teachers = CourseTeacher.objects.filter(courseId=request.GET['courseId'])
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get course_number or course_number not exists',
+            'errormessage': 'can not get courseId or courseId not exists',
             }))
     tList = []
     for t in teachers:
@@ -312,11 +310,11 @@ def getTeachers(request):
 
 def getOverAllRate(request):
     try:
-        courses = Course.objects.filter(number=request.GET['course_number'])
+        courses = Course.objects.filter(number=request.GET['courseId'])
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get course_number or course_number not exists',
+            'errormessage': 'can not get courseId or courseId not exists',
             }))
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -332,7 +330,7 @@ def submitComment(request):
         rate = request.POST.getlist('rate')
         for i, j in enumerate(rate):
             rate[i] = int(j)
-        course_id = request.POST['course_id']
+        courseId = request.POST['courseId']
         anonymous = request.POST['anonymous']
         teacher = request.POST.getlist('teacher')
     except Exception as err:
@@ -340,7 +338,7 @@ def submitComment(request):
             'statCode': -1,
             'errormessage': 'post information not complete! ',
             }))
-    cset = Course.objects.filter(number=course_number)
+    cset = Course.objects.filter(number=courseId)
     # print(rate, teacher)
     for t in teacher:
         cset = cset.filter(teacher_set__name=t)
@@ -368,3 +366,9 @@ def submitComment(request):
     return HttpResponse(json.dumps({
         'statCode': 0,
         }))
+
+def userInfo(request):
+    name = request.GET['name']
+    user = User.objects.filter(username = name)
+    return render(request, "rateMyCourse/userInfo.html")
+

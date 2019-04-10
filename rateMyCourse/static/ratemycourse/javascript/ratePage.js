@@ -48,7 +48,7 @@ $(document).ready(function() {
   $.ajax('/getTeachers', {
     dataType:'json',
     data:{
-      'course_id':window.location.pathname.split('/')[2]
+      'courseId':window.location.pathname.split('/')[2]
     }
   }).done(function(data) {
     var teacherList = $("#teacherList")
@@ -93,7 +93,7 @@ function Func_submit() {
     data: {
       'username': $.cookie('username'),
       'anonymous': document.getElementById('anonymous').checked,
-      'course_id':window.location.pathname.split('/')[2],
+      'courseId':window.location.pathname.split('/')[2],
       'comment': $('#writeCommentText').val(),
       'rate':score,
       // rates
