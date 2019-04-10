@@ -191,12 +191,12 @@ def coursePage(request, course_number):
 
 def ratePage(request, course_number):
     addHitCount()
-    cs = get_list_or_404(Course, number=course_number)
+    courses = Course.objects.filter(id=course_number)
     return render(request, "rateMyCourse/ratePage.html", {
             'course': {
-                'name': cs[0].name,
-                'school': cs[0].department.school.name,
-                'department': cs[0].department.name,
+                'name': courses[0].name,
+                'school': courses[0].description,
+                'department': courses[0].department,
             },
             'aspect1': '有趣程度',
             'aspect2': '充实程度',
@@ -292,17 +292,18 @@ def getComment(request):
         }))
 
 def getTeachers(request):
+    print(1)
     try:
-        courses = Course.objects.filter(number=request.GET['course_number'])
+        teachers = CourseTeacher.objects.filter(courseId=request.GET['course_id'])
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
             'errormessage': 'can not get course_number or course_number not exists',
             }))
     tList = []
-    for c in courses:
+    for t in teachers:
         tList.append([
-            t.name for t in c.teacher_set.all()
+            t.teacherId.name for t in teachers
             ])
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -331,9 +332,8 @@ def submitComment(request):
         rate = request.POST.getlist('rate')
         for i, j in enumerate(rate):
             rate[i] = int(j)
-        course_number = request.POST['course_number']
+        course_id = request.POST['course_id']
         anonymous = request.POST['anonymous']
-        term = request.POST['term']
         teacher = request.POST.getlist('teacher')
     except Exception as err:
         return HttpResponse(json.dumps({

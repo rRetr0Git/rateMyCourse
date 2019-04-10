@@ -31,7 +31,7 @@ function choose_term(text){
 $(document).ready(function() {
   // alert("!!!")
   // Form validation for Sign in / Sign up forms
-  $("#menuLogin").load("./test.html")
+  //$("#menuLogin").load("./test.html")
   validateSignUp()
   validateSignIn()
 
@@ -48,7 +48,7 @@ $(document).ready(function() {
   $.ajax('/getTeachers', {
     dataType:'json',
     data:{
-      'course_number':window.location.pathname.split('/')[2]
+      'course_id':window.location.pathname.split('/')[2]
     }
   }).done(function(data) {
     var teacherList = $("#teacherList")
@@ -67,10 +67,10 @@ function Func_submit() {
     alert("please log in first!")
     return false
   }
-  if($('#buttonSelectTerm').text() == '选择学期'){
-    alert("please choose your term!")
-  	return false
-  }
+//  if($('#buttonSelectTerm').text() == '选择学期'){
+//    alert("please choose your term!")
+//  	return false
+//  }
   if($('#buttonSelectTeacher').text() == '选择教师'){
     alert('please choose your teacher(s)!')
   	return false
@@ -93,9 +93,7 @@ function Func_submit() {
     data: {
       'username': $.cookie('username'),
       'anonymous': document.getElementById('anonymous').checked,
-      'course_number':window.location.pathname.split('/')[2],
-      'term': $('#buttonSelectTerm').text(),
-      'teacher': $('#buttonSelectTeacher').text().split(','),
+      'course_id':window.location.pathname.split('/')[2],
       'comment': $('#writeCommentText').val(),
       'rate':score,
       // rates
