@@ -152,7 +152,7 @@ function generateGrid(imageUrls, userName, iTerm, iTeacher, iToal, text, time) {
 function setComments() {//get comments list from service
     $.ajax('/getComment', {
         dataType: 'json',
-        data: {'course_number': window.location.pathname.split('/')[2]},
+        data: {'courseId': window.location.pathname.split('/')[2]},
     }).done(function(data){
         var imgurl = "../../static/ratemycourse/images/user.png";
         var parents = document.getElementById("commentDiv");

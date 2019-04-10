@@ -73,7 +73,7 @@ class User(models.Model):
 class Teacher(models.Model):
     # attributes
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,unique=True)
     website = models.URLField(null=True)
     img = models.URLField(null=True)
     status = models.IntegerField(default=0)

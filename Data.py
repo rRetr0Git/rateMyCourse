@@ -25,8 +25,12 @@ for row in df.iterrows():
 	sc.save()
 	for each in teachers:
 		if each != "N/A":
-			teacher = Teacher(name=each)
-			teacher.save()
+			teacher = Teacher.objects.filter(name=each)
+			if len(teacher)==0:
+				teacher = Teacher(name=each)
+				teacher.save()
+			else:
+				teacher = teacher[0]
 			teacher_uuid = teacher.id
 			ct = CourseTeacher(courseId=course,teacherId=teacher)
 			ct.save()
