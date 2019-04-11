@@ -377,15 +377,15 @@ def userInfo(request):
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
+        courseTeacher = CourseTeacher.objects.get(teacherId=teacher,courseId=course).id
         cmt = cuct.commentId
         if cmt.anonymous == True:
             continue
         commentList.append({
             'course': course.name,
-            'courseId': course.id,
+            'courseTeacher': courseTeacher,
             'teacher': teacher.name,
-            'teacherId': teacher.id,
-            'text': cmt.content.replace("\n", "<br/>"),
+            'rate': [cmt.homework,cmt.difficulty,cmt.knowledge,cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
             })
 
