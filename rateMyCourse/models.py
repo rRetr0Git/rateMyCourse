@@ -101,6 +101,7 @@ class Comment(models.Model):
         return self.content
 
 class SchoolCourse(models.Model):
+    id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     schoolId = models.ForeignKey(
         School,
         on_delete=models.CASCADE,
@@ -116,6 +117,7 @@ class SchoolCourse(models.Model):
 
 
 class CourseTeacher(models.Model):
+    id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     courseId = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
@@ -131,6 +133,7 @@ class CourseTeacher(models.Model):
 
 
 class CommentUserCourseTeacher(models.Model):
+    id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     commentId = models.ForeignKey(
         Comment,
         on_delete=models.CASCADE,
@@ -149,6 +152,9 @@ class CommentUserCourseTeacher(models.Model):
     )
     class Meta:
         unique_together = ("commentId", "userId","courseId","teacherId")
+
+    def __str__(self):
+        return str(self.courseId) + " " + str(self.courseId) + " " + str(self.teacherId)
 
 
 class HitCount(models.Model):

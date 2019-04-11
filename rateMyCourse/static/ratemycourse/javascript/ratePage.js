@@ -175,10 +175,10 @@ $(document).ready(function() {
     $("#menuUser").show()
     $("#navUser").text($.cookie('username'))
   }
-  $.ajax('/getTeachers', {
+  $.ajax('/getTeachers/', {
     dataType:'json',
     data:{
-      'courseId':window.location.pathname.split('/')[2]
+      'courseTeacherId':window.location.pathname.split('/')[2]
     }
   }).done(function(data) {
     var teacherList = $("#teacherList")
@@ -201,11 +201,7 @@ function Func_submit() {
 //    alert("please choose your term!")
 //  	return false
 //  }
-  if($('#buttonSelectTeacher').text() == '选择教师'){
-    alert('please choose your teacher(s)!')
-  	return false
-  }
-  if($('#writeCommentText').val().length < 30){
+  if($('#writeCommentText').val().length < 10){
     alert('please write more for your course!(more than 30 characters)')
 	return false
   }
@@ -222,9 +218,8 @@ function Func_submit() {
     traditional: true,
     data: {
       'username': $.cookie('username'),
-      'teacherName':$('#buttonSelectTeacher').text(),
+      'courseteacher': window.location.pathname.split('/')[2],
       'anonymous': document.getElementById('anonymous').checked,
-      'courseId':window.location.pathname.split('/')[2],
       'comment': $('#writeCommentText').val(),
       'rate':score,
       // rates

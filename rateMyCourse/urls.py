@@ -7,8 +7,8 @@ urlpatterns = [
     url(r'^$', views.getIndex, name='getIndex'),
     url(r'^index/$', views.getIndex, name='getIndex'),
     url(r'^search/$', views.search, name='search'),
-    url(r'^course/(?P<courseId>[0-9A-Za-z\-]+)/$', views.coursePage, name='coursePage'),
-    url(r'^course/(?P<courseId>[0-9A-Za-z\-]+)/rate/$', views.ratePage, name='ratePage'),
+    url(r'^course/(?P<courseTeacherId>[0-9A-Za-z\-]+)/$', views.coursePage, name='coursePage'),
+    url(r'^course/(?P<courseTeacherId>[0-9A-Za-z\-]+)/rate/$', views.ratePage, name='ratePage'),
 
     #POST
     url(r'^signIn/$', views.signIn, name='signIn'),
