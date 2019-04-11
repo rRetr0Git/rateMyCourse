@@ -120,6 +120,7 @@
                                     <label for="department">请选择所在学院</label>
                                     <br>
                                     <select class="btn btn-light btn-lg dropdown-toggle disabled my-1"  title="请选择所在学院" data-live-search="true" id="department" data-size="10">
+                                        <option>暂无</option>
                                         <option>材料科学与工程学院</option>
                                         <option>电子信息工程学院</option>
                                         <option>自动化科学与电气工程学院</option>
@@ -171,7 +172,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> <button type="button" class="btn btn-primary" onclick=Func_saveUserInfo()>保存</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> <button type="button" class="btn btn-primary" onclick=Func_saveUserInfo() data-dismiss="modal">保存</button>
                         </div>
                     </div>
                 </div>
@@ -189,16 +190,16 @@
                 <strong>昵称：</strong>{{username}}
             </p>
             <p  class="text-center">
-                <img alt="140x140" width="140" height="140" src="components/lemon.jpg" class="img-rounded"/>
+                <img alt="200x200" width="200" height="200" src="http://wx2.sinaimg.cn/large/0076t302ly1fylgfkon55j30e80e8ab5.jpg" class="img-rounded"/>
             </p>
             <br>
-            <p class="text-center">
+            <p class="text-center" id="schoolName">
                 <strong>学校：{{schoolName}}</strong>
             </p>
-            <p class="text-center">
+            <p class="text-center" id="departmentName">
                 <strong>学院：{{departmentName}}</strong>
             </p>
-            <p class="text-center">
+            <p class="text-center" id="isTeacher">
                 <strong>是否为老师：{{isTeacher}}</strong>
             </p>
         </div>
