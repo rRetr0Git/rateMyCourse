@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^getOverAllRate/$', views.getOverAllRate, name='getOverAllRate'),
 
     url(r'^userInfo/$', views.userInfo, name='userInfo'),
+    url(r'^saveUserInfo/$',views.saveUserInfo,name='saveUserInfo'),
 ]

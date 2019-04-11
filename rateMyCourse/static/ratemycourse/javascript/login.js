@@ -127,3 +127,18 @@ function Func_toUserInfo(){
     window.location.href = url
     return false
 }
+
+function Func_saveUserInfo(){
+    url = '/userInfo/?'
+    url += "name=" + $("#navUser").text()
+    $.ajax("/saveUserInfo/", {
+        dataType: 'json',
+        type: 'POST',
+        data: {
+          "school": $("#school").val(),
+          "department": $("#department").val(),
+          "username": $("#navUser").text(),
+        }
+    })
+    window.location.href = url
+}
