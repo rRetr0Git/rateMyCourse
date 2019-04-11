@@ -70,24 +70,12 @@ function validateSignIn() {
   })
 }
 
-function generateGrid(imageUrls, userName, iTerm, iTeacher, iToal, text, time) {
+function generateGrid(imageUrls, userName, text, time) {
     var ScreenGridHtml = `
         <div>
             <img>
             <p>
         </div>
-            <table>
-                <tr>
-                    <td><p></td>
-                    <td><p></td>
-                    <td><p></td>
-                </tr>
-                <tr>
-                    <td><p></td>
-                    <td><p></td>
-                    <td><p></td>
-                </tr>
-            <table>
         <div>
             <p>
         </div>
@@ -115,27 +103,13 @@ function generateGrid(imageUrls, userName, iTerm, iTeacher, iToal, text, time) {
         pTags[0].appendChild(userNameNode);
         pTags[0].setAttribute("class", "userName");
 
-        // insert information
-        var term = document.createTextNode("学期");
-        var teacher = document.createTextNode("上课老师");
-        var total = document.createTextNode("总评");
-        var vTerm = document.createTextNode(iTerm);
-        var vTeacher = document.createTextNode(iTeacher);
-        var vTotal = document.createTextNode(iToal.toFixed(1));
-        pTags[1].appendChild(term);
-        pTags[2].appendChild(teacher);
-        pTags[3].appendChild(total);
-        pTags[4].appendChild(vTerm);
-        pTags[5].appendChild(vTeacher);
-        pTags[6].appendChild(vTotal);
-
         //insert text
-        pTags[7].innerHTML = text;
-        pTags[7].setAttribute("style", "margin-top:16px;text-align:left; width:70%")
+        pTags[1].innerHTML = text;
+        pTags[1].setAttribute("style", "margin-top:16px;text-align:left; width:70%")
         //inset time
         var timenode = document.createTextNode(time);
-        pTags[8].appendChild(timenode);
-        pTags[8].setAttribute("style", "width:100%;text-align:right;margin-top:32px")
+        pTags[2].appendChild(timenode);
+        pTags[2].setAttribute("style", "width:100%;text-align:right;margin-top:32px")
 
         //css
         var divTags = commentGrid.getElementsByTagName("div");
@@ -144,15 +118,13 @@ function generateGrid(imageUrls, userName, iTerm, iTeacher, iToal, text, time) {
         divTags[2].setAttribute("class", "row");
         divTags[0].setAttribute("style", "width:70%;border-bottom:1px #e4e4e4 solid;");
         divTags[2].setAttribute("style", "width:100%;border-bottom:1px #e4e4e4 solid;");
-        var tableTag = commentGrid.getElementsByTagName("table");
-        tableTag[0].setAttribute("style", "width:70%; margin-top:16px;border-bottom:1px #e4e4e4 solid");
         return commentGrid;
 }
 
 function setComments() {//get comments list from service
-    $.ajax('/getComment', {
-        dataType: 'json',
-        data: {'courseId': window.location.pathname.split('/')[2]},
+    $.ajax('/getComment/', {
+        dataType: "json",
+        data: {'courseTeacherId': window.location.pathname.split('/')[2]},
     }).done(function(data){
         var imgurl = "../../static/ratemycourse/images/user.png";
         var parents = document.getElementById("commentDiv");
@@ -163,7 +135,7 @@ function setComments() {//get comments list from service
         for(var i=0; i<data.comments.length; i++){
             //generate a new row
             var cmt = data.comments[i]
-            var Grid = generateGrid(imgurl, cmt.userName, cmt.iTerm, cmt.iTeacher, cmt.iTotal, cmt.text, cmt.time);
+            var Grid = generateGrid(imgurl, cmt.userName, cmt.text, cmt.time);
             //insert this new row
             parents.appendChild(Grid);
         }

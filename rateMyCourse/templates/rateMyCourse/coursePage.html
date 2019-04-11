@@ -88,14 +88,17 @@
         <table style="width:100%; margin:auto">
           <tbody>
             <tr>
-              <td style="width:33%">
+              <td style="width:25%">
                 <p class="text-dark text-center">学分</p>
               </td>
-              <td style="width:33%">
+              <td style="width:25%">
                 <p class="text-dark text-center">开课专业</p>
               </td>
-              <td style="width:33%">
+              <td style="width:25%">
                 <p class="text-dark text-center">课程类别</p>
+              </td>
+              <td style="width:25%">
+                <p class="text-dark text-center">教师姓名</p>
               </td>
             </tr>
             <tr>
@@ -107,6 +110,9 @@
               </td>
               <td>
                 <p class="text-dark text-center" style="margin-top:8px">{{course_type}}</p>
+              </td>
+              <td>
+                <p class="text-dark text-center" style="margin-top:8px">{{course_teacher}}</p>
               </td>
             </tr>
           </tbody>
@@ -120,7 +126,7 @@
       <div style="width:76%">
           <div class="row show-grid" style="width:100%;margin-left:16px">
               <div class="col-md-8"><h3 class="text-dark"> 总分：{{course_scores}}</h3></div>
-              <div class="col-md-4" ><a class="btn btn-lg btn-default" id="toComment" href="rate">撰写评价</a></div>
+              <div class="col-md-4" ><a class="btn btn-lg btn-default" id="toComment" href="/course/{{courseteacherid}}/rate/">撰写评价</a></div>
         </div>
         <table style="width:80%; margin-top:16px; margin-left:32px">
           <tbody>
