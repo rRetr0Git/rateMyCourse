@@ -106,6 +106,7 @@ function Func_signIn() {
       $("#menuLogin").hide()
       $("#menuUser").show()
       $("#navUser").text(data.username)
+      $("#modalInfo").show()
       $.cookie('username', data.username, {path: '/'})
     }
   })
@@ -115,6 +116,29 @@ function Func_signIn() {
 function Func_signOut() {
   $("#menuUser").hide()
   $("#menuLogin").show()
+  $("#modalInfo").hide()
   $.removeCookie('username', {path: '/'})
   return false
+}
+
+function Func_toUserInfo(){
+    url = '/userInfo/?'
+    url += "name=" + $("#navUser").text()
+    window.location.href = url
+    return false
+}
+
+function Func_saveUserInfo(){
+    url = this.href
+    $.ajax("/saveUserInfo/", {
+        dataType: 'json',
+        type: 'POST',
+        data: {
+          "school": $("#school").val(),
+          "department": $("#department").val(),
+          "username": $("#navUser").text(),
+        }
+    })
+    location.reload(true)
+    return false
 }

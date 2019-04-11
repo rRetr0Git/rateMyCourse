@@ -77,28 +77,31 @@ def solrSearch(keywords, school, department):
         keys['school_name'] = school
     if(department != None):
         keys['department_name'] = department
-    keys['course_name'] = keywords
+    keys['courseId'] = keywords
     s = ' '.join([
         '+' + key + ':\"' + keys[key] + '\"' for key in keys
     ])
     t = request.urlopen(url%parse.quote(s)).read().decode('utf-8')
     t = json.loads(t)
-    return [i['course_number'] for i in t['response']['docs']]
+    return [i['courseId'] for i in t['response']['docs']]
 
 
 def simpleSearch(school, department, keywords):
     if school == None:
-        courselist = Course.objects.filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+        courseList = Course.objects.filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+        courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
     else:
         if department == None:
             school = School.objects.get(name=school)
-            courseidlist = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school.id)]
-            courselist = Course.objects.filter(Q(id__in = courseidlist) & (Q(name__icontains=keywords) | Q(type__icontains=keywords)))
+            courseIdList = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school)]
+            courseList = Course.objects.filter(id__in = courseIdList).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+            courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
         else:
             school = School.objects.get(name=school)
-            courseidlist = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school)]
-            courselist = Course.objects.filter(Q(id__in = courseidlist) & (Q(department__icontains=department) & (Q(name__icontains=keywords) | Q(type__icontains=keywords))))
-    return courselist
+            courseIdList = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school)]
+            courseList = Course.objects.filter(id__in = courseIdList, department=department).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+            courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
+    return courseTeacherList
 
 def search(request):
     addHitCount()
@@ -130,17 +133,25 @@ def search(request):
             'ratenumber': sum([i.comment_set.count() for i in cs])
             })
     '''
-    courselist = simpleSearch(school,department,keywords)
-    for index,course in enumerate(courselist):
+
+    courseTeacherList = simpleSearch(school,department,keywords)
+    for index,courseTeacher in enumerate(courseTeacherList):
+        course = Course.objects.get(id=courseTeacher.courseId.id)
+        teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
+        comments = [cuct.commentId for cuct in
+                    CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
+        homework, difficulty, knowledge, satisfaction, count = getAvgScore(comments)
         courses.append({
             'name': course.name,
             'ID': course.id,
+            'courseTeacher' : courseTeacher.id,
+            'teacher': teacher.name,
             'type': course.type,
             'credit': 5,
             'school': school,
             'department': course.department,
-            'rateScore': 5,
-            'ratenumber': 5
+            'rateScore': '%.1f'% ((homework + difficulty + knowledge + satisfaction) / 4.0),
+            'ratenumber': count
         })
     pn=int(len(courses)/10)+1
     for i in range(pn):
@@ -151,54 +162,61 @@ def search(request):
     	'pages': pages,
     	})
 
-def getAvgScore(courses):
-    x = [0] * 4
+def getAvgScore(comments):
     count = 0
-    for c in courses:
-        for rate in c.rate_set.all():
-            x[0] += rate.A_score
-            x[1] += rate.B_score
-            x[2] += rate.C_score
-            x[3] += rate.D_score
-            count += 1
+    homework = 0
+    difficulty = 0
+    knowledge = 0
+    satisfaction = 0
+    for cmt in comments:
+        homework += cmt.homework
+        difficulty += cmt.difficulty
+        knowledge += cmt.knowledge
+        satisfaction += cmt.satisfaction
+        count += 1
     if(count > 0):
-        for i in range(4):
-            x[i] /= count
-    return x
+        return homework / 4.0, difficulty / 4.0, knowledge / 4.0, satisfaction / 4.0, count
+    return 3.0, 3.0, 3.0, 3.0, count
 
-def coursePage(request, course_number):
+def coursePage(request, courseTeacherId):
     addHitCount()
-    #courses = get_list_or_404(Course, number=course_number)
-    courses = Course.objects.filter(id=course_number)
-    # courses = Course.objects.filter(number=course_number)
-    #x = getAvgScore(courses)
+    courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
+    course = Course.objects.get(id=courseTeacher.courseId.id)
+    teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
+    comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
+    homework, difficulty, knowledge, satisfaction, count = getAvgScore(comments)
     return render(request, "rateMyCourse/coursePage.html", {
-        'course_name': courses[0].name,
+        'course_name': course.name,
         'course_credit': 5,
-        'course_profession': courses[0].department,
-        'course_type': courses[0].type,
-        'course_scores': '%.1f'%5.0,
-        'detail1': '有趣程度：%.1f'%5.0,
-        'detail2': '充实程度：%.1f'%5.0,
-        'detail3': '课程难度：%.1f'%5.0,
-        'detail4': '课程收获：%.1f'%5.0,
-        'course_website': courses[0].website if courses[0].website != '' else '.',
+        'course_profession': course.department,
+        'course_type': course.type,
+        'course_scores': '%.1f'% ((homework + difficulty + knowledge + satisfaction) / 4.0),
+        'detail1': '轻松程度：%.1f'%homework,
+        'detail2': '课程难易：%.1f'%difficulty,
+        'detail3': '课程收获：%.1f'%knowledge,
+        'detail4': '满意程度：%.1f'%satisfaction,
+        'course_website': course.website if course.website != '' else '.',
         'profession_website': "https://baidu.com",
+        'course_teacher': teacher.name,
+        'courseteacherid': courseTeacher.id
         })
 
-def ratePage(request, course_number):
+def ratePage(request, courseTeacherId):
     addHitCount()
-    cs = get_list_or_404(Course, number=course_number)
+    courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
+    course = Course.objects.get(id=courseTeacher.courseId.id)
+    teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
     return render(request, "rateMyCourse/ratePage.html", {
             'course': {
-                'name': cs[0].name,
-                'school': cs[0].department.school.name,
-                'department': cs[0].department.name,
+                'name': course.name,
+                'school': course.description,
+                'department': course.department,
             },
-            'aspect1': '有趣程度',
-            'aspect2': '充实程度',
-            'aspect3': '课程难度',
-            'aspect4': '课程收获',
+            'teacher': teacher.name,
+            'aspect1': '作业量',
+            'aspect2': '难度',
+            'aspect3': '知识量',
+            'aspect4': '满意度',
         })
 
 def signIn(request):
@@ -251,11 +269,9 @@ def getDepartment(request):
 
 def getCourse(request):
     try:
-        print("world")
         school = School.objects.get(name=request.GET['school'])
         department = school.department_set.get(name=request.GET['department'])
         course = Course.objects.filter(school=school, department=department).distinct()
-        print(course)
     except Exception as err:
         return HttpResponse(json.dumps({
             'error': 'school or department not found'
@@ -266,23 +282,24 @@ def getCourse(request):
 
 def getComment(request):
     try:
-        courses = Course.objects.filter(number=request.GET['course_number'])
+        courseTeacherId = request.GET['courseTeacherId']
+        course = CourseTeacher.objects.get(id=courseTeacherId).courseId
+        teacher = CourseTeacher.objects.get(id=courseTeacherId).teacherId
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get course_number or course_number not exists',
+            'errormessage': 'can not get courseId or courseId not exists',
             }))
     cmtList = []
-    for c in courses:
-        for cmt in c.comment_set.all():
-            cmtList.append({
-                'userName': cmt.user.username if cmt.anonymous == False else '匿名用户',
-                'text': cmt.content.replace("\n", "<br/>"),
-                'time': cmt.time.strftime('%y/%m/%d'),
-                'iTerm': cmt.term,
-                'iTeacher': ','.join([t.name for t in cmt.course.teacher_set.all()]),
-                'iTotal': cmt.total_score,
-                })
+    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher)
+    for cuct in cuctList:
+        user = cuct.userId
+        cmt = cuct.commentId
+        cmtList.append({
+            'userName': user.username if cmt.anonymous == False else '匿名用户',
+            'text': cmt.content.replace("\n", "<br/>"),
+            'time': cmt.time.strftime('%y/%m/%d'),
+            })
     return HttpResponse(json.dumps({
         'statCode': 0,
         'comments': cmtList,
@@ -290,17 +307,15 @@ def getComment(request):
 
 def getTeachers(request):
     try:
-        courses = Course.objects.filter(number=request.GET['course_number'])
+        teachers = CourseTeacher.objects.filter(courseId=request.GET['courseId'])
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get course_number or course_number not exists',
+            'errormessage': 'can not get courseId or courseId not exists',
             }))
     tList = []
-    for c in courses:
-        tList.append([
-            t.name for t in c.teacher_set.all()
-            ])
+    for t in teachers:
+        tList.append(t.teacherId.name)
     return HttpResponse(json.dumps({
         'statCode': 0,
         'teachers': tList,
@@ -308,11 +323,11 @@ def getTeachers(request):
 
 def getOverAllRate(request):
     try:
-        courses = Course.objects.filter(number=request.GET['course_number'])
+        courses = Course.objects.filter(number=request.GET['courseId'])
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get course_number or course_number not exists',
+            'errormessage': 'can not get courseId or courseId not exists',
             }))
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -324,44 +339,62 @@ def submitComment(request):
     addHitCount()
     try:
         username = request.POST['username']
-        comment = request.POST['comment']
+        content = request.POST['comment']
         rate = request.POST.getlist('rate')
         for i, j in enumerate(rate):
             rate[i] = int(j)
-        course_number = request.POST['course_number']
+        courseTeacherId = request.POST['courseteacher']
         anonymous = request.POST['anonymous']
-        term = request.POST['term']
-        teacher = request.POST.getlist('teacher')
     except Exception as err:
         return HttpResponse(json.dumps({
             'statCode': -1,
             'errormessage': 'post information not complete! ',
-            }))
-    cset = Course.objects.filter(number=course_number)
-    # print(rate, teacher)
-    for t in teacher:
-        cset = cset.filter(teacher_set__name=t)
-    # print(cset)
-    # assert(len(cset) == 1)
-    crs = cset[0]
-    # print(anonymous)
-    Comment(
+        }))
+    user = User.objects.get(username=username)
+    course = CourseTeacher.objects.get(id=courseTeacherId).courseId
+    teacher = CourseTeacher.objects.get(id=courseTeacherId).teacherId
+    comment = Comment(
         anonymous=True if anonymous == 'true' else False,
-        content=comment,
+        content=content,
         time=timezone.now(),
-        user=User.objects.get(username=username),
-        course=crs,
-        term=term,
-        total_score = sum(rate) / len(rate),
-        ).save()
-    Rate(
-        user=User.objects.get(username=username),
-        course=crs,
-        A_score=rate[0],
-        B_score=rate[1],
-        C_score=rate[2],
-        D_score=rate[3],
-        ).save()
+        homework = rate[0],
+        difficulty=rate[1],
+        knowledge=rate[2],
+        satisfaction=rate[3]
+    )
+    comment.save()
+    cuct = CommentUserCourseTeacher(commentId=comment,userId=user,courseId=course,teacherId=teacher)
+    cuct.save()
     return HttpResponse(json.dumps({
         'statCode': 0,
-        }))
+    }))
+
+def userInfo(request):
+    name = request.GET['name']
+    user = User.objects.get(username = name)
+    commentList=[]
+    return render(request, "rateMyCourse/userInfo.html",{
+	    'username':name,
+	    'isTeacher':user.isTeacher,
+	    'schoolName':user.schoolName,
+	    'departmentName':user.departmentName,
+	    'img':user.img,
+	    'commentList':commentList,
+    })
+
+def saveUserInfo(request):
+    school = request.POST['school']
+    department = request.POST['department']
+    username = request.POST['username']
+    user = User.objects.filter(username=username)
+    user.update(schoolName=school,departmentName=department)
+    user = user[0]
+    commentList = []
+    return render(request, "rateMyCourse/userInfo.html", {
+        'username': username,
+        'isTeacher': user.isTeacher,
+        'schoolName': user.schoolName,
+        'departmentName': user.departmentName,
+        'img': user.img,
+        'commentList': commentList,
+    })

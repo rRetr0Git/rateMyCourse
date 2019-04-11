@@ -1,3 +1,133 @@
+function validateSignUp() {
+  $("#formRegister").validate({
+    submitHandler: function() {
+      Func_signUp();
+    },
+    rules: {
+      inputEmail: {
+        required: true,
+	      email: true
+      },
+      inputUsername: {
+        required: true,
+	      minlength: 2
+	    },
+	    inputPassword: {
+	      required: true,
+	      minlength: 5
+	    },
+      inputVerify: {
+        required: true,
+	      minlength: 5,
+	      equalTo: "#inputPassword"
+      }
+    },
+    messages: {
+      inputEmail: "请输入正确的邮箱地址",
+      inputUsername: {
+        required: "请输入用户名",
+        minlength: "用户名长度不能小于2个字符"
+      },
+      inputPassword: {
+        required: "请输入密码",
+        minlength: "密码长度不能小于5个字符"
+      },
+      inputVerify: {
+        required: "请再次输入密码",
+        minlength: "密码长度不能小于5个字符",
+        equalTo: "密码输入不一致"
+      }
+    }
+  })
+}
+
+function validateSignIn() {
+  $("#formLogin").validate({
+    submitHandler: function() {
+      Func_signIn();
+    },
+    rules: {
+      username: {
+        required: true,
+	      minlength: 2
+	    },
+	    password: {
+	      required: true,
+	      minlength: 5
+	    }
+    },
+    messages: {
+      username: {
+        required: "请输入用户名",
+        minlength: "用户名必需由两个字符组成"
+      },
+      password: {
+        required: "请输入密码",
+        minlength: "密码长度不能小于 5 个字符"
+      }
+    }
+  })
+}
+
+function Func_signUp() {
+  $.ajax("/signUp/", {
+    dataType: 'json',
+    type: 'POST',
+    data: {
+      "username": $("#inputUsername").val(),
+      "mail": $("#inputEmail").val(),
+      "password": $("#inputPassword").val(),
+    }
+  }).done(function(data) {
+    if (data.statCode != 0) {
+      alert(data.errormessage)
+    } else {
+      $("#menuLogin").hide()
+      $("#menuUser").show()
+      $("#navUser").text(data.username)
+      $.cookie('username', data.username, {path: '/'})
+    }
+  })
+  return false
+}
+
+function Func_signIn() {
+  $.ajax("/signIn/", {
+    dataType: 'json',
+    type: 'POST',
+    data: {
+      "username": $("#username").val(),
+      "password": $("#password").val()
+    }
+  }).done(function(data) {
+    if(data.statCode != 0) {
+      alert(data.errormessage)
+    } else {
+      $("#menuLogin").hide()
+      $("#menuUser").show()
+      $("#navUser").text(data.username)
+      $("#modalInfo").show()
+      $.cookie('username', data.username, {path: '/'})
+    }
+  })
+  return false
+}
+
+function Func_signOut() {
+  $("#menuUser").hide()
+  $("#menuLogin").show()
+  $("#modalInfo").hide()
+  $.removeCookie('username', {path: '/'})
+  return false
+}
+
+function Func_toUserInfo(){
+    url = '/userInfo/?'
+    url += "name=" + $("#navUser").text()
+    window.location.href = url
+    return false
+}
+
 var score=[0,0,0,0];
 
 function chooseScore(id){
@@ -31,7 +161,7 @@ function choose_term(text){
 $(document).ready(function() {
   // alert("!!!")
   // Form validation for Sign in / Sign up forms
-  $("#menuLogin").load("./test.html")
+  //$("#menuLogin").load("./test.html")
   validateSignUp()
   validateSignIn()
 
@@ -45,10 +175,10 @@ $(document).ready(function() {
     $("#menuUser").show()
     $("#navUser").text($.cookie('username'))
   }
-  $.ajax('/getTeachers', {
+  $.ajax('/getTeachers/', {
     dataType:'json',
     data:{
-      'course_number':window.location.pathname.split('/')[2]
+      'courseTeacherId':window.location.pathname.split('/')[2]
     }
   }).done(function(data) {
     var teacherList = $("#teacherList")
@@ -67,15 +197,11 @@ function Func_submit() {
     alert("please log in first!")
     return false
   }
-  if($('#buttonSelectTerm').text() == '选择学期'){
-    alert("please choose your term!")
-  	return false
-  }
-  if($('#buttonSelectTeacher').text() == '选择教师'){
-    alert('please choose your teacher(s)!')
-  	return false
-  }
-  if($('#writeCommentText').val().length < 30){
+//  if($('#buttonSelectTerm').text() == '选择学期'){
+//    alert("please choose your term!")
+//  	return false
+//  }
+  if($('#writeCommentText').val().length < 10){
     alert('please write more for your course!(more than 30 characters)')
 	return false
   }
@@ -92,10 +218,8 @@ function Func_submit() {
     traditional: true,
     data: {
       'username': $.cookie('username'),
+      'courseteacher': window.location.pathname.split('/')[2],
       'anonymous': document.getElementById('anonymous').checked,
-      'course_number':window.location.pathname.split('/')[2],
-      'term': $('#buttonSelectTerm').text(),
-      'teacher': $('#buttonSelectTeacher').text().split(','),
       'comment': $('#writeCommentText').val(),
       'rate':score,
       // rates

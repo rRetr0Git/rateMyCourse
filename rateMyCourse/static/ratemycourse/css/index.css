@@ -3,9 +3,16 @@
     max-height: 300px;
     overflow-x: hidden;
 }
+
 .blur {
     -webkit-filter: blur(10px);
-       -moz-filter: blur(10px);
-        -ms-filter: blur(10px);
-            filter: blur(10px);
+    -moz-filter: blur(10px);
+    -ms-filter: blur(10px);
+    filter: blur(10px);
+}
+
+.center-vertical {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }

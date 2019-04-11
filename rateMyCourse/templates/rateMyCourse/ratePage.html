@@ -71,6 +71,7 @@
           <a class="btn text-white btn-primary" href="javascript:void(0)" data-toggle="dropdown" id="navUser"></a>
           <div class="dropdown-menu" style="padding:17px;">
             <a href="javascript:void(0)" id="buttonLogOut" class="dropdown-item btn btn-primary school" onclick="Func_signOut()">注销</a>
+            <a href="javascript:void(0)" id="buttonUserInfo" class="dropdown-item btn btn-primary school" onclick="Func_toUserInfo()">个人信息</a>
           </div>
         </div>
       </ul>
@@ -83,41 +84,29 @@
       <div class="col-md-12 text-white">
         <h1 class="display-3 mb-4 text-dark" id="courseName">{{course.name}}</h1>
         <p class="lead mb-5 text-dark">{{course.school}}-&gt;{{course.department}}</p>
+        <p class="lead mb-5 text-dark">{{teacher}}</p>
       </div>
     </div>
   </div>
-  <div class="container">
-    <div class="row w-100 my-1" style="background:#eeeeee">
-      <div class="col-md-2">
-        <p class="lead my-2 text-dark">开课学期</p>
-      </div>
-      <div class="col-md-10">
-        <div class="btn-group">
-          <a class="btn dropdown-toggle btn-outline-dark px-5" data-toggle="dropdown" href="javascript:void(0)" id="buttonSelectTerm">选择学期</a>
-          <div class="dropdown-menu" id="termList">
-            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2015年秋季</a>
-            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2016年春季</a>
-            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2016年秋季</a>
-            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2017年春季</a>
-            <a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2017年秋季</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="container">
-    <div class="row w-100 my-1" style="background:#eeeeee">
-      <div class="col-md-2">
-        <p class="lead my-2 text-dark">授课教师</p>
-      </div>
-      <div class="col-md-10">
-        <div class="btn-group">
-          <a class="btn dropdown-toggle btn-outline-dark px-5" data-toggle="dropdown" href="javascript:void(0)" id="buttonSelectTeacher">选择教师</a>
-          <div class="dropdown-menu" id="teacherList"> </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!--<div class="container">-->
+    <!--<div class="row w-100 my-1" style="background:#eeeeee">-->
+      <!--<div class="col-md-2">-->
+        <!--<p class="lead my-2 text-dark">开课学期</p>-->
+      <!--</div>-->
+      <!--<div class="col-md-10">-->
+        <!--<div class="btn-group">-->
+          <!--<a class="btn dropdown-toggle btn-outline-dark px-5" data-toggle="dropdown" href="javascript:void(0)" id="buttonSelectTerm">选择学期</a>-->
+          <!--<div class="dropdown-menu" id="termList">-->
+            <!--<a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2015年秋季</a>-->
+            <!--<a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2016年春季</a>-->
+            <!--<a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2016年秋季</a>-->
+            <!--<a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2017年春季</a>-->
+            <!--<a class="dropdown-item btn btn-primary " href="javascript:void(0)" onclick="choose_term(this.text)">2017年秋季</a>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
   <div class="container">
     <div class="row w-100 my-1" style="background:#eeeeee">
       <div class="col-md-2">
@@ -209,6 +198,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>
     <script src="../../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
     <script src="../../../static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+    <script src="../../static/ratemycourse/javascript/login.js"></script>
+    <script src="../../static/ratemycourse/javascript/index.js"></script>
     <script src="../../../static/ratemycourse/javascript/ratePage.js"></script>
   </div>
 </body>
