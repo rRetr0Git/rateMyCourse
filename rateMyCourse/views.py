@@ -373,6 +373,22 @@ def userInfo(request):
     name = request.GET['name']
     user = User.objects.get(username = name)
     commentList=[]
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    for cuct in cuctList:
+        teacher = cuct.teacherId
+        course = cuct.courseId
+        cmt = cuct.commentId
+        if cmt.anonymous == True:
+            continue
+        commentList.append({
+            'course': course.name,
+            'courseId': course.id,
+            'teacher': teacher.name,
+            'teacherId': teacher.id,
+            'text': cmt.content.replace("\n", "<br/>"),
+            'time': cmt.time.strftime('%y/%m/%d'),
+            })
+
     return render(request, "rateMyCourse/userInfo.html",{
 	    'username':name,
 	    'isTeacher':user.isTeacher,
