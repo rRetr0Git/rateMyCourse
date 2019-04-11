@@ -368,3 +368,19 @@ def userInfo(request):
 	    'commentList':commentList,
     })
 
+def saveUserInfo(request):
+    school = request.POST['school']
+    department = request.POST['department']
+    username = request.POST['username']
+    user = User.objects.filter(username=username)
+    user.update(schoolName=school,departmentName=department)
+    user = user[0]
+    commentList = []
+    return render(request, "rateMyCourse/userInfo.html", {
+        'username': username,
+        'isTeacher': user.isTeacher,
+        'schoolName': user.schoolName,
+        'departmentName': user.departmentName,
+        'img': user.img,
+        'commentList': commentList,
+    })
