@@ -129,8 +129,7 @@ function Func_toUserInfo(){
 }
 
 function Func_saveUserInfo(){
-    url = '/userInfo/?'
-    url += "name=" + $("#navUser").text()
+    url = this.href
     $.ajax("/saveUserInfo/", {
         dataType: 'json',
         type: 'POST',
@@ -140,5 +139,6 @@ function Func_saveUserInfo(){
           "username": $("#navUser").text(),
         }
     })
-    window.location.href = url
+    location.reload(true)
+    return false
 }
