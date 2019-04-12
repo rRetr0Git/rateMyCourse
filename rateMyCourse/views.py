@@ -156,7 +156,7 @@ def search(request):
     pn=int(len(courses)/10)+1
     for i in range(pn):
         pages.append({'number': i+1})
-    return render(request, "rateMyCourse/searchResult.html", {
+    return render(request, "rateMyCourse/searchResult_new.html", {
     	'courses': courses,
     	'count': len(courses),
     	'pages': pages,
