@@ -210,12 +210,17 @@
                 <p id="numOfPage"></p>
             </div>
             <div class="col-md-4 colunmn">
-                <form onsubmit="goToPage()">
-                    <input type="text"  id="toPageP"  placeholder="" class="input" id="input" maxlength="4" style="width: 40px">
-                    <a class="btn disabled" id="pagesP">
-                    </a>
-                    <input type="submit" value="跳转">
-                </form>
+                <ul class="pagination">
+                    <li>
+                        <input type="text"  id="toPageP"  placeholder="" class="input" id="input" maxlength="4" style="width: 40px">
+                    </li>
+                    <li>
+                        <a class="btn disabled" id="pagesP"></a>
+                    </li>
+                    <li>
+                        <a class="page-link" style="width:60px" onclick="goToPage()">跳转</a>
+                    </li>
+                </ul>
             </div>
             <div class="col-md-4 column">
                 <nav aria-label="Page navigation">
