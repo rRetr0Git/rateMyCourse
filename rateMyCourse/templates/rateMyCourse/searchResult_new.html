@@ -204,19 +204,44 @@
                 </table>
             </div>
         </div>
+        <br>
         <div class="row clearfix">
-            <div class="col-md-12 column">
+            <div class="col-md-4 column">
+                <p id="numOfPage"></p>
+            </div>
+            <div class="col-md-4 colunmn">
+                <form onsubmit="goToPage()">
+                    <input type="text"  id="toPageP"  placeholder="" class="input" id="input" maxlength="4" style="width: 40px">
+                    <a class="btn disabled" id="pagesP">
+                    </a>
+                    <input type="submit" value="跳转">
+                </form>
+            </div>
+            <div class="col-md-4 column">
                 <nav aria-label="Page navigation">
-                    <ul id="c_pagination" class="pagination"> {% for page in pages %}
+                    <ul id="c_pagination" class="pagination">
+                        <!--{% for page in pages %}-->
+                        <!--<li class="page-item">-->
+                        <!--<a class="page-link " id="p{{page.number}}" onclick="toPage({{page.number}})" href="javascript:void(0)">{{page.number}}</a>-->
+                        <!--</li> {% endfor %}-->
+
                         <li class="page-item">
-                        <a class="page-link " id="p{{page.number}}" onclick="toPage({{page.number}})" href="javascript:void(0)">{{page.number}}</a>
-                        </li> {% endfor %}
+                            <a class="page-link" onclick="toLastPage()" id="lastPage">
+                                上一页
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" onclick="toNextPage()" id="nextPage">
+                                下一页
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
     <script>
+        currentPage = 1;
         function toPage(p){
            for(i=1;i<=parseInt({{count}});i++){
                var s="#course".concat(i.toString());
@@ -225,17 +250,87 @@
                }else{
                    $(s).hide()
                }
-           }
-           for(i=1;i<=parseInt({{count}})/10+1;i++){
-               var s="#p".concat(i.toString());
-               if(i==parseInt(p)){
-                   $(s).removeClass("page-link ");
-                   $(s).addClass("page-link bg-info text-dark");
-               }else{
-                   $(s).removeClass("page-link bg-info text-dark");
-                   $(s).addClass("page-link");
-               }
-           }
+            }
+
+            var pagen = "#numOfPage";
+           // console.log("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
+           $(pagen).text("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页, 当前第" + currentPage.toString() + "页");
+
+           var pagep = "#pagesP";
+           $(pagep).text("页/" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
+
+            var lastp = "#lastPage";
+            if(currentPage ==1)
+            {
+                $(lastp).removeClass("page-link ");
+                $(lastp).addClass("btn disabled");
+            }
+            else
+            {
+                $(lastp).removeClass("btn disabled");
+                $(lastp).addClass("page-link");
+            }
+
+            var nextp = "#nextPage";
+            if(currentPage == Math.floor(parseInt({{count}})/10)+1)
+            {
+                $(nextp).removeClass("page-link ");
+                $(nextp).addClass("btn disabled");
+            }
+            else
+            {
+                $(nextp).removeClass("btn disabled");
+                $(nextp).addClass("page-link");
+            }
+           // for(i=1;i<=parseInt({{count}})/10+1;i++){
+           //     var s="#p".concat(i.toString());
+           //     if(i==parseInt(p)){
+           //         $(s).removeClass("page-link ");
+           //         $(s).addClass("page-link bg-info text-dark");
+           //     }else{
+           //         $(s).removeClass("page-link bg-info text-dark");
+           //         $(s).addClass("page-link");
+           //     }
+           // }
+        }
+        
+        function goToPage() {
+            var v = $("#toPageP").val();
+            if(isNaN(v) || v < 1 || v > Math.floor(parseInt({{count}})/10)+1 || Math.floor(v) != v)
+                alert("请输入正确的页码");
+            else
+            {
+                currentPage = v;
+                toPage(v);
+            }
+        }
+
+
+        // $('#applyCertNum').bind('keypress',function(event){
+        //
+        //
+        //     if(event.keyCode == 13)
+        //
+        //     {
+        //         alert('你输入的内容为1：' + $('#applyCertNum').val());
+        //     }
+        //
+        // });
+
+        function toLastPage() {
+            if(currentPage != 1)
+            {
+                currentPage--;
+                toPage(currentPage);
+            }
+        }
+
+        function toNextPage() {
+            if(currentPage != Math.floor(parseInt({{count}})/10)+1)
+            {
+                currentPage++;
+                toPage(currentPage);
+            }
         }
 
         window.onload = function() {
