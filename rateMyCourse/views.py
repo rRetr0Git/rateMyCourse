@@ -175,8 +175,8 @@ def getAvgScore(comments):
         satisfaction += cmt.satisfaction
         count += 1
     if(count > 0):
-        return homework / 4.0, difficulty / 4.0, knowledge / 4.0, satisfaction / 4.0, count
-    return 3.0, 3.0, 3.0, 3.0, count
+        return homework / count, difficulty / count, knowledge / count, satisfaction / count, count, (homework + difficulty + knowledge + satisfaction) / (count * 4.0)
+    return 3.0, 3.0, 3.0, 3.0, count, 3.0
 
 def coursePage(request, courseTeacherId):
     addHitCount()
@@ -184,13 +184,27 @@ def coursePage(request, courseTeacherId):
     course = Course.objects.get(id=courseTeacher.courseId.id)
     teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
     comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
-    homework, difficulty, knowledge, satisfaction, count = getAvgScore(comments)
+    homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+    other_teacher_info = []
+    other_cts = CourseTeacher.objects.filter(courseId=course.id).filter(~Q(teacherId=teacher.id))
+    for other_ct in other_cts:
+        other_teacher = other_ct.teacherId
+        comments = CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=other_teacher.id)
+        homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+        other_teacher_info.append([other_ct.id, other_teacher.name, avg_score])
+    other_course_info = []
+    other_cts = CourseTeacher.objects.filter(teacherId=teacher.id).filter(~Q(courseId=course.id))
+    for other_ct in other_cts:
+        other_course = other_ct.courseId
+        comments = CommentUserCourseTeacher.objects.filter(courseId=other_course.id, teacherId=teacher.id)
+        homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+        other_course_info.append([other_ct.id, other_course.name, avg_score])
     return render(request, "rateMyCourse/coursePage_new.html", {
         'course_name': course.name,
         'course_credit': 5,
         'course_profession': course.department,
         'course_type': course.type,
-        'course_scores': '%.1f'% ((homework + difficulty + knowledge + satisfaction) / 4.0),
+        'course_scores': '%.1f'% avg_score,
         'detail1': '轻松程度：%.1f'%homework,
         'detail2': '课程难易：%.1f'%difficulty,
         'detail3': '课程收获：%.1f'%knowledge,
@@ -198,7 +212,9 @@ def coursePage(request, courseTeacherId):
         'course_website': course.website if course.website != '' else '.',
         'profession_website': "https://baidu.com",
         'course_teacher': teacher.name,
-        'courseteacherid': courseTeacher.id
+        'courseteacherid': courseTeacher.id,
+        'other_teacher_info': other_teacher_info,
+        'other_course_info': other_course_info
         })
 
 def ratePage(request, courseTeacherId):
