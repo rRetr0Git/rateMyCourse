@@ -140,7 +140,7 @@ def search(request):
         teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
         comments = [cuct.commentId for cuct in
                     CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
-        homework, difficulty, knowledge, satisfaction, count = getAvgScore(comments)
+        homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
         courses.append({
             'name': course.name,
             'ID': course.id,
@@ -150,7 +150,7 @@ def search(request):
             'credit': 5,
             'school': school,
             'department': course.department,
-            'rateScore': '%.1f'% ((homework + difficulty + knowledge + satisfaction) / 4.0),
+            'rateScore': '%.1f'% avg_score,
             'ratenumber': count
         })
     pn=int(len(courses)/10)+1
