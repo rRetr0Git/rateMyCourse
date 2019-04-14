@@ -173,6 +173,7 @@ models.Article.objects.create(title=title) # 插入方法一
 cur_ticket = models.ticket(title=title)
 cur_ticket.save() # 插入方法二，此方法可以获得自增主键cur_ticket.id
 article = models.Article.objects.get(title='') # 查询一个，在找不到或找到一个以上时会报错，可用try except判断
+article = models.Article.objects.get(~Q(title=''))# 不等于
 articles = models.Article.objects.filter(title='')# 查询多个，返回一个列表，通过[]取到
 articles = models.Article.objects.filter(title__in='')# 查询结果为多个，且查询条件为列表
 article = models.Article.objects.get(pk='') # 根据主码查询
