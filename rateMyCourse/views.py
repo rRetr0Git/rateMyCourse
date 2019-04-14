@@ -185,7 +185,7 @@ def coursePage(request, courseTeacherId):
     teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
     comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
     homework, difficulty, knowledge, satisfaction, count = getAvgScore(comments)
-    return render(request, "rateMyCourse/coursePage.html", {
+    return render(request, "rateMyCourse/coursePage_new.html", {
         'course_name': course.name,
         'course_credit': 5,
         'course_profession': course.department,
