@@ -1,0 +1,264 @@
+{% extends '../rateMyCourse/base.html' %}
+{% block content %}
+    <div class="container">
+        <br>
+        <!--<div class="row clearfix">-->
+            <!--<div class="col-md-4 column">-->
+                <!--<div class="row clearfix">-->
+                    <!--<div class="col-md-6 column">-->
+                        <!--<p class="text-right center-vertical">-->
+                            <!--<strong>学院：</strong>-->
+                        <!--</p>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-6 column">-->
+                        <!--<div class="btn-group text-align center-vertical">-->
+                            <!--<select class="btn btn-sm disabled my-1" title="请选择所在学院" data-live-search="true"-->
+                                <!--id="department" data-size="10">-->
+                                <!--<option>材料科学与工程学院</option>-->
+                                <!--<option>电子信息工程学院</option>-->
+                                <!--<option>自动化科学与电气工程学院</option>-->
+                                <!--<option>能源与动力工程学院</option>-->
+                                <!--<option>航空科学与工程学院</option>-->
+                                <!--<option>计算机学院</option>-->
+                                <!--<option>机械工程及自动化学院</option>-->
+                                <!--<option>经济管理学院</option>-->
+                                <!--<option>数学与系统科学学院</option>-->
+                                <!--<option>生物与医学工程学院</option>-->
+                                <!--<option>人文社会科学学院</option>-->
+                                <!--<option>外国语学院</option>-->
+                                <!--<option>交通科学与工程学院</option>-->
+                                <!--<option>可靠性与系统工程学院</option>-->
+                                <!--<option>宇航学院</option>-->
+                                <!--<option>飞行学院</option>-->
+                                <!--<option>仪器科学与光电工程学院</option>-->
+                                <!--<option>北京学院</option>-->
+                                <!--<option>物理科学与核能工程学院</option>-->
+                                <!--<option>法学院</option>-->
+                                <!--<option>软件学院</option>-->
+                                <!--<option>高等理工学院</option>-->
+                                <!--<option>中法工程师学院</option>-->
+                                <!--<option>国际学院</option>-->
+                                <!--<option>新媒体艺术与设计学院</option>-->
+                                <!--<option>化学学院</option>-->
+                                <!--<option>马克思主义学院</option>-->
+                                <!--<option>人文与社会科学高等研究院</option>-->
+                                <!--<option>空间与环境学院</option>-->
+                                <!--<option>国际通用工程学院</option>-->
+                                <!--<option>北航学院</option>-->
+                                <!--<option>士谔书院</option>-->
+                                <!--<option>冯如书院</option>-->
+                                <!--<option>士嘉书院</option>-->
+                                <!--<option>守锷书院</option>-->
+                                <!--<option>致真书院</option>-->
+                                <!--<option>知行书院</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-4 column">-->
+                <!--<div class="row clearfix">-->
+                    <!--<div class="col-md-6 column">-->
+                        <!--<p class="text-right center-vertical">-->
+                            <!--<strong>课程类别：</strong>-->
+                        <!--</p>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-6 column">-->
+                            <!--<div class="btn-group text-align center-vertical">-->
+                                    <!--<select class="btn btn-sm disabled my-1" title="请选择所在学院" data-live-search="true"-->
+                                        <!--id="descripition" data-size="10">-->
+                                        <!--<option>核心专业课</option>-->
+                                        <!--<option>一般专业课</option>-->
+                                        <!--<option>核心通识课</option>-->
+                                        <!--<option>一般通识课</option>-->
+                                        <!--<option>基础课</option>-->
+                                    <!--</select>-->
+                                <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-4 column">-->
+                <!--<p class="text-center">-->
+                    <!--<button type="button" class="btn btn-default btn-primary">搜索</button>-->
+                <!--</p>-->
+            <!--</div>-->
+        <!--</div>-->
+        <br>
+        <br>
+        <div class="row clearfix">
+            <p id="count">搜索到 {{count}} 门课程</p>
+            <div class="col-md-12 column">
+                <table class="table text-center" style="table-layout: fixed;">
+                    <thead>
+                        <tr>
+                            <th width="300px" style='vertical-align: middle;text-align: left;'>课程名称</th>
+                            <th width="300px" style='vertical-align: middle;text-align: left;'>开设院系</th>
+                            <th>课程类别</th>
+                            <th>授课教师</th>
+                            <th>课程评分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                        <tr id="course{{forloop.counter}}">
+                            <td width="300px" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                <a title={{course.name}} href="/course/{{course.courseTeacher}}/">{{course.name}}</a>
+                            </td>
+                            <td width="300px" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                {{course.department}}
+                            </td>
+                            <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                                {{course.type}}
+                            </td>
+                            <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                                {{course.teacher}}
+                            </td>
+                            <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                                {{course.credit}}
+                            </td>
+                        </tr>
+                        {% endfor%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div class="row clearfix">
+            <div class="col-md-4 column">
+                <p id="numOfPage"></p>
+            </div>
+            <div class="col-md-4 colunmn">
+                <ul class="pagination">
+                    <li>
+                        <input type="text"  id="toPageP"  placeholder="" class="input" id="input" maxlength="4" style="width: 40px">
+                    </li>
+                    <li>
+                        <a class="btn disabled" id="pagesP"></a>
+                    </li>
+                    <li>
+                        <a class="page-link" style="width:60px" onclick="goToPage()">跳转</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-4 column">
+                <nav aria-label="Page navigation">
+                    <ul id="c_pagination" class="pagination">
+                        <!--{% for page in pages %}-->
+                        <!--<li class="page-item">-->
+                        <!--<a class="page-link " id="p{{page.number}}" onclick="toPage({{page.number}})" href="javascript:void(0)">{{page.number}}</a>-->
+                        <!--</li> {% endfor %}-->
+
+                        <li class="page-item">
+                            <a class="page-link" onclick="toLastPage()" id="lastPage">
+                                上一页
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" onclick="toNextPage()" id="nextPage">
+                                下一页
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <script>
+        currentPage = 1;
+        function toPage(p){
+           for(i=1;i<=parseInt({{count}});i++){
+               var s="#course".concat(i.toString());
+               if(i>(parseInt(p)-1)*10&&i<=parseInt(p)*10){
+                   $(s).show()
+               }else{
+                   $(s).hide()
+               }
+            }
+
+            var pagen = "#numOfPage";
+           // console.log("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
+           $(pagen).text("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页, 当前第" + currentPage.toString() + "页");
+
+           var pagep = "#pagesP";
+           $(pagep).text("页/" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
+
+            var lastp = "#lastPage";
+            if(currentPage ==1)
+            {
+                $(lastp).removeClass("page-link ");
+                $(lastp).addClass("btn disabled");
+            }
+            else
+            {
+                $(lastp).removeClass("btn disabled");
+                $(lastp).addClass("page-link");
+            }
+
+            var nextp = "#nextPage";
+            if(currentPage == Math.floor(parseInt({{count}})/10)+1)
+            {
+                $(nextp).removeClass("page-link ");
+                $(nextp).addClass("btn disabled");
+            }
+            else
+            {
+                $(nextp).removeClass("btn disabled");
+                $(nextp).addClass("page-link");
+            }
+           // for(i=1;i<=parseInt({{count}})/10+1;i++){
+           //     var s="#p".concat(i.toString());
+           //     if(i==parseInt(p)){
+           //         $(s).removeClass("page-link ");
+           //         $(s).addClass("page-link bg-info text-dark");
+           //     }else{
+           //         $(s).removeClass("page-link bg-info text-dark");
+           //         $(s).addClass("page-link");
+           //     }
+           // }
+        }
+        
+        function goToPage() {
+            var v = $("#toPageP").val();
+            if(isNaN(v) || v < 1 || v > Math.floor(parseInt({{count}})/10)+1 || Math.floor(v) != v)
+                alert("请输入正确的页码");
+            else
+            {
+                currentPage = v;
+                toPage(v);
+            }
+        }
+
+
+        // $('#applyCertNum').bind('keypress',function(event){
+        //
+        //
+        //     if(event.keyCode == 13)
+        //
+        //     {
+        //         alert('你输入的内容为1：' + $('#applyCertNum').val());
+        //     }
+        //
+        // });
+
+        function toLastPage() {
+            if(currentPage != 1)
+            {
+                currentPage--;
+                toPage(currentPage);
+            }
+        }
+
+        function toNextPage() {
+            if(currentPage != Math.floor(parseInt({{count}})/10)+1)
+            {
+                currentPage++;
+                toPage(currentPage);
+            }
+        }
+
+        window.onload = function() {
+            var count=0;
+            toPage("1");
+        }
+    </script>
+{% endblock %}

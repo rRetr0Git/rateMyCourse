@@ -140,7 +140,7 @@ def search(request):
         teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
         comments = [cuct.commentId for cuct in
                     CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
-        homework, difficulty, knowledge, satisfaction, count = getAvgScore(comments)
+        homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
         courses.append({
             'name': course.name,
             'ID': course.id,
@@ -150,13 +150,13 @@ def search(request):
             'credit': 5,
             'school': school,
             'department': course.department,
-            'rateScore': '%.1f'% ((homework + difficulty + knowledge + satisfaction) / 4.0),
+            'rateScore': '%.1f'% avg_score,
             'ratenumber': count
         })
     pn=int(len(courses)/10)+1
     for i in range(pn):
         pages.append({'number': i+1})
-    return render(request, "rateMyCourse/searchResult.html", {
+    return render(request, "rateMyCourse/searchResult_new.html", {
     	'courses': courses,
     	'count': len(courses),
     	'pages': pages,
@@ -175,8 +175,8 @@ def getAvgScore(comments):
         satisfaction += cmt.satisfaction
         count += 1
     if(count > 0):
-        return homework / 4.0, difficulty / 4.0, knowledge / 4.0, satisfaction / 4.0, count
-    return 3.0, 3.0, 3.0, 3.0, count
+        return homework / count, difficulty / count, knowledge / count, satisfaction / count, count, (homework + difficulty + knowledge + satisfaction) / (count * 4.0)
+    return 3.0, 3.0, 3.0, 3.0, count, 3.0
 
 def coursePage(request, courseTeacherId):
     addHitCount()
@@ -184,21 +184,40 @@ def coursePage(request, courseTeacherId):
     course = Course.objects.get(id=courseTeacher.courseId.id)
     teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
     comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
-    homework, difficulty, knowledge, satisfaction, count = getAvgScore(comments)
-    return render(request, "rateMyCourse/coursePage.html", {
+    homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+    other_teacher_info = []
+    other_cts = CourseTeacher.objects.filter(courseId=course.id).filter(~Q(teacherId=teacher.id))
+    for other_ct in other_cts:
+        other_teacher = other_ct.teacherId
+        comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=other_teacher.id)]
+        other_homework, other_difficulty, other_knowledge, other_satisfaction, other_count, other_avg_score = getAvgScore(comments)
+        other_teacher_info.append({"id":other_ct.id, "name":other_teacher.name, "score":'%.1f'%other_avg_score})
+    other_course_info = []
+    other_cts = CourseTeacher.objects.filter(teacherId=teacher.id).filter(~Q(courseId=course.id))
+    for other_ct in other_cts:
+        other_course = other_ct.courseId
+        comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=other_course.id, teacherId=teacher.id)]
+        other_homework, other_difficulty, other_knowledge, other_satisfaction, other_count, other_avg_score = getAvgScore(comments)
+        other_course_info.append({"id":other_ct.id, "name":other_course.name, "score":'%.1f'%other_avg_score})
+    return render(request, "rateMyCourse/coursePage_new.html", {
         'course_name': course.name,
-        'course_credit': 5,
         'course_profession': course.department,
         'course_type': course.type,
-        'course_scores': '%.1f'% ((homework + difficulty + knowledge + satisfaction) / 4.0),
-        'detail1': '轻松程度：%.1f'%homework,
-        'detail2': '课程难易：%.1f'%difficulty,
-        'detail3': '课程收获：%.1f'%knowledge,
-        'detail4': '满意程度：%.1f'%satisfaction,
+        'course_scores': '%.1f'% avg_score,
+        'percent1': str(homework*20)+'%',
+        'percent2': str(difficulty * 20) + '%',
+        'percent3': str(knowledge * 20) + '%',
+        'percent4': str(satisfaction * 20) + '%',
+        'detail1': '%.1f'%homework,
+        'detail2': '%.1f'%difficulty,
+        'detail3': '%.1f'%knowledge,
+        'detail4': '%.1f'%satisfaction,
         'course_website': course.website if course.website != '' else '.',
         'profession_website': "https://baidu.com",
         'course_teacher': teacher.name,
-        'courseteacherid': courseTeacher.id
+        'courseteacherid': courseTeacher.id,
+        'other_teacher_info': other_teacher_info,
+        'other_course_info': other_course_info
         })
 
 def ratePage(request, courseTeacherId):

@@ -1,0 +1,201 @@
+{% extends '../rateMyCourse/base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-8 column">
+                <div class="text-center text-dark">
+                    <h3 class="text-center">{{course_name}}</h3>
+                </div>
+                <br>
+                <br>
+                <table style="width:100%; margin:auto">
+                    <tbody>
+                        <tr>
+                            <td style="width:25%">
+                                <p class="text-dark text-center">开课单位</p>
+                            </td>
+                            <td style="width:25%">
+                                <p class="text-dark text-center">课程类别</p>
+                            </td>
+                            <td style="width:25%">
+                                <p class="text-dark text-center">教师姓名</p>
+                            </td>
+                            <td style="width:25%">
+                                <p class="text-dark text-center">课程评分</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p class="text-dark text-center" style="margin-top:8px">{{course_profession}}</p>
+                            </td>
+                            <td>
+                                <p class="text-dark text-center" style="margin-top:8px">{{course_type}}</p>
+                            </td>
+                            <td>
+                                <p class="text-dark text-center" style="margin-top:8px">{{course_teacher}}</p>
+                            </td>
+                             <td>
+                                <p class="text-dark text-center" style="margin-top:8px">{{course_scores}}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <p class="text-center">
+                    <a class="btn btn-lg btn-default" id="toComment" href="/course/{{courseteacherid}}/rate/">撰写评价</a>
+                </p>
+            </div>
+
+            <div class="col-md-4 column">
+                <div class="row clearfix">
+                    <div class="col-md-1 column">
+                    </div>
+                    <div class="col-md-10 column">
+                        <p><strong>评分详情：</strong></p>
+                        <ul></ul>
+                        <ul>
+                            作业量
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{percent1}}"
+                                     aria-valuenow="{{detail1}}" aria-valuemin="0" aria-valuemax="5">{{detail1}}</div>
+                            </div>
+                        </ul>
+                        <ul>
+                            难易度
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{percent2}}"
+                                     aria-valuenow={{detail2}}" aria-valuemin="0" aria-valuemax="5">{{detail2}}</div>
+                            </div>
+                        </ul>
+                        <ul>
+                            收获量
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{percent3}}"
+                                    aria-valuenow="{{detail3}}" aria-valuemin="0" aria-valuemax="5">{{detail3}}</div>
+                            </div>
+                        </ul>
+                        <ul>
+                            满意度
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{percent4}}"
+                                    aria-valuenow="{{detail4}}" aria-valuemin="0" aria-valuemax="5">{{detail4}}</div>
+                            </div>
+                        </ul>
+                        <ul></ul>
+                    </div>
+                    <div class="col-md-1 column">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <br>
+
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-2 column">
+                <strong>课程评价</strong>
+            </div>
+            <div class="col-md-10 column">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-light">回复时间</button>
+                    <button type="button" class="btn btn-default btn-light">点赞个数</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-8 column">
+                <div class="list-group" id="commentDiv"></div>
+            </div>
+            <div class="col-md-4 column">
+                <div class="list=group">
+                    {% if other_teacher_info %}
+                    <ul>
+                        <strong>相关老师</strong>
+                        <table class="table text-center" style="table-layout: fixed;">
+                            <thead>
+                                <tr>
+                                    <th width="100px" style='vertical-align: middle;text-align: left;'>课程链接</th>
+                                    <th width="100px" style='vertical-align: middle;text-align: left;'>授课教师</th>
+                                    <th>课程评分</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in other_teacher_info %}
+                                <tr>
+                                    <td width="100px" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                        <a title={{course_name}} href="/course/{{item.id}}/">{{course_name}}</a>
+                                    </td>
+                                    <td width="100px" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                        {{item.name}}
+                                    </td>
+                                    <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                                        {{item.score}}
+                                    </td>
+                                </tr>
+                                {% endfor%}
+                            </tbody>
+                        </table>
+                    </ul>
+                    {% endif %}
+                    {% if other_course_info %}
+                    <ul>
+                        <strong>相关课程</strong>
+                        <table class="table text-center" style="table-layout: fixed;">
+                            <thead>
+                                <tr>
+                                    <th width="100px" style='vertical-align: middle;text-align: left;'>课程链接</th>
+                                    <th width="100px" style='vertical-align: middle;text-align: left;'>授课教师</th>
+                                    <th>课程评分</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in other_course_info %}
+                                <tr>
+                                    <td width="100px" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                        <a title={{item.name}} href="/course/{{item.id}}/">{{item.name}}</a>
+                                    </td>
+                                    <td width="100px" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                        {{course_teacher}}
+                                    </td>
+                                    <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                                        {{item.score}}
+                                    </td>
+                                </tr>
+                                {% endfor%}
+                            </tbody>
+                        </table>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+
+
+    <!--<div class="container">-->
+        <!--<div class="row clearfix">-->
+            <!--<div class="col-md-12 column">-->
+                <!--<nav aria-label="Page navigation">-->
+                    <!--<ul class="pagination justify-content-center">-->
+                        <!--<li class="page-item disabled">-->
+                            <!--<a class="page-link" href="#" tabindex="-1">Previous</a>-->
+                        <!--</li>-->
+                        <!--<li class="page-item"><a class="page-link" href="#">1</a></li>-->
+                        <!--<li class="page-item"><a class="page-link" href="#">2</a></li>-->
+                        <!--<li class="page-item"><a class="page-link" href="#">3</a></li>-->
+                        <!--<li class="page-item">-->
+                            <!--<a class="page-link" href="#">Next</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</nav>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+{% endblock %}
