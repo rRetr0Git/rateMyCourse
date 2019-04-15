@@ -114,8 +114,8 @@ function generateGrid(imageUrls, userName, text, time) {
         //insert user image and name
         var imageTag = commentGrid.getElementsByTagName("img");
         imageTag[0].src = "http://wx2.sinaimg.cn/large/0076t302ly1fylgfkon55j30e80e8ab5.jpg";
-        imageTag[0].width = "60";
-        imageTag[0].height = "60";
+        imageTag[0].width = "50";
+        imageTag[0].height = "50";
         //imageTag[0].setAttribute("style", "margin-bottom:16px;margin-top:16px");
 
         var pTags = commentGrid.getElementsByTagName("p");
@@ -183,7 +183,7 @@ function setComments() {//get comments list from service
 
 $(document).ready(function () {
     // Form validation for Sign in / Sign up forms
-    $("#menuLogin").load("test.html")
+    //$("#menuLogin").load("test.html")
     validateSignUp()
     validateSignIn()
 

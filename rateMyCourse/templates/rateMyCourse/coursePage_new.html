@@ -95,10 +95,7 @@
                     <tbody>
                         <tr>
                             <td style="width:25%">
-                                <p class="text-dark text-center">学分</p>
-                            </td>
-                            <td style="width:25%">
-                                <p class="text-dark text-center">开课专业</p>
+                                <p class="text-dark text-center">开课单位</p>
                             </td>
                             <td style="width:25%">
                                 <p class="text-dark text-center">课程类别</p>
@@ -106,11 +103,11 @@
                             <td style="width:25%">
                                 <p class="text-dark text-center">教师姓名</p>
                             </td>
+                            <td style="width:25%">
+                                <p class="text-dark text-center">课程评分</p>
+                            </td>
                         </tr>
                         <tr>
-                            <td>
-                                <p class="text-dark text-center" style="margin-top:8px">{{course_credit}}</p>
-                            </td>
                             <td>
                                 <p class="text-dark text-center" style="margin-top:8px">{{course_profession}}</p>
                             </td>
@@ -119,6 +116,9 @@
                             </td>
                             <td>
                                 <p class="text-dark text-center" style="margin-top:8px">{{course_teacher}}</p>
+                            </td>
+                             <td>
+                                <p class="text-dark text-center" style="margin-top:8px">{{course_scores}}</p>
                             </td>
                         </tr>
                     </tbody>
@@ -131,53 +131,42 @@
 
             <div class="col-md-4 column">
                 <div class="row clearfix">
-                    <div class="col-md-6 column">
-                        <p class="text-right center-vertical">
-                            <strong>授课老师:</strong>
-                        </p>
+                    <div class="col-md-1 column">
                     </div>
-                    <div class="col-md-6 column pre-scrollable" style="height: 220px;overflow: auto">
-                        <ul></ul>
-                        <ul></ul>
+                    <div class="col-md-10 column">
+                        <p><strong>评分详情：</strong></p>
                         <ul></ul>
                         <ul>
-                            {{teacher}}
+                            作业量
                             <div class="progress">
-                                <div class="progress-bar progress-bar-success" style="width:95%;" role="progressbar"
-                                     aria-valuenow="95" aria-valuemin="0" aria-valuemax="100">9.5</div>
+                                <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{percent1}}"
+                                     aria-valuenow="{{detail1}}" aria-valuemin="0" aria-valuemax="5">{{detail1}}</div>
                             </div>
                         </ul>
                         <ul>
-                            {{teacher}}
+                            难易度
                             <div class="progress">
-                                <div class="progress-bar progress-bar-success" style="width:25%;" role="progressbar"
-                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">2.5</div>
+                                <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{percent2}}"
+                                     aria-valuenow={{detail2}}" aria-valuemin="0" aria-valuemax="5">{{detail2}}</div>
                             </div>
                         </ul>
                         <ul>
-                            {{teacher}}
+                            收获量
                             <div class="progress">
-                                <div class="progress-bar progress-bar-warning" style="width:80%;" role="progressbar"
-                                    aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">8.0</div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{percent3}}"
+                                    aria-valuenow="{{detail3}}" aria-valuemin="0" aria-valuemax="5">{{detail3}}</div>
                             </div>
                         </ul>
                         <ul>
-                            {{teacher}}
+                            满意度
                             <div class="progress">
-                                <div class="progress-bar progress-bar-warning" style="width:40%;" role="progressbar"
-                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">4.0</div>
-                            </div>
-                        </ul>
-                        <ul>
-                            {{teacher}}
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-warning" style="width:25%;" role="progressbar"
-                                    aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">2.5</div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{percent4}}"
+                                    aria-valuenow="{{detail4}}" aria-valuemin="0" aria-valuemax="5">{{detail4}}</div>
                             </div>
                         </ul>
                         <ul></ul>
-                        <ul></ul>
-                        <ul></ul>
+                    </div>
+                    <div class="col-md-1 column">
                     </div>
                 </div>
             </div>
@@ -197,13 +186,77 @@
                     <button type="button" class="btn btn-default btn-light">点赞个数</button>
                 </div>
             </div>
-            <div class="col-md-6 column">
-            </div>
         </div>
     </div>
     <br>
     <div class="container">
-        <div class="list-group" id="commentDiv"></div>
+        <div class="row clearfix">
+            <div class="col-md-8 column">
+                <div class="list-group" id="commentDiv"></div>
+            </div>
+            <div class="col-md-4 column">
+                <div class="list=group">
+                    {% if other_teacher_info %}
+                    <ul>
+                        <strong>相关老师</strong>
+                        <table class="table text-center" style="table-layout: fixed;">
+                            <thead>
+                                <tr>
+                                    <th width="100px" style='vertical-align: middle;text-align: left;'>课程链接</th>
+                                    <th width="100px" style='vertical-align: middle;text-align: left;'>授课教师</th>
+                                    <th>课程评分</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in other_teacher_info %}
+                                <tr>
+                                    <td width="100px" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                        <a title={{course_name}} href="/course/{{item.id}}/">{{course_name}}</a>
+                                    </td>
+                                    <td width="100px" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                        {{item.name}}
+                                    </td>
+                                    <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                                        {{item.score}}
+                                    </td>
+                                </tr>
+                                {% endfor%}
+                            </tbody>
+                        </table>
+                    </ul>
+                    {% endif %}
+                    {% if other_course_info %}
+                    <ul>
+                        <strong>相关课程</strong>
+                        <table class="table text-center" style="table-layout: fixed;">
+                            <thead>
+                                <tr>
+                                    <th width="100px" style='vertical-align: middle;text-align: left;'>课程链接</th>
+                                    <th width="100px" style='vertical-align: middle;text-align: left;'>授课教师</th>
+                                    <th>课程评分</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in other_course_info %}
+                                <tr>
+                                    <td width="100px" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                        <a title={{item.name}} href="/course/{{item.id}}/">{{item.name}}</a>
+                                    </td>
+                                    <td width="100px" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                                        {{course_teacher}}
+                                    </td>
+                                    <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                                        {{item.score}}
+                                    </td>
+                                </tr>
+                                {% endfor%}
+                            </tbody>
+                        </table>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
     <br>
     <br>
@@ -236,6 +289,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>
     <script src="../../static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
     <script src="../../static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+    <script src="../../static/ratemycourse/javascript/login.js"></script>
+    <script src="../../static/ratemycourse/javascript/index.js"></script>
     <script src="../../static/ratemycourse/javascript/coursePage.js"></script>
 </body>
 
