@@ -175,20 +175,20 @@ $(document).ready(function() {
     $("#menuUser").show()
     $("#navUser").text($.cookie('username'))
   }
-  $.ajax('/getTeachers/', {
-    dataType:'json',
-    data:{
-      'courseTeacherId':window.location.pathname.split('/')[2]
-    }
-  }).done(function(data) {
-    var teacherList = $("#teacherList")
-    for (var i = 0; i < data.teachers.length; i++) {
-      teacherList.append("<a class='dropdown-item btn btn-primary teacher' href='javascript:void(0)'>" + data.teachers[i] + "</a>")
-    }
-    $(".dropdown-item.teacher").click(function() {
-      $(this).parent().prev().text($(this).text())
-    })
-  })
+//  $.ajax('/getTeachers/', {
+//    dataType:'json',
+//    data:{
+//      'courseTeacherId':window.location.pathname.split('/')[2]
+//    }
+//  }).done(function(data) {
+//    var teacherList = $("#teacherList")
+//    for (var i = 0; i < data.teachers.length; i++) {
+//      teacherList.append("<a class='dropdown-item btn btn-primary teacher' href='javascript:void(0)'>" + data.teachers[i] + "</a>")
+//    }
+//    $(".dropdown-item.teacher").click(function() {
+//      $(this).parent().prev().text($(this).text())
+//    })
+//  })
 })
 
 function Func_submit() {
