@@ -1,4 +1,5 @@
 {% extends '../rateMyCourse/base.html' %}
+{% block title %}主页 - {{ block.super }}{% endblock %}
 {% block content %}
   <div class="py-5 text-center opaque-overlay" style="background-image: url('../../static/ratemycourse/images/indexPageBackground1.png');">
     <div class="container py-5">
@@ -55,9 +56,6 @@
                 <div class="dropdown-menu">
                   <div class="container" style="width:400px">
                     <div class="input-group">
-                      <span class="input-group-addon">
-                        <i class="fa fa-search"></i>
-                      </span>
                       <input id="searchboxCourse" class="form-control input-lg"
                       type="text" placeholder="请输入课程名" autocomplete="off">
                     </div>
