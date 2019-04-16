@@ -5,6 +5,7 @@ import json
 from urllib import request, parse
 from django.http import HttpResponse
 from django.utils import timezone
+import numpy as np
 
 # Create your views here.
 
@@ -435,4 +436,51 @@ def saveUserInfo(request):
     })
 
 def getRank(request):
-    return render(request,"rateMyCourse/rankPage.html")
+    return render(request, "rateMyCourse/rankPage.html")
+
+def getTopCourse(request):
+    top_course_ids = []
+    top_course_scores = []
+    top_course_counts = []
+    top_teacher_ids = []
+    top_teacher_scores = []
+    top_teacher_counts = []
+    for cuct in CommentUserCourseTeacher.objects.all():
+        ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
+        comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=cuct.courseId, teacherId=cuct.teacherId)]
+        homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+        if ct.id in top_course_ids:
+            index = top_course_ids.index(ct.id)
+            top_course_scores[index] += avg_score
+            top_course_counts[index] += 1
+        else:
+            top_course_ids.append(ct.id)
+            top_course_scores.append(avg_score)
+            top_course_counts.append(1)
+        if ct.teacherId.id in top_teacher_ids:
+            index = top_teacher_ids.index(ct.teacherId.id)
+            top_teacher_scores[index] += avg_score
+            top_teacher_counts[index] += 1
+        else:
+            top_teacher_ids.append([ct.teacherId.id])
+            top_teacher_scores.append(avg_score)
+            top_teacher_counts.append(1)
+    for i in range(len(top_course_scores)):
+        top_course_scores[i] /= top_course_counts[i]
+    for i in range(len(top_teacher_scores)):
+        top_teacher_scores[i] /= top_teacher_counts[i]
+
+    top_courses = []
+    score_sorted_index = np.array(top_course_scores).argsort()
+    for i in range(20):
+        ct = CourseTeacher.objects.get(id=top_course_ids[score_sorted_index[i]])
+        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': top_course_scores[score_sorted_index[i]]})
+    top_teachers = []
+    score_sorted_index = np.array(top_teacher_scores).argsort()
+    for i in range(20):
+        teacher = Teacher.objects.get(id=top_teacher_ids[score_sorted_index[i]])
+        top_courses.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': top_teacher_scores[score_sorted_index[i]]})
+    return render(request, "rateMyCourse/.html", {
+        'top_courses': top_courses,
+        'top_teachers': top_teachers
+    })
