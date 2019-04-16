@@ -25,4 +25,5 @@ urlpatterns = [
 
     url(r'^userInfo/$', views.userInfo, name='userInfo'),
     url(r'^saveUserInfo/$',views.saveUserInfo,name='saveUserInfo'),
+    url(r'^rank/$',views.getRank,name='getRank'),
 ]

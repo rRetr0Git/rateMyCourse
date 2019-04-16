@@ -433,3 +433,6 @@ def saveUserInfo(request):
         'img': user.img,
         'commentList': commentList,
     })
+
+def getRank(request):
+    return render(request,"rateMyCourse/rankPage.html")

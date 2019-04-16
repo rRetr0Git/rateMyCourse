@@ -12,12 +12,8 @@
                 <br>
                 <div class="radio">
                     <label>
-                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked> 课程
-                    </label>
-                </div>
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2"> 老师
+                        <input type="radio" name="Radios" id="radio" value="option1" checked="" > 课程
+                        <input type="radio" name="Radios" id="radio" value="option2" > 老师
                     </label>
                 </div>
                 <hr>
@@ -63,17 +59,31 @@
                 <div class="col-md-12 column">
                     <ul class="text-right">
                         <button type="button" class="btn btn-sm btn-primary">按评分排序</button>
-                        <button type="button" class="btn btn-sm btn-primary disabled">按热度排序</button>
+                        <button type="button" class="btn btn-sm btn-primary">按热度排序</button>
                     </ul>
                 </div>
             </div>
             <ul class="list-group">
-                <li class="list-group-item">
+                <li class="list-group-item" id="courselist" value="123">
                     <p>
                         <h4>{{course_name}} {{teacher_name}}</h4>
                     </p>
                     <p>
                         {{feature1}} {{feature2}}
+                    </p>
+                    <p>
+                        course
+                    </p>
+                </li>
+                <li class="list-group-item" id="teacherlist" value="456">
+                    <p>
+                        <h4>{{course_name}} {{teacher_name}}</h4>
+                    </p>
+                    <p>
+                        {{feature1}} {{feature2}}
+                    </p>
+                    <p>
+                        teacher
                     </p>
                 </li>
             </ul>
