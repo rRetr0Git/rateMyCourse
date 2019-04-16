@@ -1,0 +1,19 @@
+$(document).ready(function() {
+  //alert("!!!")
+  //$("#navbarContainer").load("./components/indexNavbarContainer.html")
+
+  // Form validation for Sign in / Sign up forms
+  validateSignUp()
+  validateSignIn()
+
+  // Login widget set according to cookie
+  if($.cookie('username') == undefined) {
+    $("#menuUser").hide()
+    $("#menuLogin").show()
+  }
+  else{
+    $("#menuLogin").hide()
+    $("#menuUser").show()
+    $("#navUser").text($.cookie('username'))
+  }
+})
