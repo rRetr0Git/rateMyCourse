@@ -1,0 +1,122 @@
+{% extends '../rateMyCourse/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-2 column">
+            <div class="form-group">
+                <br>
+                <br>
+                <hr>
+                评价类型
+                <br>
+                <br>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked> 课程
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2"> 老师
+                    </label>
+                </div>
+                <hr>
+                课程类别
+                <br>
+                <br>
+                <select class="btn btn-light btn-sm dropdown-toggle my-1" data-live-search="true" id="type"
+                        data-size="10">
+                    <option>基础课</option>
+                    <li class="divider"></li>
+                    <option>数学与自然科学类</option>
+                    <option>工程基础类</option>
+                    <option>语言类</option>
+                    <option>外语类</option>
+                    <option>英语分级</option>
+                </select>
+                <br>
+                <select class="btn btn-light btn-sm dropdown-toggle my-1" data-live-search="true" id="type"
+                        data-size="10">
+                    <option>通识课</option>
+                    <li class="divider"></li>
+                    <option>核心通识类</option>
+                    <option>一般通识类</option>
+                    <option>语言类</option>
+                    <option>外语类</option>
+                    <option>英语分级</option>
+                </select>
+                <br>
+                <select class="btn btn-light btn-sm dropdown-toggle my-1" data-live-search="true" id="type"
+                        data-size="10">
+                    <option>专业课</option>
+                    <li class="divider"></li>
+                    <option>核心专业类</option>
+                    <option>一般专业类</option>
+                </select>
+
+            </div>
+
+        </div>
+        <div class="col-md-10 column">
+            <br>
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <ul class="text-right">
+                        <button type="button" class="btn btn-sm btn-primary">按评分排序</button>
+                        <button type="button" class="btn btn-sm btn-primary disabled">按热度排序</button>
+                    </ul>
+                </div>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <p>
+                        <h4>{{course_name}} {{teacher_name}}</h4>
+                    </p>
+                    <p>
+                        {{feature1}} {{feature2}}
+                    </p>
+                </li>
+            </ul>
+            <!--<hr>-->
+            <!--<p>-->
+            <!--<h4>{{course_name}} {{teacher_name}}</h4>-->
+            <!--</p>-->
+            <!--<p>-->
+                <!--{{feature1}} {{feature2}}-->
+            <!--</p>-->
+            <!--<hr>-->
+            <!--<nav aria-label="Page navigation">-->
+                <!--<ul class="pagination justify-content-center">-->
+                    <!--<li class="page-item disabled">-->
+                        <!--<a class="page-link" href="#" tabindex="-1">Previous</a>-->
+                    <!--</li>-->
+                    <!--<li class="page-item"><a class="page-link" href="#">1</a></li>-->
+                    <!--<li class="page-item"><a class="page-link" href="#">2</a></li>-->
+                    <!--<li class="page-item"><a class="page-link" href="#">3</a></li>-->
+                    <!--<li class="page-item">-->
+                        <!--<a class="page-link" href="#">Next</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</nav>-->
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+            </li>
+            </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
