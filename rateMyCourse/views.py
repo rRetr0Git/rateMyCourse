@@ -225,10 +225,10 @@ def ratePage(request, courseTeacherId):
     courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
     course = Course.objects.get(id=courseTeacher.courseId.id)
     teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
-    return render(request, "rateMyCourse/ratePage.html", {
+    return render(request, "rateMyCourse/ratePage_new.html", {
             'course': {
                 'name': course.name,
-                'school': course.description,
+                'description': course.description,
                 'department': course.department,
             },
             'teacher': teacher.name,
