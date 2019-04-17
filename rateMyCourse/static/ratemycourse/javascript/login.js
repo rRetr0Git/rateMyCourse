@@ -139,6 +139,6 @@ function Func_saveUserInfo(){
           "username": $("#navUser").text(),
         }
     })
-    location.reload(true)
+    location.replace(location)
     return false
 }

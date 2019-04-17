@@ -9,6 +9,18 @@ import numpy as np
 
 # Create your views here.
 
+def upload(request):
+    return render(request, 'rateMyCourse/templates/uploadpic/upload.html')
+
+
+def show(request):
+    new_img = IMG(img=request.FILES.get('img'))
+    new_img.save()
+    content = {
+        'aaa': new_img,
+    }
+    return render(request, 'rateMyCourse/templates/uploadpic/show.html', content)
+
 
 def addHitCount():
 	try:

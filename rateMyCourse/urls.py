@@ -2,6 +2,9 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from . import views
 
+from django.conf.urls.static import static
+from django.conf import settings
+
 urlpatterns = [
     #GET
     url(r'^$', views.getIndex, name='getIndex'),
@@ -26,4 +29,8 @@ urlpatterns = [
     url(r'^userInfo/$', views.userInfo, name='userInfo'),
     url(r'^saveUserInfo/$',views.saveUserInfo,name='saveUserInfo'),
     url(r'^rank/$',views.getRank,name='getRank'),
-]
+
+    # test for modifying user's avatar
+    url(r'^upload', views.upload),
+    url(r'^show', views.show),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
