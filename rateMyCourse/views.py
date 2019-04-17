@@ -232,8 +232,8 @@ def ratePage(request, courseTeacherId):
                 'department': course.department,
             },
             'teacher': teacher.name,
-            'aspect1': '作业量',
-            'aspect2': '难度',
+            'aspect1': '作业量合理',
+            'aspect2': '难度合理',
             'aspect3': '知识量',
             'aspect4': '满意度',
         })
