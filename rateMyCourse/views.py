@@ -5,8 +5,21 @@ import json
 from urllib import request, parse
 from django.http import HttpResponse
 from django.utils import timezone
+import numpy as np
 
 # Create your views here.
+
+def upload(request):
+    return render(request, 'rateMyCourse/templates/uploadpic/upload.html')
+
+
+def show(request):
+    new_img = IMG(img=request.FILES.get('img'))
+    new_img.save()
+    content = {
+        'aaa': new_img,
+    }
+    return render(request, 'rateMyCourse/templates/uploadpic/show.html', content)
 
 
 def addHitCount():
@@ -225,15 +238,15 @@ def ratePage(request, courseTeacherId):
     courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
     course = Course.objects.get(id=courseTeacher.courseId.id)
     teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
-    return render(request, "rateMyCourse/ratePage.html", {
+    return render(request, "rateMyCourse/ratePage_new.html", {
             'course': {
                 'name': course.name,
-                'school': course.description,
+                'description': course.description,
                 'department': course.department,
             },
             'teacher': teacher.name,
-            'aspect1': '作业量',
-            'aspect2': '难度',
+            'aspect1': '作业量合理',
+            'aspect2': '难度合理',
             'aspect3': '知识量',
             'aspect4': '满意度',
         })
@@ -432,4 +445,62 @@ def saveUserInfo(request):
         'departmentName': user.departmentName,
         'img': user.img,
         'commentList': commentList,
+    })
+
+def getRank(request):
+    top_course_ids = []
+    top_course_scores = []
+    top_course_counts = []
+    top_teacher_ids = []
+    top_teacher_scores = []
+    top_teacher_counts = []
+    for cuct in CommentUserCourseTeacher.objects.all():
+        ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
+        comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=cuct.courseId, teacherId=cuct.teacherId)]
+        homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+        if ct.id in top_course_ids:
+            index = top_course_ids.index(ct.id)
+            top_course_scores[index] += avg_score
+            top_course_counts[index] += 1
+        else:
+            top_course_ids.append(ct.id)
+            top_course_scores.append(avg_score)
+            top_course_counts.append(1)
+        if ct.teacherId.id in top_teacher_ids:
+            index = top_teacher_ids.index(ct.teacherId.id)
+            top_teacher_scores[index] += avg_score
+            top_teacher_counts[index] += 1
+        else:
+            top_teacher_ids.append(ct.teacherId.id)
+            top_teacher_scores.append(avg_score)
+            top_teacher_counts.append(1)
+    for i in range(len(top_course_scores)):
+        top_course_scores[i] /= top_course_counts[i]
+    for i in range(len(top_teacher_scores)):
+        top_teacher_scores[i] /= top_teacher_counts[i]
+
+    top_courses = []
+    score_sorted_index = np.argsort(-np.array(top_course_scores))
+    if len(top_course_scores)<20:
+        courseRange=len(top_course_scores)
+    else:
+        courseRange=20
+
+    if len(top_teacher_scores)<20:
+        teacherRange=len(top_teacher_scores)
+    else:
+        teacherRange=20
+
+
+    for i in range(courseRange):
+        ct = CourseTeacher.objects.get(id=top_course_ids[score_sorted_index[i]])
+        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': '%.1f'%top_course_scores[score_sorted_index[i]]})
+    top_teachers = []
+    score_sorted_index = np.argsort(-np.array(top_teacher_scores))
+    for i in range(teacherRange):
+        teacher = Teacher.objects.get(id=top_teacher_ids[score_sorted_index[i]])
+        top_teachers.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': '%.1f'%top_teacher_scores[score_sorted_index[i]]})
+    return render(request, "rateMyCourse/rankPage.html", {
+        'top_courses': top_courses,
+        'top_teachers': top_teachers
     })

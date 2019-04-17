@@ -1,4 +1,5 @@
 {% extends '../rateMyCourse/base.html' %}
+{% block title %}主页 - {{ block.super }}{% endblock %}
 {% block content %}
   <div class="py-5 text-center opaque-overlay" style="background-image: url('../../static/ratemycourse/images/indexPageBackground1.png');">
     <div class="container py-5">
@@ -55,9 +56,6 @@
                 <div class="dropdown-menu">
                   <div class="container" style="width:400px">
                     <div class="input-group">
-                      <span class="input-group-addon">
-                        <i class="fa fa-search"></i>
-                      </span>
                       <input id="searchboxCourse" class="form-control input-lg"
                       type="text" placeholder="请输入课程名" autocomplete="off">
                     </div>
@@ -116,4 +114,12 @@
       </div>
     </div>
   </div>
+  <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="/static/ratemycourse/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+  <script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>-->
+  <script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+  <script src="/static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+  <script src="/static/ratemycourse/javascript/index.js"></script>
 {% endblock %}
