@@ -448,9 +448,6 @@ def saveUserInfo(request):
     })
 
 def getRank(request):
-    return render(request, "rateMyCourse/rankPage.html")
-
-def getTopCourse(request):
     top_course_ids = []
     top_course_scores = []
     top_course_counts = []
@@ -474,7 +471,7 @@ def getTopCourse(request):
             top_teacher_scores[index] += avg_score
             top_teacher_counts[index] += 1
         else:
-            top_teacher_ids.append([ct.teacherId.id])
+            top_teacher_ids.append(ct.teacherId.id)
             top_teacher_scores.append(avg_score)
             top_teacher_counts.append(1)
     for i in range(len(top_course_scores)):
@@ -483,16 +480,27 @@ def getTopCourse(request):
         top_teacher_scores[i] /= top_teacher_counts[i]
 
     top_courses = []
-    score_sorted_index = np.array(top_course_scores).argsort()
-    for i in range(20):
+    score_sorted_index = np.argsort(-np.array(top_course_scores))
+    if len(top_course_scores)<20:
+        courseRange=len(top_course_scores)
+    else:
+        courseRange=20
+
+    if len(top_teacher_scores)<20:
+        teacherRange=len(top_teacher_scores)
+    else:
+        teacherRange=20
+
+
+    for i in range(courseRange):
         ct = CourseTeacher.objects.get(id=top_course_ids[score_sorted_index[i]])
-        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': top_course_scores[score_sorted_index[i]]})
+        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': '%.1f'%top_course_scores[score_sorted_index[i]]})
     top_teachers = []
-    score_sorted_index = np.array(top_teacher_scores).argsort()
-    for i in range(20):
+    score_sorted_index = np.argsort(-np.array(top_teacher_scores))
+    for i in range(teacherRange):
         teacher = Teacher.objects.get(id=top_teacher_ids[score_sorted_index[i]])
-        top_courses.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': top_teacher_scores[score_sorted_index[i]]})
-    return render(request, "rateMyCourse/.html", {
+        top_teachers.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': '%.1f'%top_teacher_scores[score_sorted_index[i]]})
+    return render(request, "rateMyCourse/rankPage.html", {
         'top_courses': top_courses,
         'top_teachers': top_teachers
     })

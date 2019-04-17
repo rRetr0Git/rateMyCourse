@@ -91,6 +91,19 @@ function Func_signUp() {
   return false
 }
 
+$(function(){
+  $(":radio").click(function(){
+      if($(this).val()=="option1"){
+        $("#top_courses").show()
+        $("#top_teachers").hide()
+      }
+      else{
+        $("#top_teachers").show()
+        $("#top_courses").hide()
+      }
+  });
+ });
+
 function Func_signIn() {
   $.ajax("/signIn/", {
     dataType: 'json',
@@ -128,16 +141,6 @@ function Func_toUserInfo(){
     return false
 }
 
-var radio = document.getElementsByName("Radios");
-radio[0].onclick=function(){
-	$("teacherlist").hide()
-    $("courselist").show()
-};
-radio[1].onclick=function(){
-	$("teacherlist").show()
-    $("courselist").hide()
-}
-
 $(document).ready(function() {
   // alert("!!!")
   // Form validation for Sign in / Sign up forms
@@ -155,7 +158,8 @@ $(document).ready(function() {
     $("#menuUser").show()
     $("#navUser").text($.cookie('username'))
   }
-  $("#teacherlist").hide()
+  $("#top_courses").show()
+  $("#top_teachers").hide()
 
 //  $.ajax('/getTeachers/', {
 //    dataType:'json',
