@@ -53,17 +53,17 @@ def signUp(request):
         if("mail" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -2,
-                'errormessage': 'mail repeated',
+                'errormessage': 'mail invalid',
                 }))
         elif("username" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -3,
-                'errormessage': 'username repeated',
+                'errormessage': 'username invalid',
                 }))
         else:
             return HttpResponse(json.dumps({
                 'statCode': -4,
-                'errormessage': 'other error, maybe out of length',
+                'errormessage': 'other error',
                 }))
     else:
         return HttpResponse(json.dumps({
@@ -290,7 +290,7 @@ def getSchool(request):
 def getDepartment(request):
     try:
         school = School.objects.get(name=request.GET['school'])
-        department = [c.courseId.department for c in SchoolCourse.objects.filter(schoolId=school.id).distinct()]
+        department = [c.courseId.department for c in SchoolCourse.objects.filter(schoolId=school.id).distinct().order_by('courseId')]
     except Exception as err:
         return HttpResponse(json.dumps({
             'error': 'school not found'
