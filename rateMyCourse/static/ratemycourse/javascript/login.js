@@ -59,7 +59,7 @@ function validateSignIn() {
     messages: {
       username: {
         required: "请输入用户名",
-        minlength: "用户名必需由两个字符组成"
+        minlength: "用户名至少由两个字符组成"
       },
       password: {
         required: "请输入密码",

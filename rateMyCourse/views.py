@@ -6,13 +6,26 @@ from urllib import request, parse
 from django.http import HttpResponse
 from django.utils import timezone
 import numpy as np
+import time
 
 # Create your views here.
 
+def timeit(method):
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        print('%r  %2.2f sec' % (method.__name__, te - ts))
+        return result
+    return timed
+
+
+@timeit
 def upload(request):
     return render(request, 'rateMyCourse/templates/uploadpic/upload.html')
 
 
+@timeit
 def show(request):
     new_img = IMG(img=request.FILES.get('img'))
     new_img.save()
@@ -22,20 +35,24 @@ def show(request):
     return render(request, 'rateMyCourse/templates/uploadpic/show.html', content)
 
 
+@timeit
 def addHitCount():
-	try:
-		hit = HitCount.objects.get(name='hit')
-	except Exception:
-		hit = HitCount(name='hit', count=0)
-		hit.save()
-	hit.count += 1
-	hit.save()
+    try:
+        hit = HitCount.objects.get(name='hit')
+    except Exception:
+        hit = HitCount(name='hit', count=0)
+        hit.save()
+    hit.count += 1
+    hit.save()
 
 
+@timeit
 def getIndex(request):
     #addHitCount()
     return render(request, "rateMyCourse/index.html")
 
+
+@timeit
 def signUp(request):
     try:
         username = request.POST['username']
@@ -53,17 +70,17 @@ def signUp(request):
         if("mail" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -2,
-                'errormessage': 'mail repeated',
+                'errormessage': 'mail invalid',
                 }))
         elif("username" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -3,
-                'errormessage': 'username repeated',
+                'errormessage': 'username invalid',
                 }))
         else:
             return HttpResponse(json.dumps({
                 'statCode': -4,
-                'errormessage': 'other error, maybe out of length',
+                'errormessage': 'other error',
                 }))
     else:
         return HttpResponse(json.dumps({
@@ -76,29 +93,8 @@ def signUp(request):
     return HttpResponse("textBox: "+textBox)
     '''
 
-def solrSearch(keywords, school, department):
-    url = "http://10.2.28.123:8080/solr/collection1/select?q=%s&rows=100&sort=rate_count+desc&wt=json&indent=true"
-    keys = dict()
 
-    ######
-    # this is a fool idea to fix bug that if nothing to write in nothing you can search
-    if(school == None and keywords == ''):
-    	school = "北京航空航天大学"
-    ######
-
-    if(school != None):
-        keys['school_name'] = school
-    if(department != None):
-        keys['department_name'] = department
-    keys['courseId'] = keywords
-    s = ' '.join([
-        '+' + key + ':\"' + keys[key] + '\"' for key in keys
-    ])
-    t = request.urlopen(url%parse.quote(s)).read().decode('utf-8')
-    t = json.loads(t)
-    return [i['courseId'] for i in t['response']['docs']]
-
-
+@timeit
 def simpleSearch(school, department, keywords):
     if school == None:
         courseList = Course.objects.filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
@@ -116,6 +112,8 @@ def simpleSearch(school, department, keywords):
             courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
     return courseTeacherList
 
+
+@timeit
 def search(request):
     addHitCount()
     keywords = request.GET['keywords']
@@ -127,45 +125,29 @@ def search(request):
         department = request.GET['department']
     else:
         department = None
+
     courses = []
     pages = []
-    '''
-        for i, c_number in enumerate(courselist):
-        if(c_number in courselist[:i]):
-            continue
-        cs = Course.objects.filter(number=c_number)
-        x = getAvgScore(cs)
-        courses.append({
-            'name': cs[0].name,
-            'ID': cs[0].number,
-            'type': cs[0].coursetype,
-            'credit': cs[0].credit,
-            'school': cs[0].department.school.name,
-            'department': cs[0].department.name,
-            'rateScore': sum(x) / len(x),
-            'ratenumber': sum([i.comment_set.count() for i in cs])
-            })
-    '''
+    courseTeacherList = simpleSearch(school, department, keywords)
+    for ct in courseTeacherList:
+        course = ct.courseId
+        teacher = ct.teacherId
 
-    courseTeacherList = simpleSearch(school,department,keywords)
-    for index,courseTeacher in enumerate(courseTeacherList):
-        course = Course.objects.get(id=courseTeacher.courseId.id)
-        teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
-        comments = [cuct.commentId for cuct in
-                    CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
-        homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+        count = ct.commentCnt
+        if count == 0:
+            avg_score = 3
+        else:
+            avg_score = (ct.allHomeworkScore + ct.allDifficultyScore + ct.allKnowledgeScore + ct.allSatisfactionScore) / 4 / count
         courses.append({
             'name': course.name,
-            'ID': course.id,
-            'courseTeacher' : courseTeacher.id,
+            'courseTeacher' : ct.id,
             'teacher': teacher.name,
             'type': course.type,
-            'credit': 5,
-            'school': school,
             'department': course.department,
-            'rateScore': '%.1f'% avg_score,
+            'rateScore': '%.1f' % avg_score,
             'ratenumber': count
         })
+
     pn=int(len(courses)/10)+1
     for i in range(pn):
         pages.append({'number': i+1})
@@ -175,43 +157,49 @@ def search(request):
     	'pages': pages,
     	})
 
-def getAvgScore(comments):
-    count = 0
-    homework = 0
-    difficulty = 0
-    knowledge = 0
-    satisfaction = 0
-    for cmt in comments:
-        homework += cmt.homework
-        difficulty += cmt.difficulty
-        knowledge += cmt.knowledge
-        satisfaction += cmt.satisfaction
-        count += 1
-    if(count > 0):
-        return homework / count, difficulty / count, knowledge / count, satisfaction / count, count, (homework + difficulty + knowledge + satisfaction) / (count * 4.0)
-    return 3.0, 3.0, 3.0, 3.0, count, 3.0
 
+@timeit
 def coursePage(request, courseTeacherId):
     addHitCount()
     courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
     course = Course.objects.get(id=courseTeacher.courseId.id)
     teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
-    comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=teacher.id)]
-    homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+
+    count = courseTeacher.commentCnt
+    if count == 0:
+        homework = 3
+        difficulty = 3
+        knowledge = 3
+        satisfaction = 3
+        avg_score = 3
+    else:
+        homework = courseTeacher.allHomeworkScore / count
+        difficulty = courseTeacher.allDifficultyScore / count
+        knowledge = courseTeacher.allKnowledgeScore / count
+        satisfaction = courseTeacher.allSatisfactionScore / count
+        avg_score = (homework + difficulty + knowledge + satisfaction) / 4
+
     other_teacher_info = []
     other_cts = CourseTeacher.objects.filter(courseId=course.id).filter(~Q(teacherId=teacher.id))
     for other_ct in other_cts:
         other_teacher = other_ct.teacherId
-        comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=course.id, teacherId=other_teacher.id)]
-        other_homework, other_difficulty, other_knowledge, other_satisfaction, other_count, other_avg_score = getAvgScore(comments)
+        other_count = other_teacher.commentCnt
+        if other_count == 0:
+            other_avg_score = 3
+        else:
+            other_avg_score = (other_teacher.allHomeworkScore + other_teacher.allDifficultyScore + other_teacher.allKnowledgeScore + other_teacher.allSatisfactionScore) / 4 / other_count
         other_teacher_info.append({"id":other_ct.id, "name":other_teacher.name, "score":'%.1f'%other_avg_score})
+
     other_course_info = []
     other_cts = CourseTeacher.objects.filter(teacherId=teacher.id).filter(~Q(courseId=course.id))
     for other_ct in other_cts:
-        other_course = other_ct.courseId
-        comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=other_course.id, teacherId=teacher.id)]
-        other_homework, other_difficulty, other_knowledge, other_satisfaction, other_count, other_avg_score = getAvgScore(comments)
-        other_course_info.append({"id":other_ct.id, "name":other_course.name, "score":'%.1f'%other_avg_score})
+        other_count = other_ct.commentCnt
+        if other_count == 0:
+            other_avg_score = 3
+        else:
+            other_avg_score = (other_ct.allHomeworkScore + other_ct.allDifficultyScore + other_ct.allKnowledgeScore + other_ct.allSatisfactionScore) / 4 / other_count
+        other_course_info.append({"id":other_ct.id, "name":other_ct.courseId.name, "score":'%.1f'%other_avg_score})
+
     return render(request, "rateMyCourse/coursePage_new.html", {
         'course_name': course.name,
         'course_profession': course.department,
@@ -233,11 +221,13 @@ def coursePage(request, courseTeacherId):
         'other_course_info': other_course_info
         })
 
+
+@timeit
 def ratePage(request, courseTeacherId):
     addHitCount()
     courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
-    course = Course.objects.get(id=courseTeacher.courseId.id)
-    teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
+    course = courseTeacher.courseId
+    teacher = courseTeacher.teacherId
     return render(request, "rateMyCourse/ratePage_new.html", {
             'course': {
                 'name': course.name,
@@ -251,6 +241,8 @@ def ratePage(request, courseTeacherId):
             'aspect4': '满意度',
         })
 
+
+@timeit
 def signIn(request):
     try:
         username = request.POST['username']
@@ -281,42 +273,52 @@ def signIn(request):
             'username': u.username,
             }))
 
+
+@timeit
 def getSchool(request):
     result = {
         'school': [s.name for s in School.objects.all()],
     }
     return HttpResponse(json.dumps(result))
 
+
+@timeit
 def getDepartment(request):
     try:
         school = School.objects.get(name=request.GET['school'])
-        department = [c.courseId.department for c in SchoolCourse.objects.filter(schoolId=school.id).distinct()]
+        department_set = SchoolCourse.objects.filter(schoolId=school.id).values("courseId__department").distinct()
+        department = [ds['courseId__department'] for ds in department_set]
     except Exception as err:
         return HttpResponse(json.dumps({
             'error': 'school not found'
             }))
     return HttpResponse(json.dumps({
-        'department': list(set([d for d in department]))
+        'department': department
         }))
 
-def getCourse(request):
-    try:
-        school = School.objects.get(name=request.GET['school'])
-        department = school.department_set.get(name=request.GET['department'])
-        course = Course.objects.filter(school=school, department=department).distinct()
-    except Exception as err:
-        return HttpResponse(json.dumps({
-            'error': 'school or department not found'
-            }))
-    return HttpResponse(json.dumps({
-        'course': [c.name for c in course]
-        }))
 
+# @timeit
+# def getCourse(request):
+#     try:
+#         school = School.objects.get(name=request.GET['school'])
+#         department = school.department_set.get(name=request.GET['department'])
+#         course = Course.objects.filter(school=school, department=department).distinct()
+#     except Exception as err:
+#         return HttpResponse(json.dumps({
+#             'error': 'school or department not found'
+#             }))
+#     return HttpResponse(json.dumps({
+#         'course': [c.name for c in course]
+#         }))
+
+
+@timeit
 def getComment(request):
     try:
         courseTeacherId = request.GET['courseTeacherId']
-        course = CourseTeacher.objects.get(id=courseTeacherId).courseId
-        teacher = CourseTeacher.objects.get(id=courseTeacherId).teacherId
+        ct = CourseTeacher.objects.get(id=courseTeacherId)
+        course = ct.courseId
+        teacher = ct.teacherId
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
@@ -337,36 +339,41 @@ def getComment(request):
         'comments': cmtList,
         }))
 
-def getTeachers(request):
-    try:
-        teachers = CourseTeacher.objects.filter(courseId=request.GET['courseId'])
-    except Exception:
-        return HttpResponse(json.dumps({
-            'statCode': -1,
-            'errormessage': 'can not get courseId or courseId not exists',
-            }))
-    tList = []
-    for t in teachers:
-        tList.append(t.teacherId.name)
-    return HttpResponse(json.dumps({
-        'statCode': 0,
-        'teachers': tList,
-        }))
 
-def getOverAllRate(request):
-    try:
-        courses = Course.objects.filter(number=request.GET['courseId'])
-    except Exception:
-        return HttpResponse(json.dumps({
-            'statCode': -1,
-            'errormessage': 'can not get courseId or courseId not exists',
-            }))
-    return HttpResponse(json.dumps({
-        'statCode': 0,
-        'rate': getAvgScore(courses),
-        }))
+# @timeit
+# def getTeachers(request):
+#     try:
+#         course = request.GET['courseId']
+#         cts = CourseTeacher.objects.filter(courseId=course)
+#     except Exception:
+#         return HttpResponse(json.dumps({
+#             'statCode': -1,
+#             'errormessage': 'can not get courseId or courseId not exists',
+#             }))
+#     tList = [ct.teacherId.name for ct in cts]
+#     return HttpResponse(json.dumps({
+#         'statCode': 0,
+#         'teachers': tList,
+#         }))
 
 
+# @timeit
+# def getOverAllRate(request):
+#     try:
+#         course = request.GET['courseId']
+#         courses = Course.objects.filter(number=course)
+#     except Exception:
+#         return HttpResponse(json.dumps({
+#             'statCode': -1,
+#             'errormessage': 'can not get courseId or courseId not exists',
+#             }))
+#     return HttpResponse(json.dumps({
+#         'statCode': 0,
+#         'rate': getAvgScore(courses),
+#         }))
+
+
+@timeit
 def submitComment(request):
     addHitCount()
     try:
@@ -383,8 +390,9 @@ def submitComment(request):
             'errormessage': 'post information not complete! ',
         }))
     user = User.objects.get(username=username)
-    course = CourseTeacher.objects.get(id=courseTeacherId).courseId
-    teacher = CourseTeacher.objects.get(id=courseTeacherId).teacherId
+    ct = CourseTeacher.objects.get(id=courseTeacherId)
+    course = ct.courseId
+    teacher = ct.teacherId
     comment = Comment(
         anonymous=True if anonymous == 'true' else False,
         content=content,
@@ -397,10 +405,14 @@ def submitComment(request):
     comment.save()
     cuct = CommentUserCourseTeacher(commentId=comment,userId=user,courseId=course,teacherId=teacher)
     cuct.save()
+    Teacher.objects.filter(id=teacher.id).update(allHomeworkScore=teacher.allHomeworkScore + rate[0], allDifficultyScore=teacher.allDifficultyScore + rate[1], allKnowledgeScore = teacher.allKnowledgeScore + rate[2], allSatisfactionScore = teacher.allSatisfactionScore + rate[3], commentCnt = teacher.commentCnt + 1)
+    CourseTeacher.objects.filter(id=ct.id).update(allHomeworkScore=ct.allHomeworkScore + rate[0], allDifficultyScore=ct.allDifficultyScore + rate[1], allKnowledgeScore = ct.allKnowledgeScore + rate[2], allSatisfactionScore = ct.allSatisfactionScore + rate[3], commentCnt = ct.commentCnt + 1)
     return HttpResponse(json.dumps({
         'statCode': 0,
     }))
 
+
+@timeit
 def userInfo(request):
     name = request.GET['name']
     user = User.objects.get(username = name)
@@ -409,15 +421,15 @@ def userInfo(request):
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
-        courseTeacher = CourseTeacher.objects.get(teacherId=teacher,courseId=course).id
+        courseTeacher = CourseTeacher.objects.get(teacherId=teacher,courseId=course)
         cmt = cuct.commentId
         if cmt.anonymous == True:
             continue
         commentList.append({
             'course': course.name,
-            'courseTeacher': courseTeacher,
+            'courseTeacher': courseTeacher.id,
             'teacher': teacher.name,
-            'rate': [cmt.homework,cmt.difficulty,cmt.knowledge,cmt.satisfaction],
+            'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
             })
 
@@ -430,14 +442,32 @@ def userInfo(request):
 	    'commentList':commentList,
     })
 
+
+@timeit
 def saveUserInfo(request):
     school = request.POST['school']
     department = request.POST['department']
     username = request.POST['username']
     user = User.objects.filter(username=username)
     user.update(schoolName=school,departmentName=department)
-    user = user[0]
+
+    user = User.objects.get(username=username)
     commentList = []
+    # cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    # for cuct in cuctList:
+    #     teacher = cuct.teacherId
+    #     course = cuct.courseId
+    #     courseTeacher = CourseTeacher.objects.get(teacherId=teacher, courseId=course)
+    #     cmt = cuct.commentId
+    #     if cmt.anonymous == True:
+    #         continue
+    #     commentList.append({
+    #         'course': course.name,
+    #         'courseTeacher': courseTeacher.id,
+    #         'teacher': teacher.name,
+    #         'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
+    #         'time': cmt.time.strftime('%y/%m/%d'),
+    #     })
     return render(request, "rateMyCourse/userInfo.html", {
         'username': username,
         'isTeacher': user.isTeacher,
@@ -447,6 +477,8 @@ def saveUserInfo(request):
         'commentList': commentList,
     })
 
+
+@timeit
 def getRank(request):
     top_course_ids = []
     top_course_scores = []
@@ -456,8 +488,8 @@ def getRank(request):
     top_teacher_counts = []
     for cuct in CommentUserCourseTeacher.objects.all():
         ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
-        comments = [cuct.commentId for cuct in CommentUserCourseTeacher.objects.filter(courseId=cuct.courseId, teacherId=cuct.teacherId)]
-        homework, difficulty, knowledge, satisfaction, count, avg_score = getAvgScore(comments)
+        count = ct.commentCnt
+        avg_score = (ct.allHomeworkScore + ct.allDifficultyScore + ct.allKnowledgeScore + ct.allSatisfactionScore) / 4 / count
         if ct.id in top_course_ids:
             index = top_course_ids.index(ct.id)
             top_course_scores[index] += avg_score
@@ -479,27 +511,27 @@ def getRank(request):
     for i in range(len(top_teacher_scores)):
         top_teacher_scores[i] /= top_teacher_counts[i]
 
+    if len(top_course_scores) < 20:
+        courseRange = len(top_course_scores)
+    else:
+        courseRange = 20
+
+    if len(top_teacher_scores) < 20:
+        teacherRange = len(top_teacher_scores)
+    else:
+        teacherRange = 20
+
     top_courses = []
     score_sorted_index = np.argsort(-np.array(top_course_scores))
-    if len(top_course_scores)<20:
-        courseRange=len(top_course_scores)
-    else:
-        courseRange=20
-
-    if len(top_teacher_scores)<20:
-        teacherRange=len(top_teacher_scores)
-    else:
-        teacherRange=20
-
-
     for i in range(courseRange):
         ct = CourseTeacher.objects.get(id=top_course_ids[score_sorted_index[i]])
-        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': '%.1f'%top_course_scores[score_sorted_index[i]]})
+        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': '%.1f' % top_course_scores[score_sorted_index[i]]})
+
     top_teachers = []
     score_sorted_index = np.argsort(-np.array(top_teacher_scores))
     for i in range(teacherRange):
         teacher = Teacher.objects.get(id=top_teacher_ids[score_sorted_index[i]])
-        top_teachers.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': '%.1f'%top_teacher_scores[score_sorted_index[i]]})
+        top_teachers.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': '%.1f' % top_teacher_scores[score_sorted_index[i]]})
     return render(request, "rateMyCourse/rankPage.html", {
         'top_courses': top_courses,
         'top_teachers': top_teachers
