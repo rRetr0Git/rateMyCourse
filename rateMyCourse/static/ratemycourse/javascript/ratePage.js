@@ -202,7 +202,7 @@ function Func_submit() {
 //  	return false
 //  }
   if($('#writeCommentText').val().length < 10){
-    alert('please write more for your course!(more than 30 characters)')
+    alert('please write more for your course!(more than 10 characters)')
 	return false
   }
   for(i = 0; i　< score.length; i++){

@@ -97,6 +97,7 @@
                             <th>课程类别</th>
                             <th>授课教师</th>
                             <th>课程评分</th>
+                            <th>评价次数</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,7 +116,10 @@
                                 {{course.teacher}}
                             </td>
                             <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
-                                {{course.credit}}
+                                {{course.rateScore}}
+                            </td>
+                            <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                                {{course.ratenumber}}
                             </td>
                         </tr>
                         {% endfor%}

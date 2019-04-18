@@ -77,6 +77,11 @@ class Teacher(models.Model):
     website = models.URLField(null=True)
     img = models.URLField(null=True)
     status = models.IntegerField(default=0)
+    allHomeworkScore = models.IntegerField(default=0)
+    allDifficultyScore = models.IntegerField(default=0)
+    allKnowledgeScore = models.IntegerField(default=0)
+    allSatisfactionScore = models.IntegerField(default=0)
+    commentCnt = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 
@@ -97,6 +102,8 @@ class Comment(models.Model):
     difficulty = models.IntegerField(default=3)  # 难易度
     knowledge = models.IntegerField(default=3)  # 收获度
     satisfaction = models.IntegerField(default=3)  # 满意度
+    like = models.IntegerField(default=0)
+    dislike = models.IntegerField(default=0)
     def __str__(self):
         return self.content
 
@@ -126,6 +133,11 @@ class CourseTeacher(models.Model):
         Teacher,
         on_delete=models.CASCADE,
     )
+    allHomeworkScore = models.IntegerField(default=0)
+    allDifficultyScore = models.IntegerField(default=0)
+    allKnowledgeScore = models.IntegerField(default=0)
+    allSatisfactionScore = models.IntegerField(default=0)
+    commentCnt = models.IntegerField(default=0)
     class Meta:
         unique_together = ("courseId", "teacherId")
     def __str__(self):
