@@ -1,7 +1,6 @@
 #-*- coding: UTF-8 -*-
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
-from rateMyCourse.system.storage import ImageStorage
 import uuid
 # Create your models here.
 
