@@ -31,6 +31,6 @@ urlpatterns = [
     url(r'^rank/$',views.getRank,name='getRank'),
 
     # test for modifying user's avatar
-    url(r'^upload', views.upload),
-    url(r'^show', views.show),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # url(r'^upload', views.upload),
+    # url(r'^show', views.show),
+] ## + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

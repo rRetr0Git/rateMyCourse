@@ -20,19 +20,19 @@ def timeit(method):
     return timed
 
 
-@timeit
-def upload(request):
-    return render(request, 'rateMyCourse/templates/uploadpic/upload.html')
+# @timeit
+# def upload(request):
+#     return render(request, 'rateMyCourse/templates/uploadpic/upload.html')
 
 
-@timeit
-def show(request):
-    new_img = IMG(img=request.FILES.get('img'))
-    new_img.save()
-    content = {
-        'aaa': new_img,
-    }
-    return render(request, 'rateMyCourse/templates/uploadpic/show.html', content)
+# @timeit
+# def show(request):
+#     new_img = IMG(img=request.FILES.get('img'))
+#     new_img.save()
+#     content = {
+#         'aaa': new_img,
+#     }
+#     return render(request, 'rateMyCourse/templates/uploadpic/show.html', content)
 
 
 @timeit
