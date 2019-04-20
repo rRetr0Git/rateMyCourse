@@ -115,7 +115,7 @@ def simpleSearch(school, department, keywords):
 
 @timeit
 def search(request):
-    addHitCount()
+    # addHitCount()
     keywords = request.GET['keywords']
     if('school' in request.GET):
         school = request.GET['school']
@@ -160,7 +160,7 @@ def search(request):
 
 @timeit
 def coursePage(request, courseTeacherId):
-    addHitCount()
+    # addHitCount()
     courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
     course = Course.objects.get(id=courseTeacher.courseId.id)
     teacher = Teacher.objects.get(id=courseTeacher.teacherId.id)
@@ -224,7 +224,7 @@ def coursePage(request, courseTeacherId):
 
 @timeit
 def ratePage(request, courseTeacherId):
-    addHitCount()
+    # addHitCount()
     courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
     course = courseTeacher.courseId
     teacher = courseTeacher.teacherId
@@ -268,6 +268,7 @@ def signIn(request):
             'errormessage': 'wrong password',
             }))
     else:
+        addHitCount()
         return HttpResponse(json.dumps({
             'statCode': 0,
             'username': u.username,
@@ -375,7 +376,7 @@ def getComment(request):
 
 @timeit
 def submitComment(request):
-    addHitCount()
+    # addHitCount()
     try:
         username = request.POST['username']
         content = request.POST['comment']
