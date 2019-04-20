@@ -18,19 +18,24 @@ function clickSearchButton() {
 $(document).ready(function() {
   //alert("!!!")
   //$("#navbarContainer").load("./components/indexNavbarContainer.html")
-
+    //$("#menuUser").hide()
+    //$("#menuLogin").hide()
   // Form validation for Sign in / Sign up forms
   validateSignUp()
   validateSignIn()
 
   // Login widget set according to cookie
   if($.cookie('username') == undefined) {
-    $("#menuUser").hide()
-    $("#menuLogin").show()
+      $("#menuUser").prop("hidden",true)
+      $("#menuLogin").prop("hidden",false)
+    //$("#menuUser").hide()
+    //$("#menuLogin").show()
   }
   else{
-    $("#menuLogin").hide()
-    $("#menuUser").show()
+      $("#menuUser").prop("hidden",false)
+      $("#menuLogin").prop("hidden",true)
+    //$("#menuLogin").hide()
+    //$("#menuUser").show()
     $("#navUser").text($.cookie('username'))
   }
 
