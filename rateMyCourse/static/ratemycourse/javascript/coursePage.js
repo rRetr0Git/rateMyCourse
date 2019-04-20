@@ -94,12 +94,12 @@ function generateGrid(imageUrls, userName, text, time) {
                     <div>
                     </div>
                     <div>
-                        <button>
-                        </button>
+<!--                        <button>-->
+<!--                        </button>-->
                     </div>
                     <div>
-                        <button>
-                        </button>
+<!--                        <button>-->
+<!--                        </button>-->
                     </div>
                 </div>
             </div>
@@ -130,13 +130,13 @@ function generateGrid(imageUrls, userName, text, time) {
         var timenode = document.createTextNode(time);
         pTags[2].appendChild(timenode);
         //pTags[2].setAttribute("style", "width:100%;text-align:right;margin-top:32px")
-        var buttonTag = commentGrid.getElementsByTagName("button");
-        buttonTag[0].type = "button";
-        buttonTag[0].setAttribute("class","btn btn-sm btn-success");
-        buttonTag[0].innerHTML = "👍";
-        buttonTag[1].type = "button";
-        buttonTag[1].setAttribute("class","btn btn-sm btn-danger");
-        buttonTag[1].innerHTML = "👎";
+        // var buttonTag = commentGrid.getElementsByTagName("button");
+        // buttonTag[0].type = "button";
+        // buttonTag[0].setAttribute("class","btn btn-sm btn-success");
+        // buttonTag[0].innerHTML = "👍";
+        // buttonTag[1].type = "button";
+        // buttonTag[1].setAttribute("class","btn btn-sm btn-danger");
+        // buttonTag[1].innerHTML = "👎";
         //css
         var divTags = commentGrid.getElementsByTagName("div");
         divTags[0].setAttribute("class", "col-md-12 column");
