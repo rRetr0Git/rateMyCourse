@@ -82,8 +82,10 @@ function Func_signUp() {
     if (data.statCode != 0) {
       alert(data.errormessage)
     } else {
-      $("#menuLogin").hide()
-      $("#menuUser").show()
+        $("#menuUser").prop("hidden",false)
+        $("#menuLogin").prop("hidden",true)
+      //$("#menuLogin").hide()
+      //$("#menuUser").show()
       $("#navUser").text(data.username)
       $.cookie('username', data.username, {path: '/'})
     }
@@ -103,10 +105,12 @@ function Func_signIn() {
     if(data.statCode != 0) {
       alert(data.errormessage)
     } else {
-      $("#menuLogin").hide()
-      $("#menuUser").show()
+        $("#menuUser").prop("hidden",false)
+        $("#menuLogin").prop("hidden",true)
+      //$("#menuLogin").hide()
+      //$("#menuUser").show()
       $("#navUser").text(data.username)
-      $("#modalInfo").show()
+      //$("#modalInfo").show()
       $.cookie('username', data.username, {path: '/'})
     }
   })
@@ -114,9 +118,11 @@ function Func_signIn() {
 }
 
 function Func_signOut() {
-  $("#menuUser").hide()
-  $("#menuLogin").show()
-  $("#modalInfo").hide()
+    $("#menuUser").prop("hidden",true)
+    $("#menuLogin").prop("hidden",false)
+  //$("#menuUser").hide()
+  //$("#menuLogin").show()
+  //$("#modalInfo").hide()
   $.removeCookie('username', {path: '/'})
   return false
 }
