@@ -28,9 +28,6 @@ urlpatterns = [
 
     url(r'^userInfo/$', views.userInfo, name='userInfo'),
     url(r'^saveUserInfo/$',views.saveUserInfo,name='saveUserInfo'),
+    url(r'^saveUserPicture/$', views.saveUserPicture, name='saveUserPicture'),
     url(r'^rank/$',views.getRank,name='getRank'),
-
-    # test for modifying user's avatar
-    # url(r'^upload', views.upload),
-    # url(r'^show', views.show),
-] ## + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

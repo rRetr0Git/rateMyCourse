@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 import numpy as np
 import time
+import os
 
 # Create your views here.
 
@@ -58,13 +59,14 @@ def signUp(request):
         username = request.POST['username']
         mail = request.POST['mail']
         password = request.POST['password']
+        img = "http://wx2.sinaimg.cn/large/0076t302ly1fylgfkon55j30e80e8ab5.jpg"
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
             'errormessage': 'can not get username, mail or password',
             }))
     try:
-        User(username=username, mail=mail, password=password).save()
+        User(username=username, mail=mail, password=password, img=img).save()
     except Exception as err:
         errmsg = str(err)
         if("mail" in errmsg):
@@ -444,6 +446,44 @@ def userInfo(request):
     })
 
 
+def saveUserPicture(request):
+    username = request.COOKIES.get('username')
+    new_img = IMG(img=request.FILES.get('img'))
+    new_img.save()
+    user = User.objects.filter(username=username)
+    old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + User.objects.get(username=username).img
+    if os.path.exists(old_img_url):
+        os.remove(old_img_url)
+    user.update(img=new_img.img.url)
+
+    user = User.objects.get(username=username)
+    commentList = []
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    for cuct in cuctList:
+        teacher = cuct.teacherId
+        course = cuct.courseId
+        courseTeacher = CourseTeacher.objects.get(teacherId=teacher, courseId=course)
+        cmt = cuct.commentId
+        if cmt.anonymous == True:
+            continue
+        commentList.append({
+            'course': course.name,
+            'courseTeacher': courseTeacher.id,
+            'teacher': teacher.name,
+            'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
+            'time': cmt.time.strftime('%y/%m/%d'),
+        })
+
+    return render(request, "rateMyCourse/userInfo.html", {
+        'username': username,
+        'isTeacher': user.isTeacher,
+        'schoolName': user.schoolName,
+        'departmentName': user.departmentName,
+        'img': user.img,
+        'commentList': commentList,
+    })
+
+
 @timeit
 def saveUserInfo(request):
     school = request.POST['school']
@@ -454,21 +494,21 @@ def saveUserInfo(request):
 
     user = User.objects.get(username=username)
     commentList = []
-    # cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
-    # for cuct in cuctList:
-    #     teacher = cuct.teacherId
-    #     course = cuct.courseId
-    #     courseTeacher = CourseTeacher.objects.get(teacherId=teacher, courseId=course)
-    #     cmt = cuct.commentId
-    #     if cmt.anonymous == True:
-    #         continue
-    #     commentList.append({
-    #         'course': course.name,
-    #         'courseTeacher': courseTeacher.id,
-    #         'teacher': teacher.name,
-    #         'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
-    #         'time': cmt.time.strftime('%y/%m/%d'),
-    #     })
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    for cuct in cuctList:
+        teacher = cuct.teacherId
+        course = cuct.courseId
+        courseTeacher = CourseTeacher.objects.get(teacherId=teacher, courseId=course)
+        cmt = cuct.commentId
+        if cmt.anonymous == True:
+            continue
+        commentList.append({
+            'course': course.name,
+            'courseTeacher': courseTeacher.id,
+            'teacher': teacher.name,
+            'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
+            'time': cmt.time.strftime('%y/%m/%d'),
+        })
     return render(request, "rateMyCourse/userInfo.html", {
         'username': username,
         'isTeacher': user.isTeacher,

@@ -1,6 +1,7 @@
 #-*- coding: UTF-8 -*-
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+from rateMyCourse.system.storage import ImageStorage
 import uuid
 # Create your models here.
 
@@ -172,3 +173,6 @@ class CommentUserCourseTeacher(models.Model):
 class HitCount(models.Model):
     name = models.CharField(max_length=50)
     count = models.IntegerField()
+
+class IMG(models.Model):
+    img = models.ImageField(upload_to='upload')

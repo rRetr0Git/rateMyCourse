@@ -9,3 +9,4 @@ settings.py
 __pycache__
 migrations
 db.sqlite3
+media

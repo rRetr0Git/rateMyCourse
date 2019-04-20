@@ -280,21 +280,48 @@
         </div>
     </div>
 
+    <!--修改信息模态框-->
+    <div class="modal fade" id="modalPicture-container" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myPictureLabel">
+                        修改头像
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <form role="form" method="POST" enctype="multipart/form-data"
+                          action="/saveUserPicture/">
+                        {% csrf_token %}
+                        <input type="file" name="img">
+                        <button type="submit">上传</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="row clearfix">
         <div class="col-md-5 column">
+            <p class="text-center">
+                <strong>昵称：</strong>{{username}}
+            </p>
+            <p class="text-center column">
+                <button class="btn btn-primary btn-lg col-md-5 column" data-toggle="modal" data-target="#modalPicture-container">
+	            修改个人头像
+                </button>
+            </p>
+            <p  class="text-center">
+                <img alt="200x200" width="200" height="200" src={{ img }} class="img-rounded"/>
+            </p>
+            <br>
             <p class="text-center column">
                 <button class="btn btn-primary btn-lg col-md-5 column" data-toggle="modal" data-target="#modalInfo-container">
 	            修改个人信息
                 </button>
             </p>
-            <p class="text-center">
-                <strong>昵称：</strong>{{username}}
-            </p>
-            <p  class="text-center">
-                <img alt="200x200" width="200" height="200" src="http://wx2.sinaimg.cn/large/0076t302ly1fylgfkon55j30e80e8ab5.jpg" class="img-rounded"/>
-            </p>
-            <br>
             <p class="text-center" id="schoolName">
                 <strong>学校：{{schoolName}}</strong>
             </p>

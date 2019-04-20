@@ -147,7 +147,7 @@ function generateGrid(imageUrls, userName, text, time) {
     // insert picture
     divTags[10].setAttribute("class","col-md-2 column");
     var imageTag = commentGrid.getElementsByTagName("img");
-    imageTag[0].src = "http://wx2.sinaimg.cn/large/0076t302ly1fylgfkon55j30e80e8ab5.jpg";
+    imageTag[0].src = imageUrls;
     imageTag[0].width = "100";
     imageTag[0].height = "100";
 
