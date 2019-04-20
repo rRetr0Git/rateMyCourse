@@ -436,6 +436,10 @@ def userInfo(request):
             'time': cmt.time.strftime('%y/%m/%d'),
             })
 
+    school = School.objects.get(name='北京航空航天大学')
+    department_set = SchoolCourse.objects.filter(schoolId=school.id).values("courseId__department").distinct()
+    departments = [ds['courseId__department'] for ds in department_set]
+
     return render(request, "rateMyCourse/userInfo.html",{
 	    'username':name,
 	    'isTeacher':user.isTeacher,
@@ -443,6 +447,7 @@ def userInfo(request):
 	    'departmentName':user.departmentName,
 	    'img':user.img,
 	    'commentList':commentList,
+        'departments':departments,
     })
 
 
