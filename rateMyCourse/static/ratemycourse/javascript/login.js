@@ -135,6 +135,14 @@ function Func_toUserInfo(){
 }
 
 function Func_saveUserInfo(){
+    if($.cookie('username') == undefined){
+        alert("please log in first!")
+        return false
+    }
+    else if($.cookie('username') !=$("#nickName").text()){
+        alert("you cannot change other's info!")
+        return false
+    }
     url = this.href
     $.ajax("/saveUserInfo/", {
         dataType: 'json',
@@ -151,6 +159,14 @@ function Func_saveUserInfo(){
 }
 
 function Func_saveUserPic(){
+    if($.cookie('username') == undefined){
+        alert("please log in first!")
+        return false
+    }
+    else if($.cookie('username') !=$("#nickName").text()){
+        alert("you cannot change other's info!")
+        return false
+    }
     Url = this.href;
     var formData = new FormData();
     formData.append("file",$("#inputfile")[0].files[0]);

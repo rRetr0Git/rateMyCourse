@@ -27,7 +27,7 @@ urlpatterns = [
     # url(r'^getOverAllRate/$', views.getOverAllRate, name='getOverAllRate'),
 
     url(r'^userInfo/$', views.userInfo, name='userInfo'),
-    url(r'^saveUserInfo/$',views.saveUserInfo,name='saveUserInfo'),
-    url(r'^saveUserPic/$',views.saveUserPic,name='saveUserPic'),
-    url(r'^rank/$',views.getRank,name='getRank'),
+    url(r'^saveUserInfo/$', views.saveUserInfo, name='saveUserInfo'),
+    url(r'^saveUserPic/$', views.saveUserPic, name='saveUserPic'),
+    url(r'^rank/$', views.getRank,name='getRank'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
