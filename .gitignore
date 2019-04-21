@@ -10,5 +10,5 @@ __pycache__
 migrations
 db.sqlite3
 media
-rateMyCourse/static/ratemycourse/images/upload/*
-!rateMyCourse/static/ratemycourse/images/upload/user.png
+rateMyCourse/static/ratemycourse/images/upload/user/*
+!rateMyCourse/static/ratemycourse/images/upload/user/user.png

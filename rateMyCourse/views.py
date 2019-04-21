@@ -453,16 +453,18 @@ def userInfo(request):
 def saveUserPic(request):
     username = request.POST['username']
     img_name = request.FILES.get('file')
+    user = User.objects.get(username=username)
+    img_name.name = str(user.id) + '.png'
 
-    new_img = IMG(img=request.FILES.get('file'))
+    new_img = IMG(img=img_name)
     new_img.save()
 
     old_img_url = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/ratemycourse/ratemycourse' + User.objects.get(username=username).img.url
-    if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/ratemycourse/ratemycourse/static/ratemycourse/images/upload/user.png':
+    if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/ratemycourse/ratemycourse/static/ratemycourse/images/upload/user/user.png':
         os.remove(old_img_url)
+    print(new_img.img.url)
     User.objects.filter(username=username).update(img=img_name)
 
-    user = User.objects.get(username=username)
     commentList = []
     cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
     for cuct in cuctList:
