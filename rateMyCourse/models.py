@@ -4,6 +4,10 @@ from django.contrib.auth.hashers import make_password, check_password
 import uuid
 # Create your models here.
 
+class IMG(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, auto_created=True)
+    img = models.ImageField(upload_to='upload/')
+
 class School(models.Model):
     # attributes
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
@@ -65,7 +69,7 @@ class User(models.Model):
     isTeacher = models.BooleanField(default=False)
     schoolName = models.CharField(max_length=30,null=True)
     departmentName = models.CharField(max_length=20,null=True)
-    img = models.URLField(blank=True,null=True)
+    img = models.ImageField(upload_to='upload/', default='user.png')
     mail = models.CharField(max_length=20)
     def __str__(self):
         return self.username
@@ -75,7 +79,7 @@ class Teacher(models.Model):
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     name = models.CharField(max_length=100,unique=True)
     website = models.URLField(null=True)
-    img = models.URLField(null=True)
+    img = models.ImageField(upload_to='upload/', default='user.png')
     status = models.IntegerField(default=0)
     allHomeworkScore = models.IntegerField(default=0)
     allDifficultyScore = models.IntegerField(default=0)
@@ -97,7 +101,7 @@ class Comment(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
-    img = models.URLField(blank=True,null=True)
+    img = models.ImageField(upload_to='upload/', null=True)
     homework = models.IntegerField(default=3)  # 作业量
     difficulty = models.IntegerField(default=3)  # 难易度
     knowledge = models.IntegerField(default=3)  # 收获度
@@ -173,5 +177,6 @@ class HitCount(models.Model):
     name = models.CharField(max_length=50)
     count = models.IntegerField()
 
+
 class IMG(models.Model):
-    img = models.ImageField(upload_to='upload')
+    img = models.ImageField(upload_to='upload/')

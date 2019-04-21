@@ -77,6 +77,9 @@ function generateGrid(imageUrls, userName, text, time) {
             <div>
                 <div>
                     <div>
+                        <img>
+                    </div>
+                    <div>
                         <p></p>
                     </div>
                     <div>
@@ -95,10 +98,7 @@ function generateGrid(imageUrls, userName, text, time) {
             <div>
                 <div>
                     <div>
-                        <img>
-                    </div>
-                    <div>
-                        <p></p>
+                        <p>cc</p>
                     </div>
                 </div>
             </div>
@@ -118,41 +118,42 @@ function generateGrid(imageUrls, userName, text, time) {
     divTags[1].setAttribute("class","col-md-12 column");
     divTags[2].setAttribute("class","row clearfix");
 
+    // insert picture
+    divTags[3].setAttribute("class","col-md-2 column");
+    var imageTag = commentGrid.getElementsByTagName("img");
+    imageTag[0].src = imageUrls;
+    imageTag[0].width = "35";
+    imageTag[0].height = "35";
+
     // insert user name
-    divTags[3].setAttribute("class","col-md-4 column");
+    divTags[4].setAttribute("class","col-md-4 column");
     var userNameNode = document.createTextNode(userName);
     pTags[0].appendChild(userNameNode);
 
     // insert time
-    divTags[4].setAttribute("class","col-md-4 column")
+    divTags[5].setAttribute("class","col-md-2 column")
     var timenode = document.createTextNode(time);
     pTags[1].appendChild(timenode);
 
     var buttonTag = commentGrid.getElementsByTagName("button");
     // insert vote-up
-    divTags[5].setAttribute("class","col-md-2 column")
+    divTags[6].setAttribute("class","col-md-2 column")
     // buttonTag[0].type = "button";
     // buttonTag[0].setAttribute("class","btn btn-sm btn-success");
     // buttonTag[0].innerHTML = "👍";
 
     // insert vote-down
-    divTags[6].setAttribute("class","col-md-2 column")
+    divTags[7].setAttribute("class","col-md-2 column")
     // buttonTag[1].type = "button";
     // buttonTag[1].setAttribute("class","btn btn-sm btn-danger");
     // buttonTag[1].innerHTML = "👎";
 
-    divTags[7].setAttribute("class","list-group-item");
-    divTags[8].setAttribute("class","col-md-12 column");
-    divTags[9].setAttribute("class","row clearfix");
-    // insert picture
-    divTags[10].setAttribute("class","col-md-2 column");
-    var imageTag = commentGrid.getElementsByTagName("img");
-    imageTag[0].src = imageUrls;
-    imageTag[0].width = "100";
-    imageTag[0].height = "100";
+    divTags[8].setAttribute("class","list-group-item");
+    divTags[9].setAttribute("class","col-md-12 column");
+    divTags[10].setAttribute("class","row clearfix");
 
     // insert comment
-    divTags[11].setAttribute("class","col-md-10 column")
+    divTags[11].setAttribute("class","col-md-12 column")
     pTags[2].innerHTML = text;
     pTags[2].setAttribute("class", "center-vertical")
 

@@ -59,14 +59,13 @@ def signUp(request):
         username = request.POST['username']
         mail = request.POST['mail']
         password = request.POST['password']
-        img = "http://wx2.sinaimg.cn/large/0076t302ly1fylgfkon55j30e80e8ab5.jpg"
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
             'errormessage': 'can not get username, mail or password',
             }))
     try:
-        User(username=username, mail=mail, password=password, img=img).save()
+        User(username=username, mail=mail, password=password).save()
     except Exception as err:
         errmsg = str(err)
         if("mail" in errmsg):
@@ -436,34 +435,33 @@ def userInfo(request):
             'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
             })
-
+    print(user.img.url)
     school = School.objects.get(name='北京航空航天大学')
     department_set = SchoolCourse.objects.filter(schoolId=school.id).values("courseId__department").distinct()
     departments = [ds['courseId__department'] for ds in department_set]
 
     return render(request, "rateMyCourse/userInfo.html",{
-	    'username':name,
-	    'isTeacher':user.isTeacher,
-	    'schoolName':user.schoolName,
-	    'departmentName':user.departmentName,
-	    'img':user.img,
-	    'commentList':commentList,
-        'departments':departments,
+	    'username': name,
+	    'isTeacher': user.isTeacher,
+	    'schoolName': user.schoolName,
+	    'departmentName': user.departmentName,
+	    'img': user.img,
+	    'commentList': commentList,
+        'departments': departments,
     })
 
 
 def saveUserPic(request):
     username = request.POST['username']
-    new_img = IMG(img=request.FILES.get('file'))
+    img_name = request.FILES.get('file')
+    new_img = IMG(img=img_name)
     new_img.save()
-    print(username)
 
-    user = User.objects.filter(username=username)
-    old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + User.objects.get(
-        username=username).img
-    if os.path.exists(old_img_url):
+    old_img_url = User.objects.get(username=username).img.url
+    if old_img_url != '/static/ratemycourse/images/user.png':
         os.remove(old_img_url)
-    user.update(img=new_img.img.url)
+    User.objects.filter(username=username).update(img=img_name)
+    print(User.objects.get(username=username).img.url)
 
     user = User.objects.get(username=username)
     commentList = []
@@ -488,7 +486,7 @@ def saveUserPic(request):
         'isTeacher': user.isTeacher,
         'schoolName': user.schoolName,
         'departmentName': user.departmentName,
-        'img': user.img,
+        'img': user.img.url,
         'commentList': commentList,
     })
 
