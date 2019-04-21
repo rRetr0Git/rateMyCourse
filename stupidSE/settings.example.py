@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media'
             ],
         },
     },
@@ -110,7 +111,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+FILE_CHARSET = 'utf-8'
+
+DEFAULT_CHARSET = 'utf-8'
+
+LANGUAGE_CODE = 'zh-Hans'
 
 TIME_ZONE = 'UTC'
 
@@ -127,5 +132,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # test for modifying user's avatar
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+MEDIA_URL = '/static/ratemycourse/images/upload/user/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'ratemycourse/static/ratemycourse/images/upload/user').replace('\\', '/')

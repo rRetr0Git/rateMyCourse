@@ -4,6 +4,10 @@ from django.contrib.auth.hashers import make_password, check_password
 import uuid
 # Create your models here.
 
+class IMG(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, auto_created=True)
+    img = models.ImageField()
+
 class School(models.Model):
     # attributes
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
@@ -65,7 +69,7 @@ class User(models.Model):
     isTeacher = models.BooleanField(default=False)
     schoolName = models.CharField(max_length=30,null=True)
     departmentName = models.CharField(max_length=20,null=True)
-    img = models.URLField(blank=True,null=True)
+    img = models.ImageField(default='user.png')
     mail = models.CharField(max_length=20)
     def __str__(self):
         return self.username
@@ -75,8 +79,13 @@ class Teacher(models.Model):
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     name = models.CharField(max_length=100,unique=True)
     website = models.URLField(null=True)
-    img = models.URLField(null=True)
+    img = models.ImageField(default='user.png')
     status = models.IntegerField(default=0)
+    allHomeworkScore = models.IntegerField(default=0)
+    allDifficultyScore = models.IntegerField(default=0)
+    allKnowledgeScore = models.IntegerField(default=0)
+    allSatisfactionScore = models.IntegerField(default=0)
+    commentCnt = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 
@@ -92,11 +101,13 @@ class Comment(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
-    img = models.URLField(blank=True,null=True)
+    img = models.ImageField(null=True)
     homework = models.IntegerField(default=3)  # 作业量
     difficulty = models.IntegerField(default=3)  # 难易度
     knowledge = models.IntegerField(default=3)  # 收获度
     satisfaction = models.IntegerField(default=3)  # 满意度
+    like = models.IntegerField(default=0)
+    dislike = models.IntegerField(default=0)
     def __str__(self):
         return self.content
 
@@ -126,6 +137,11 @@ class CourseTeacher(models.Model):
         Teacher,
         on_delete=models.CASCADE,
     )
+    allHomeworkScore = models.IntegerField(default=0)
+    allDifficultyScore = models.IntegerField(default=0)
+    allKnowledgeScore = models.IntegerField(default=0)
+    allSatisfactionScore = models.IntegerField(default=0)
+    commentCnt = models.IntegerField(default=0)
     class Meta:
         unique_together = ("courseId", "teacherId")
     def __str__(self):
@@ -151,7 +167,7 @@ class CommentUserCourseTeacher(models.Model):
         on_delete=models.CASCADE,
     )
     class Meta:
-        unique_together = ("commentId", "userId","courseId","teacherId")
+        unique_together = ("commentId", "userId", "courseId", "teacherId")
 
     def __str__(self):
         return str(self.courseId) + " " + str(self.courseId) + " " + str(self.teacherId)
@@ -160,3 +176,7 @@ class CommentUserCourseTeacher(models.Model):
 class HitCount(models.Model):
     name = models.CharField(max_length=50)
     count = models.IntegerField()
+
+
+class IMG(models.Model):
+    img = models.ImageField()

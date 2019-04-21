@@ -59,7 +59,7 @@ function validateSignIn() {
     messages: {
       username: {
         required: "请输入用户名",
-        minlength: "用户名必需由两个字符组成"
+        minlength: "用户名至少由两个字符组成"
       },
       password: {
         required: "请输入密码",
@@ -82,8 +82,10 @@ function Func_signUp() {
     if (data.statCode != 0) {
       alert(data.errormessage)
     } else {
-      $("#menuLogin").hide()
-      $("#menuUser").show()
+        $("#menuUser").prop("hidden",false)
+        $("#menuLogin").prop("hidden",true)
+      //$("#menuLogin").hide()
+      //$("#menuUser").show()
       $("#navUser").text(data.username)
       $.cookie('username', data.username, {path: '/'})
     }
@@ -103,10 +105,12 @@ function Func_signIn() {
     if(data.statCode != 0) {
       alert(data.errormessage)
     } else {
-      $("#menuLogin").hide()
-      $("#menuUser").show()
+        $("#menuUser").prop("hidden",false)
+        $("#menuLogin").prop("hidden",true)
+      //$("#menuLogin").hide()
+      //$("#menuUser").show()
       $("#navUser").text(data.username)
-      $("#modalInfo").show()
+      //$("#modalInfo").show()
       $.cookie('username', data.username, {path: '/'})
     }
   })
@@ -114,9 +118,11 @@ function Func_signIn() {
 }
 
 function Func_signOut() {
-  $("#menuUser").hide()
-  $("#menuLogin").show()
-  $("#modalInfo").hide()
+    $("#menuUser").prop("hidden",true)
+    $("#menuLogin").prop("hidden",false)
+  //$("#menuUser").hide()
+  //$("#menuLogin").show()
+  //$("#modalInfo").hide()
   $.removeCookie('username', {path: '/'})
   return false
 }
@@ -129,16 +135,50 @@ function Func_toUserInfo(){
 }
 
 function Func_saveUserInfo(){
+    if($.cookie('username') == undefined){
+        alert("please log in first!")
+        return false
+    }
+    else if($.cookie('username') !=$("#nickName").text()){
+        alert("you cannot change other's info!")
+        return false
+    }
     url = this.href
     $.ajax("/saveUserInfo/", {
         dataType: 'json',
         type: 'POST',
+        async : false,
         data: {
           "school": $("#school").val(),
           "department": $("#department").val(),
           "username": $("#navUser").text(),
         }
-    })
-    location.replace(location)
-    return false
+    });
+    location.replace(location);
+    return false;
+}
+
+function Func_saveUserPic(){
+    if($.cookie('username') == undefined){
+        alert("please log in first!")
+        return false
+    }
+    else if($.cookie('username') !=$("#nickName").text()){
+        alert("you cannot change other's info!")
+        return false
+    }
+    Url = this.href;
+    var formData = new FormData();
+    formData.append("file",$("#inputfile")[0].files[0]);
+    formData.append("username",$("#navUser").text());
+    $.ajax("/saveUserPic/", {
+        url : Url,
+        type : 'POST',
+        data : formData,
+        async : false,
+        processData : false,
+        contentType : false,
+    });
+    location.replace(location);
+    return false;
 }

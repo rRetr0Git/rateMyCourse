@@ -21,16 +21,13 @@ urlpatterns = [
     #TMP GET IN INDEX
     url(r'^getSchool/$', views.getSchool, name='getSchool'),
     url(r'^getDepartment/$', views.getDepartment, name='getDepartment'),
-    url(r'^getCourse/$', views.getCourse, name='getCourse'),
+    # url(r'^getCourse/$', views.getCourse, name='getCourse'),
     url(r'^getComment/$', views.getComment, name='getComment'),
-    url(r'^getTeachers/$', views.getTeachers, name='getTeachers'),
-    url(r'^getOverAllRate/$', views.getOverAllRate, name='getOverAllRate'),
+    # url(r'^getTeachers/$', views.getTeachers, name='getTeachers'),
+    # url(r'^getOverAllRate/$', views.getOverAllRate, name='getOverAllRate'),
 
     url(r'^userInfo/$', views.userInfo, name='userInfo'),
-    url(r'^saveUserInfo/$',views.saveUserInfo,name='saveUserInfo'),
-    url(r'^rank/$',views.getRank,name='getRank'),
-
-    # test for modifying user's avatar
-    url(r'^upload', views.upload),
-    url(r'^show', views.show),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    url(r'^saveUserInfo/$', views.saveUserInfo, name='saveUserInfo'),
+    url(r'^saveUserPic/$', views.saveUserPic, name='saveUserPic'),
+    url(r'^rank/$', views.getRank,name='getRank'),
+]
