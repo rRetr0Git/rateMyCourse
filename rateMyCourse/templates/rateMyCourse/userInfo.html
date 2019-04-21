@@ -77,12 +77,12 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <div class="modal-body">
-                    <form role="form" method="POST" enctype="multipart/form-data"
-                          action="/saveUserPicture/">
-                        {% csrf_token %}
-                        <input type="file" name="img">
-                        <button type="submit">上传</button>
-                    </form>
+                    <div class="form-group">
+                        <input type="file" id="inputfile">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> <button type="button" class="btn btn-primary" onclick=Func_saveUserPic() data-dismiss="modal">保存</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,7 +100,7 @@
                 </button>
             </p >
             <p  class="text-center">
-                < img alt="200x200" width="200" height="200" src={{ img }} class="img-rounded"/>
+                <img alt="200x200" width="200" height="200" src={{ img }} class="img-rounded"/>
             </p >
             <br>
             <p class="text-center column">

@@ -164,7 +164,6 @@ function setComments() {//get comments list from service
         dataType: "json",
         data: {'courseTeacherId': window.location.pathname.split('/')[2]},
     }).done(function(data){
-        var imgurl = "../../static/ratemycourse/images/user.png";
         var parents = document.getElementById("commentDiv");
         var comment = document.getElementById("commentGrid");
         if (comment) {
@@ -172,8 +171,8 @@ function setComments() {//get comments list from service
         }
         for(var i=0; i<data.comments.length; i++){
             //generate a new row
-            var cmt = data.comments[i]
-            var Grid = generateGrid(imgurl, cmt.userName, cmt.text, cmt.time);
+            var cmt = data.comments[i];
+            var Grid = generateGrid(cmt.avator, cmt.userName, cmt.text, cmt.time);
             //insert this new row
             parents.appendChild(Grid);
         }

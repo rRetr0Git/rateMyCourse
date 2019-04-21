@@ -336,6 +336,7 @@ def getComment(request):
             'userName': user.username if cmt.anonymous == False else '匿名用户',
             'text': cmt.content.replace("\n", "<br/>"),
             'time': cmt.time.strftime('%y/%m/%d'),
+            'avator': User.objects.get(username=user).img
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -451,12 +452,15 @@ def userInfo(request):
     })
 
 
-def saveUserPicture(request):
-    username = request.COOKIES.get('username')
-    new_img = IMG(img=request.FILES.get('img'))
+def saveUserPic(request):
+    username = request.POST['username']
+    new_img = IMG(img=request.FILES.get('file'))
     new_img.save()
+    print(username)
+
     user = User.objects.filter(username=username)
-    old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + User.objects.get(username=username).img
+    old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + User.objects.get(
+        username=username).img
     if os.path.exists(old_img_url):
         os.remove(old_img_url)
     user.update(img=new_img.img.url)

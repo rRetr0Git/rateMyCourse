@@ -139,12 +139,30 @@ function Func_saveUserInfo(){
     $.ajax("/saveUserInfo/", {
         dataType: 'json',
         type: 'POST',
+        async : false,
         data: {
           "school": $("#school").val(),
           "department": $("#department").val(),
           "username": $("#navUser").text(),
         }
-    })
-    location.replace(location)
-    return false
+    });
+    location.replace(location);
+    return false;
+}
+
+function Func_saveUserPic(){
+    Url = this.href;
+    var formData = new FormData();
+    formData.append("file",$("#inputfile")[0].files[0]);
+    formData.append("username",$("#navUser").text());
+    $.ajax("/saveUserPic/", {
+        url : Url,
+        type : 'POST',
+        data : formData,
+        async : false,
+        processData : false,
+        contentType : false,
+    });
+    location.replace(location);
+    return false;
 }
