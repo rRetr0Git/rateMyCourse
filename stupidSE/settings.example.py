@@ -128,5 +128,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # test for modifying user's avatar
-MEDIA_URL = '/static/ratemycourse/images/'
-MEDIA_ROOT = os.path.join(BASE_DIR, '/static/ratemycourse/images/').replace('\\', '/')
+MEDIA_URL = '/static/ratemycourse/images/upload/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'ratemycourse/static/ratemycourse/images/upload').replace('\\', '/')
