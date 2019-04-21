@@ -335,7 +335,7 @@ def getComment(request):
             'userName': user.username if cmt.anonymous == False else '匿名用户',
             'text': cmt.content.replace("\n", "<br/>"),
             'time': cmt.time.strftime('%y/%m/%d'),
-            'avator': User.objects.get(username=user).img
+            'avator': User.objects.get(username=user).img.url
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -419,8 +419,6 @@ def submitComment(request):
 def userInfo(request):
     name = request.GET['name']
     user = User.objects.get(username = name)
-    print("img:", user.img)
-    print("img_url:", user.img.url)
     commentList=[]
     cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
     for cuct in cuctList:
@@ -437,7 +435,6 @@ def userInfo(request):
             'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
             })
-    print(user.img.url)
     school = School.objects.get(name='北京航空航天大学')
     department_set = SchoolCourse.objects.filter(schoolId=school.id).values("courseId__department").distinct()
     departments = [ds['courseId__department'] for ds in department_set]
@@ -461,7 +458,7 @@ def saveUserPic(request):
     new_img.save()
 
     old_img_url = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/ratemycourse/ratemycourse' + User.objects.get(username=username).img.url
-    if old_img_url != os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ratemycourse/static/ratemycourse/images/upload/user.png').replace('\\', '/'):
+    if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/ratemycourse/ratemycourse/static/ratemycourse/images/upload/user.png':
         os.remove(old_img_url)
     User.objects.filter(username=username).update(img=img_name)
 
@@ -523,7 +520,7 @@ def saveUserInfo(request):
         'isTeacher': user.isTeacher,
         'schoolName': user.schoolName,
         'departmentName': user.departmentName,
-        'img': user.img,
+        'img': user.img.url,
         'commentList': commentList,
     })
 
