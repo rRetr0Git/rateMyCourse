@@ -419,6 +419,8 @@ def submitComment(request):
 def userInfo(request):
     name = request.GET['name']
     user = User.objects.get(username = name)
+    print("img:", user.img)
+    print("img_url:", user.img.url)
     commentList=[]
     cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
     for cuct in cuctList:
@@ -454,8 +456,6 @@ def userInfo(request):
 def saveUserPic(request):
     username = request.POST['username']
     img_name = request.FILES.get('file')
-    new_img = IMG(img=img_name)
-    new_img.save()
 
     old_img_url = User.objects.get(username=username).img.url
     if old_img_url != '/static/ratemycourse/images/user.png':

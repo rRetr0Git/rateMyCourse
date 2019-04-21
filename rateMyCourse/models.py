@@ -167,7 +167,7 @@ class CommentUserCourseTeacher(models.Model):
         on_delete=models.CASCADE,
     )
     class Meta:
-        unique_together = ("commentId", "userId","courseId","teacherId")
+        unique_together = ("commentId", "userId", "courseId", "teacherId")
 
     def __str__(self):
         return str(self.courseId) + " " + str(self.courseId) + " " + str(self.teacherId)

@@ -93,35 +93,35 @@
         <div class="col-md-5 column">
             <p class="text-center">
                 <strong>昵称：</strong><strong id="nickName">{{username}}</strong>
-            </p >
+            </p>
             <p class="text-center column">
                 <button class="btn btn-primary btn-lg col-md-5 column" data-toggle="modal" data-target="#modalPicture-container">
 	            修改个人头像
                 </button>
-            </p >
-            <p  class="text-center">
+            </p>
+            <p class="text-center">
                 <img alt="200x200" width="200" height="200" src={{ MEDIA_URL }}{{ img }} class="img-rounded"/>
-            </p >
+            </p>
             <br>
             <p class="text-center column">
                 <button class="btn btn-primary btn-lg col-md-5 column" data-toggle="modal" data-target="#modalInfo-container">
 	            修改个人信息
                 </button>
-            </p >
+            </p>
             <p class="text-center" id="schoolName">
                 <strong>学校：{{schoolName}}</strong>
-            </p >
+            </p>
             <p class="text-center" id="departmentName">
                 <strong>学院：{{departmentName}}</strong>
-            </p >
+            </p>
             <p class="text-center" id="isTeacher">
                 <strong>是否为老师：{{isTeacher}}</strong>
-            </p >
+            </p>
         </div>
         <div class="col-md-7 column">
             <p class="text-center">
                 <strong>近期点评</strong>
-            </p >
+            </p>
             <div style="width: 650px;">
             <div class="table-head">
             <table>
@@ -148,7 +148,7 @@
                 </colgroup>
                 <tbody>
                     {% for item in commentList %}
-                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{item.rate}}</td><td><a href=" ">详情</a></td></tr>
+                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{item.rate}}</td><td><a href="/course/{{item.courseTeacher}}">详情</a></td></tr>
                     {% endfor %}
                 </tbody>
             </table>
