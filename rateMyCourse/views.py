@@ -455,7 +455,7 @@ def saveUserPic(request):
     img_name = request.FILES.get('file')
     user = User.objects.get(username=username)
 
-    old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + '/rateMyCourse/rateMyCourse' + User.objects.get(username=username).img.url
+    old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + '/rateMyCourse' + User.objects.get(username=username).img.url
     if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/rateMyCourse/rateMyCourse/static/ratemycourse/images/upload/user/user.png':
         os.remove(old_img_url)
 
