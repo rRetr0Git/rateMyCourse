@@ -176,7 +176,3 @@ class CommentUserCourseTeacher(models.Model):
 class HitCount(models.Model):
     name = models.CharField(max_length=50)
     count = models.IntegerField()
-
-
-class IMG(models.Model):
-    img = models.ImageField()

@@ -60,11 +60,11 @@ function validateSignIn() {
     messages: {
       username: {
         required: "请输入用户名",
-        minlength: "用户名必需由两个字符组成"
+        minlength: "用户名必须由至少2个字符组成"
       },
       password: {
         required: "请输入密码",
-        minlength: "密码长度不能小于 5 个字符"
+        minlength: "密码长度不能小于5个字符"
       }
     }
   })
