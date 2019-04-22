@@ -70,7 +70,7 @@ class User(models.Model):
     schoolName = models.CharField(max_length=30,null=True)
     departmentName = models.CharField(max_length=20,null=True)
     img = models.ImageField(default='user.png')
-    mail = models.CharField(max_length=20)
+    mail = models.CharField(max_length=40)
     def __str__(self):
         return self.username
 
