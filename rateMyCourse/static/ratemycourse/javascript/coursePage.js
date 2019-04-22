@@ -70,6 +70,17 @@ function validateSignIn() {
   })
 }
 
+function htmlEscape(text){
+  return text.replace(/[<>"&]/g, function(match, pos, originalText){
+    switch(match){
+    case "<": return "&lt;";
+    case ">":return "&gt;";
+    case "&":return "&amp;";
+    case "\"":return "&quot;";
+  }
+  });
+}
+
 function generateGrid(imageUrls, userName, text, time) {
     var ScreenGridHtml =
         `
@@ -98,7 +109,7 @@ function generateGrid(imageUrls, userName, text, time) {
             <div>
                 <div>
                     <div>
-                        <p>cc</p>
+                        <p></p>
                     </div>
                 </div>
             </div>
@@ -154,7 +165,8 @@ function generateGrid(imageUrls, userName, text, time) {
 
     // insert comment
     divTags[11].setAttribute("class","col-md-12 column")
-    pTags[2].innerHTML = text;
+    pTags[2].innerHTML = htmlEscape(text);
+    pTags[2].setAttribute("style","word-wrap:break-word")
     pTags[2].setAttribute("class", "center-vertical")
 
     return commentGrid;
