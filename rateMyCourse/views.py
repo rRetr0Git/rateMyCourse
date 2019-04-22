@@ -335,7 +335,7 @@ def getComment(request):
             'userName': user.username if cmt.anonymous == False else '匿名用户',
             'text': cmt.content.replace("\n", "<br/>"),
             'time': cmt.time.strftime('%y/%m/%d'),
-            'avator': User.objects.get(username=user).img.url
+            'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png'
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -396,6 +396,11 @@ def submitComment(request):
     ct = CourseTeacher.objects.get(id=courseTeacherId)
     course = ct.courseId
     teacher = ct.teacherId
+    if(rate[0]<=0 or rate[0]>5 or rate[1]<=0 or rate[1]>5 or rate[2]<=0 or rate[2]>5 or rate[3]<=0 or rate[3]>5):
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': 'post information invalid! ',
+        }))
     comment = Comment(
         anonymous=True if anonymous == 'true' else False,
         content=content,

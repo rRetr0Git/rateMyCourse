@@ -10,7 +10,7 @@ function validateSignUp() {
       },
       inputUsername: {
         required: true,
-	      minlength: 1
+	      minlength: 2
 	    },
 	    inputPassword: {
 	      required: true,
@@ -26,7 +26,7 @@ function validateSignUp() {
       inputEmail: "请输入正确的邮箱地址",
       inputUsername: {
         required: "请输入用户名",
-        minlength: "用户名长度不能小于1个字符"
+        minlength: "用户名长度不能小于2个字符"
       },
       inputPassword: {
         required: "请输入密码",
@@ -49,7 +49,7 @@ function validateSignIn() {
     rules: {
       username: {
         required: true,
-	      minlength: 1
+	      minlength: 2
 	    },
 	    password: {
 	      required: true,
@@ -59,11 +59,11 @@ function validateSignIn() {
     messages: {
       username: {
         required: "请输入用户名",
-        minlength: "用户名至少由 1 个字符组成"
+        minlength: "用户名必须由至少2个字符组成"
       },
       password: {
         required: "请输入密码",
-        minlength: "密码长度不能小于 5 个字符"
+        minlength: "密码长度不能小于5个字符"
       }
     }
   })
