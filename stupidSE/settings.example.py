@@ -133,4 +133,4 @@ STATIC_URL = '/static/'
 
 # test for modifying user's avatar
 MEDIA_URL = '/static/ratemycourse/images/upload/user/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'ratemycourse/static/ratemycourse/images/upload/user').replace('\\', '/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'rateMyCourse/static/ratemycourse/images/upload/user').replace('\\', '/')
