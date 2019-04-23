@@ -92,33 +92,33 @@
                 <table class="table text-center" style="table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th width="300px" style='vertical-align: middle;text-align: left;'>课程名称</th>
-                            <th width="300px" style='vertical-align: middle;text-align: left;'>开设院系</th>
-                            <th>课程类别</th>
-                            <th>授课教师</th>
-                            <th>课程评分</th>
-                            <th>评价次数</th>
+                            <th width="30%" style='vertical-align: middle;text-align: left;'>课程名称</th>
+                            <th width="30%" style='vertical-align: middle;text-align: left;'>开设院系</th>
+                            <th width="10%" style='vertical-align: middle;text-align: left;'>课程类别</th>
+                            <th width="10%" style='vertical-align: middle;text-align: left;'>授课教师</th>
+                            <th width="10%" style='vertical-align: middle;text-align: left;'>课程评分</th>
+                            <th width="10%" style='vertical-align: middle;text-align: left;'>评价次数</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for course in courses %}
                         <tr id="course{{forloop.counter}}">
-                            <td width="300px" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                            <td width="30%" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                                 <a title={{course.name}} href="/course/{{course.courseTeacher}}/">{{course.name}}</a>
                             </td>
-                            <td width="300px" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                            <td width="30%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                                 {{course.department}}
                             </td>
-                            <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                            <td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                                 {{course.type}}
                             </td>
-                            <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                            <td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                                 {{course.teacher}}
                             </td>
-                            <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                            <td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                                 {{course.rateScore}}
                             </td>
-                            <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
+                            <td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                                 {{course.ratenumber}}
                             </td>
                         </tr>
