@@ -335,7 +335,7 @@ def getComment(request):
             'userName': user.username if cmt.anonymous == False else '匿名用户',
             'text': cmt.content.replace("\n", "<br/>"),
             'time': cmt.time.strftime('%y/%m/%d'),
-            'avator': User.objects.get(username=user).img.url
+            'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png'
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -396,20 +396,62 @@ def submitComment(request):
     ct = CourseTeacher.objects.get(id=courseTeacherId)
     course = ct.courseId
     teacher = ct.teacherId
-    comment = Comment(
-        anonymous=True if anonymous == 'true' else False,
-        content=content,
-        time=timezone.now(),
-        homework = rate[0],
-        difficulty=rate[1],
-        knowledge=rate[2],
-        satisfaction=rate[3]
-    )
-    comment.save()
-    cuct = CommentUserCourseTeacher(commentId=comment,userId=user,courseId=course,teacherId=teacher)
-    cuct.save()
-    Teacher.objects.filter(id=teacher.id).update(allHomeworkScore=teacher.allHomeworkScore + rate[0], allDifficultyScore=teacher.allDifficultyScore + rate[1], allKnowledgeScore = teacher.allKnowledgeScore + rate[2], allSatisfactionScore = teacher.allSatisfactionScore + rate[3], commentCnt = teacher.commentCnt + 1)
-    CourseTeacher.objects.filter(id=ct.id).update(allHomeworkScore=ct.allHomeworkScore + rate[0], allDifficultyScore=ct.allDifficultyScore + rate[1], allKnowledgeScore = ct.allKnowledgeScore + rate[2], allSatisfactionScore = ct.allSatisfactionScore + rate[3], commentCnt = ct.commentCnt + 1)
+    if(rate[0]<=0 or rate[0]>5 or rate[1]<=0 or rate[1]>5 or rate[2]<=0 or rate[2]>5 or rate[3]<=0 or rate[3]>5):
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': 'post information invalid! ',
+        }))
+    preComment = CommentUserCourseTeacher.objects.filter(userId=user,courseId=course,teacherId=teacher)
+    if(len(preComment)==0):
+        comment = Comment(
+            anonymous=True if anonymous == 'true' else False,
+            content=content,
+            time=timezone.now(),
+            homework = rate[0],
+            difficulty=rate[1],
+            knowledge=rate[2],
+            satisfaction=rate[3]
+        )
+        comment.save()
+        cuct = CommentUserCourseTeacher(commentId=comment,userId=user,courseId=course,teacherId=teacher)
+        cuct.save()
+        Teacher.objects.filter(id=teacher.id).update(allHomeworkScore=teacher.allHomeworkScore + rate[0],
+                                                     allDifficultyScore=teacher.allDifficultyScore + rate[1],
+                                                     allKnowledgeScore=teacher.allKnowledgeScore + rate[2],
+                                                     allSatisfactionScore=teacher.allSatisfactionScore + rate[3],
+                                                     commentCnt=teacher.commentCnt + 1
+                                                     )
+        CourseTeacher.objects.filter(id=ct.id).update(allHomeworkScore=ct.allHomeworkScore + rate[0],
+                                                      allDifficultyScore=ct.allDifficultyScore + rate[1],
+                                                      allKnowledgeScore=ct.allKnowledgeScore + rate[2],
+                                                      allSatisfactionScore=ct.allSatisfactionScore + rate[3],
+                                                      commentCnt=ct.commentCnt + 1
+                                                      )
+    else:
+        comment = preComment[0].commentId
+        rate1=comment.homework
+        rate2=comment.difficulty
+        rate3=comment.knowledge
+        rate4=comment.satisfaction
+        Comment.objects.filter(id=comment.id).update(
+            anonymous=True if anonymous == 'true' else False,
+            content=content,
+            time=timezone.now(),
+            homework = rate[0],
+            difficulty=rate[1],
+            knowledge=rate[2],
+            satisfaction=rate[3]
+        )
+        Teacher.objects.filter(id=teacher.id).update(allHomeworkScore=teacher.allHomeworkScore - rate1 + rate[0],
+                                                     allDifficultyScore=teacher.allDifficultyScore - rate2 + rate[1],
+                                                     allKnowledgeScore=teacher.allKnowledgeScore -rate3 + rate[2],
+                                                     allSatisfactionScore=teacher.allSatisfactionScore -rate4 + rate[3],
+                                                     )
+        CourseTeacher.objects.filter(id=ct.id).update(allHomeworkScore=ct.allHomeworkScore -rate1 + rate[0],
+                                                      allDifficultyScore=ct.allDifficultyScore -rate2 + rate[1],
+                                                      allKnowledgeScore=ct.allKnowledgeScore -rate3 + rate[2],
+                                                      allSatisfactionScore=ct.allSatisfactionScore -rate4 + rate[3],
+                                                      )
     return HttpResponse(json.dumps({
         'statCode': 0,
     }))

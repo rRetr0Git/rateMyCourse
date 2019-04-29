@@ -5,7 +5,7 @@ import uuid
 # Create your models here.
 
 class IMG(models.Model):
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, auto_created=True)
+    #id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, auto_created=True)
     img = models.ImageField()
 
 class School(models.Model):
@@ -176,7 +176,3 @@ class CommentUserCourseTeacher(models.Model):
 class HitCount(models.Model):
     name = models.CharField(max_length=50)
     count = models.IntegerField()
-
-
-class IMG(models.Model):
-    img = models.ImageField()

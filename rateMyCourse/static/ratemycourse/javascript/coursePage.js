@@ -60,14 +60,25 @@ function validateSignIn() {
     messages: {
       username: {
         required: "请输入用户名",
-        minlength: "用户名必需由两个字符组成"
+        minlength: "用户名必须由至少2个字符组成"
       },
       password: {
         required: "请输入密码",
-        minlength: "密码长度不能小于 5 个字符"
+        minlength: "密码长度不能小于5个字符"
       }
     }
   })
+}
+
+function htmlEscape(text){
+  return text.replace(/[<>"&]/g, function(match, pos, originalText){
+    switch(match){
+    case "<": return "&lt;";
+    case ">":return "&gt;";
+    case "&":return "&amp;";
+    case "\"":return "&quot;";
+  }
+  });
 }
 
 function generateGrid(imageUrls, userName, text, time) {
@@ -98,7 +109,7 @@ function generateGrid(imageUrls, userName, text, time) {
             <div>
                 <div>
                     <div>
-                        <p>cc</p>
+                        <p></p>
                     </div>
                 </div>
             </div>
@@ -154,7 +165,8 @@ function generateGrid(imageUrls, userName, text, time) {
 
     // insert comment
     divTags[11].setAttribute("class","col-md-12 column")
-    pTags[2].innerHTML = text;
+    pTags[2].innerHTML = htmlEscape(text);
+    pTags[2].setAttribute("style","word-wrap:break-word")
     pTags[2].setAttribute("class", "center-vertical")
 
     return commentGrid;
