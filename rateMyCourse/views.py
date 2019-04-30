@@ -8,6 +8,7 @@ from django.utils import timezone
 import numpy as np
 import time
 import os
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your views here.
 
@@ -65,7 +66,8 @@ def signUp(request):
             'errormessage': 'can not get username, mail or password',
             }))
     try:
-        User(username=username, mail=mail, password=password).save()
+        new_password = make_password(password)
+        User(username=username, mail=mail, password=new_password).save()
     except Exception as err:
         errmsg = str(err)
         if("mail" in errmsg):
@@ -263,7 +265,7 @@ def signIn(request):
             'statCode': -2,
             'errormessage': 'username or mail doesn\'t exists',
             }))
-    if(password != u.password):
+    if not check_password(password, u.password):
         return HttpResponse(json.dumps({
             'statCode': -3,
             'errormessage': 'wrong password',
