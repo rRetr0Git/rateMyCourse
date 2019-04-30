@@ -65,7 +65,7 @@ class User(models.Model):
     # attributes
     id = models.UUIDField(primary_key=True,editable=False,default=uuid.uuid4,auto_created=True)
     username = models.CharField(max_length=20, unique=True) # 用户名不可重复
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=100)
     isTeacher = models.BooleanField(default=False)
     schoolName = models.CharField(max_length=30,null=True)
     departmentName = models.CharField(max_length=20,null=True)
