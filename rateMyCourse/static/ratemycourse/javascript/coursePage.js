@@ -9,6 +9,11 @@ function htmlEscape(text){
   });
 }
 
+function fixBr(text){
+    return text.replace(RegExp("&lt;br&gt;", "g"),"<br>");
+}
+
+
 function generateGrid(imageUrls, userName, text, time) {
     var ScreenGridHtml =
         `
@@ -93,7 +98,7 @@ function generateGrid(imageUrls, userName, text, time) {
 
     // insert comment
     divTags[11].setAttribute("class","col-md-12 column")
-    pTags[2].innerHTML = htmlEscape(text);
+    pTags[2].innerHTML = fixBr(htmlEscape(text));
     pTags[2].setAttribute("style","word-wrap:break-word")
     pTags[2].setAttribute("class", "center-vertical")
 
