@@ -73,17 +73,17 @@ def signUp(request):
         if("mail" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -2,
-                'errormessage': 'mail invalid',
+                'errormessage': 'something wrong in mail',
                 }))
         elif("username" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -3,
-                'errormessage': 'username invalid',
+                'errormessage': 'something wrong in username',
                 }))
         else:
             return HttpResponse(json.dumps({
                 'statCode': -4,
-                'errormessage': 'other error',
+                'errormessage': 'something wrong in ... well i don\'t know',
                 }))
     else:
         return HttpResponse(json.dumps({
