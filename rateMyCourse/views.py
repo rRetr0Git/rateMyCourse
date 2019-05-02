@@ -403,6 +403,15 @@ def submitComment(request):
             'statCode': -1,
             'errormessage': 'post information invalid! ',
         }))
+    postCheckStatus=0
+    for i in range(len(content)):
+        if content[i]=='<':
+            postCheckStatus += 1;
+        elif content[i]=='>' and postCheckStatus>0:
+            return HttpResponse(json.dumps({
+                'statCode': -1,
+                'errormessage': '\'<\' or \'>\' is forbidden in comment',
+            }))
     preComment = CommentUserCourseTeacher.objects.filter(userId=user,courseId=course,teacherId=teacher)
     if(len(preComment)==0):
         comment = Comment(
