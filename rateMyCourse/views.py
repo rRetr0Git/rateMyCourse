@@ -1,3 +1,4 @@
+from django.contrib.sites import requests
 from django.shortcuts import render, get_list_or_404
 from rateMyCourse.models import *
 from django.db.models import Q
@@ -56,6 +57,11 @@ def getIndex(request):
 
 @timeit
 def signUp(request):
+    """
+    注册后登录的代码复制了signIn，很蠢
+    """
+    if request.session.get('is_login', False):
+        request.session.flush()
     try:
         username = request.POST['username']
         mail = request.POST['mail']
@@ -86,9 +92,37 @@ def signUp(request):
                 'errormessage': 'something wrong in ... well i don\'t know',
                 }))
     else:
-        return HttpResponse(json.dumps({
-            'statCode': 0,
-            'username': username,
+        try:
+            username = request.POST['username']
+            password = request.POST['password']
+        except Exception:
+            return HttpResponse(json.dumps({
+                'statCode': -1,
+                'errormessage': 'can not get username or mail or password',
+            }))
+        try:
+            u = User.objects.get(username=username)
+        except Exception:
+            try:
+                u = User.objects.get(mail=username)
+            except Exception:
+                return HttpResponse(json.dumps({
+                    'statCode': -2,
+                    'errormessage': 'username or mail doesn\'t exists',
+                }))
+        if not check_password(password, u.password):
+            return HttpResponse(json.dumps({
+                'statCode': -3,
+                'errormessage': 'wrong password',
+            }))
+        else:
+            addHitCount()
+            request.session['userid'] = str(u.id)
+            request.session['username'] = u.username
+            request.session['is_login'] = True
+            return HttpResponse(json.dumps({
+                'statCode': 0,
+                'username': u.username,
             }))
 
     '''
@@ -247,6 +281,8 @@ def ratePage(request, courseTeacherId):
 
 @timeit
 def signIn(request):
+    if request.session.get('is_login', False):
+        request.session.flush()
     try:
         username = request.POST['username']
         password = request.POST['password']
@@ -272,11 +308,27 @@ def signIn(request):
             }))
     else:
         addHitCount()
+        request.session['userid'] = str(u.id)
+        request.session['username'] = u.username
+        request.session['is_login'] = True
         return HttpResponse(json.dumps({
             'statCode': 0,
             'username': u.username,
             }))
 
+
+@timeit
+def signOut(request):
+    if request.session.get("is_login", False):
+        request.session.flush()
+        return HttpResponse(json.dumps({
+            'statCode': 0
+        }))
+    else:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '用户未登录'
+        }))
 
 @timeit
 def getSchool(request):
@@ -381,8 +433,10 @@ def getComment(request):
 @timeit
 def submitComment(request):
     # addHitCount()
+    if not request.session.get('is_login', False):
+        return render(request, "rateMyCourse/index.html")
     try:
-        username = request.POST['username']
+        username = request.session['username']
         content = request.POST['comment']
         rate = request.POST.getlist('rate')
         for i, j in enumerate(rate):
@@ -504,7 +558,9 @@ def userInfo(request):
 
 
 def saveUserPic(request):
-    username = request.POST['username']
+    if not request.session.get('is_login', False):
+        return render(request, "rateMyCourse/index.html")
+    username = request.session.get('username')
     img_name = request.FILES.get('file')
     user = User.objects.get(username=username)
 
@@ -546,9 +602,11 @@ def saveUserPic(request):
 
 @timeit
 def saveUserInfo(request):
+    if not request.session.get('is_login', False):
+        return render(request, "rateMyCourse/index.html")
     school = request.POST['school']
     department = request.POST['department']
-    username = request.POST['username']
+    username = request.session.get('username')
     user = User.objects.filter(username=username)
     user.update(schoolName=school,departmentName=department)
 
