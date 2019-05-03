@@ -1,6 +1,7 @@
 {% extends '../rateMyCourse/base.html' %}
 {% block title %}搜索结果 - {{ block.super }}{% endblock %}
 {% block content %}
+
     <div class="container">
         <br>
         <!--<div class="row clearfix">-->
@@ -84,11 +85,20 @@
                 <!--</p>-->
             <!--</div>-->
         <!--</div>-->
+
         <br>
-        <br>
+        <p id="count">搜索到 {{count}} 门课程</p>
+        <div class="input-group" style="width:400px;float:right">
+
+                <input id="searchboxRes" class="form-control input-lg"
+                      type="text" placeholder="请输入课程名" autocomplete="off"/>
+
+        </div>
+
         <div class="row clearfix">
-            <p id="count">搜索到 {{count}} 门课程</p>
+
             <div class="col-md-12 column">
+
                 <table class="table text-center" style="table-layout: fixed;">
                     <thead>
                         <tr>
