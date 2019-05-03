@@ -16,6 +16,7 @@ urlpatterns = [
     #POST
     url(r'^signIn/$', views.signIn, name='signIn'),
     url(r'^signUp/$', views.signUp, name='signUp'),
+    url(r'^signOut/$', views.signOut, name='signOut'),
     url(r'^submitComment/$', views.submitComment, name='submitComment'),
 
     #TMP GET IN INDEX

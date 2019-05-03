@@ -1,75 +1,3 @@
-'use strict'
-function validateSignUp() {
-  $("#formRegister").validate({
-    submitHandler: function() {
-      Func_signUp();
-    },
-    rules: {
-      inputEmail: {
-        required: true,
-	      email: true
-      },
-      inputUsername: {
-        required: true,
-	      minlength: 2
-	    },
-	    inputPassword: {
-	      required: true,
-	      minlength: 5
-	    },
-      inputVerify: {
-        required: true,
-	      minlength: 5,
-	      equalTo: "#inputPassword"
-      }
-    },
-    messages: {
-      inputEmail: "请输入正确的邮箱地址",
-      inputUsername: {
-        required: "请输入用户名",
-        minlength: "用户名长度不能小于2个字符"
-      },
-      inputPassword: {
-        required: "请输入密码",
-        minlength: "密码长度不能小于5个字符"
-      },
-      inputVerify: {
-        required: "请再次输入密码",
-        minlength: "密码长度不能小于5个字符",
-        equalTo: "密码输入不一致"
-      }
-    }
-  })
-}
-
-function validateSignIn() {
-  $("#formLogin").validate({
-    submitHandler: function() {
-      Func_signIn();
-    },
-    rules: {
-      username: {
-        required: true,
-	      minlength: 2
-	    },
-	    password: {
-	      required: true,
-	      minlength: 5
-	    }
-    },
-    messages: {
-      username: {
-        required: "请输入用户名",
-        minlength: "用户名必须由至少2个字符组成"
-      },
-      password: {
-        required: "请输入密码",
-        minlength: "密码长度不能小于5个字符"
-      }
-    }
-  })
-}
-
 function htmlEscape(text){
   return text.replace(/[<>"&]/g, function(match, pos, originalText){
     switch(match){
@@ -80,6 +8,11 @@ function htmlEscape(text){
   }
   });
 }
+
+function fixBr(text){
+    return text.replace(RegExp("&lt;br&gt;", "g"),"<br>");
+}
+
 
 function generateGrid(imageUrls, userName, text, time) {
     var ScreenGridHtml =
@@ -165,7 +98,7 @@ function generateGrid(imageUrls, userName, text, time) {
 
     // insert comment
     divTags[11].setAttribute("class","col-md-12 column")
-    pTags[2].innerHTML = htmlEscape(text);
+    pTags[2].innerHTML = fixBr(htmlEscape(text));
     pTags[2].setAttribute("style","word-wrap:break-word")
     pTags[2].setAttribute("class", "center-vertical")
 
@@ -206,19 +139,19 @@ $(document).ready(function () {
     validateSignIn()
 
     // Login widget set according to cookie
-    if ($.cookie('username') == undefined) {
-        $("#menuUser").prop("hidden",true)
-        $("#menuLogin").prop("hidden",false)
-        // $("#menuUser").hide()
-        // $("#menuLogin").show()
-    }
-    else {
-        $("#menuUser").prop("hidden",false)
-        $("#menuLogin").prop("hidden",true)
-        // $("#menuLogin").hide()
-        // $("#menuUser").show()
-        $("#navUser").text($.cookie('username'))
-    }
+    // if ($.cookie('username') == undefined || $.cookie('userid') == undefined) {
+    //     $("#menuUser").prop("hidden",true)
+    //     $("#menuLogin").prop("hidden",false)
+    //     // $("#menuUser").hide()
+    //     // $("#menuLogin").show()
+    // }
+    // else {
+    //     $("#menuUser").prop("hidden",false)
+    //     $("#menuLogin").prop("hidden",true)
+    //     // $("#menuLogin").hide()
+    //     // $("#menuUser").show()
+    //     $("#navUser").text($.cookie('username'))
+    // }
     // $.ajax('/getOverAllRate', {
     // 	dataType: 'json',
     // 	data: {
@@ -229,59 +162,3 @@ $(document).ready(function () {
     // })
     setComments();
 })
-
-function Func_signUp() {
-  $.ajax("/signUp/", {
-    dataType: 'json',
-    type: 'POST',
-    data: {
-      "username": $("#inputUsername").val(),
-      "mail": $("#inputEmail").val(),
-      "password": $("#inputPassword").val(),
-    }
-  }).done(function(data) {
-    if (data.statCode != 0) {
-      alert(data.errormessage)
-    } else {
-        $("#menuUser").prop("hidden",false)
-        $("#menuLogin").prop("hidden",true)
-      // $("#menuLogin").hide()
-      // $("#menuUser").show()
-      $("#navUser").text(data.username)
-      $.cookie('username', data.username, {path: '/'})
-    }
-  })
-  return false
-}
-
-function Func_signIn() {
-  $.ajax("/signIn/", {
-    dataType: 'json',
-    type: 'POST',
-    data: {
-      "username": $("#username").val(),
-      "password": $("#password").val()
-    }
-  }).done(function(data) {
-    if(data.statCode != 0) {
-      alert(data.errormessage)
-    } else {
-        $("#menuUser").prop("hidden",false)
-        $("#menuLogin").prop("hidden",true)
-      // $("#menuLogin").hide()
-      // $("#menuUser").show()
-      $("#navUser").text(data.username)
-      $.cookie('username', data.username, {path: '/'})
-    }
-  })
-  return false
-}
-
-function Func_signOut() {
-    $("#menuUser").prop("hidden",true)
-    $("#menuLogin").prop("hidden",false)
-  // $("#menuUser").hide()
-  // $("#menuLogin").show()
-  $.removeCookie('username', {path: '/'})
-  return false
-}

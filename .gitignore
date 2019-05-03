@@ -12,3 +12,4 @@ db.sqlite3
 media
 rateMyCourse/static/ratemycourse/images/upload/user/*
 !rateMyCourse/static/ratemycourse/images/upload/user/user.png
+Server.md
