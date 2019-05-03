@@ -80,14 +80,15 @@ function Func_signUp() {
     }
   }).done(function(data) {
     if (data.statCode != 0) {
-      alert(data.errormessage)
+      alert(data.errormessage);
     } else {
         $("#menuUser").prop("hidden",false)
         $("#menuLogin").prop("hidden",true)
       //$("#menuLogin").hide()
       //$("#menuUser").show()
-      $("#navUser").text(data.username)
-      $.cookie('username', data.username, {path: '/'})
+      //$("#navUser").text(data.username)
+      //$.cookie('userid', data.userid, {path: '/'})
+        location.replace(location);
     }
   })
   return false
@@ -102,28 +103,38 @@ function Func_signIn() {
       "password": $("#password").val()
     }
   }).done(function(data) {
-    if(data.statCode != 0) {
-      alert(data.errormessage)
-    } else {
-        $("#menuUser").prop("hidden",false)
-        $("#menuLogin").prop("hidden",true)
-      //$("#menuLogin").hide()
-      //$("#menuUser").show()
-      $("#navUser").text(data.username)
-      //$("#modalInfo").show()
-      $.cookie('username', data.username, {path: '/'})
+    if(data.statCode !== 0) {
+      alert(data.errormessage);
     }
-  })
+    else {
+    //     $("#menuUser").prop("hidden",false);
+    //     $("#menuLogin").prop("hidden",true);
+    //   //$("#menuLogin").hide()
+    //   //$("#menuUser").show()
+    //     $("#navUser").text(data.username);
+    //   //$("#modalInfo").show()
+    //   //$.cookie('username', data.username, {path: '/'})
+          location.replace(location);
+    }
+  });
   return false
 }
 
 function Func_signOut() {
-    $("#menuUser").prop("hidden",true)
-    $("#menuLogin").prop("hidden",false)
-  //$("#menuUser").hide()
-  //$("#menuLogin").show()
-  //$("#modalInfo").hide()
-  $.removeCookie('username', {path: '/'})
+  $.ajax("/signOut/", {
+    dataType: 'json',
+    type: 'POST',
+    data: {}
+  }).done(function(data) {
+    if(data.statCode !== 0) {
+      alert(data.errormessage);
+    }
+    else {
+        //$("#menuUser").prop("hidden",true)
+        //$("#menuLogin").prop("hidden",false)
+        location.replace(location);
+    }
+  });
   return false
 }
 
@@ -135,14 +146,14 @@ function Func_toUserInfo(){
 }
 
 function Func_saveUserInfo(){
-    if($.cookie('username') == undefined){
-        alert("please log in first!")
-        return false
-    }
-    else if($.cookie('username') !=$("#nickName").text()){
-        alert("you cannot change other's info!")
-        return false
-    }
+    // if($.cookie('userid') == undefined || $.cookie('username') == undefined){
+    //     alert("please log in first!")
+    //     return false
+    // }
+    // else if($.cookie('userid') !=$("#nickName").text()){
+    //     alert("you cannot change other's info!")
+    //     return false
+    // }
     url = this.href
     $.ajax("/saveUserInfo/", {
         dataType: 'json',
@@ -151,7 +162,7 @@ function Func_saveUserInfo(){
         data: {
           "school": $("#school").val(),
           "department": $("#department").val(),
-          "username": $("#navUser").text(),
+          //"username": $("#navUser").text(),
         }
     });
     location.replace(location);
@@ -159,18 +170,18 @@ function Func_saveUserInfo(){
 }
 
 function Func_saveUserPic(){
-    if($.cookie('username') == undefined){
-        alert("please log in first!")
-        return false
-    }
-    else if($.cookie('username') !=$("#nickName").text()){
-        alert("you cannot change other's info!")
-        return false
-    }
+    // if($.cookie('userid') == undefined || $.cookie('username') == undefined){
+    //     alert("please log in first!")
+    //     return false
+    // }
+    // else if($.cookie('username') !=$("#nickName").text()){
+    //     alert("you cannot change other's info!")
+    //     return false
+    // }
     Url = this.href;
     var formData = new FormData();
     formData.append("file",$("#inputfile")[0].files[0]);
-    formData.append("username",$("#navUser").text());
+    //formData.append("username",$("#navUser").text());
     $.ajax("/saveUserPic/", {
         url : Url,
         type : 'POST',

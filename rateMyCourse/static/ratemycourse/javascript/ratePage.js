@@ -36,19 +36,19 @@ $(document).ready(function() {
   validateSignIn()
 
   // Login widget set according to cookie
-  if($.cookie('username') == undefined) {
-      $("#menuUser").prop("hidden",true)
-      $("#menuLogin").prop("hidden",false)
-    // $("#menuUser").hide()
-    // $("#menuLogin").show()
-  }
-  else{
-      $("#menuUser").prop("hidden",false)
-      $("#menuLogin").prop("hidden",true)
-    // $("#menuLogin").hide()
-    // $("#menuUser").show()
-    $("#navUser").text($.cookie('username'))
-  }
+  // if($.cookie('username') == undefined || $.cookie('userid') == undefined) {
+  //     $("#menuUser").prop("hidden",true)
+  //     $("#menuLogin").prop("hidden",false)
+  //   // $("#menuUser").hide()
+  //   // $("#menuLogin").show()
+  // }
+  // else{
+  //     $("#menuUser").prop("hidden",false)
+  //     $("#menuLogin").prop("hidden",true)
+  //   // $("#menuLogin").hide()
+  //   // $("#menuUser").show()
+  //   $("#navUser").text($.cookie('username'))
+  // }
 //  $.ajax('/getTeachers/', {
 //    dataType:'json',
 //    data:{
@@ -67,10 +67,10 @@ $(document).ready(function() {
 
 function Func_submit() {
 
-  if($.cookie('username') == undefined){
-    alert("please log in first!")
-    return false
-  }
+  // if($.cookie('username') == undefined || $.cookie('userid') == undefined){
+  //   alert("please log in first!")
+  //   return false
+  // }
 //  if($('#buttonSelectTerm').text() == '选择学期'){
 //    alert("please choose your term!")
 //  	return false
@@ -91,7 +91,7 @@ function Func_submit() {
     type: 'POST',
     traditional: true,
     data: {
-      'username': $.cookie('username'),
+      //'username': $.cookie('username'),
       'courseteacher': window.location.pathname.split('/')[2],
       'anonymous': document.getElementById('anonymous').checked,
       'comment': $('#writeCommentText').val(),
