@@ -387,6 +387,7 @@ def getComment(request):
         cmt = cuct.commentId
         cmtList.append({
             'userName': user.username if cmt.anonymous == False else '匿名用户',
+            'userid': str(user.id) if cmt.anonymous == False else '',
             'text': cmt.content.replace("\n", "<br>"),
             'time': cmt.time.strftime('%y/%m/%d'),
             'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png'

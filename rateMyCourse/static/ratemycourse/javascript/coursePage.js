@@ -14,7 +14,7 @@ function fixBr(text){
 }
 
 
-function generateGrid(imageUrls, userName, text, time) {
+function generateGrid(imageUrls, userName, userid, text, time) {
     var ScreenGridHtml =
         `
         <div>
@@ -24,7 +24,7 @@ function generateGrid(imageUrls, userName, text, time) {
                         <img>
                     </div>
                     <div>
-                        <p></p>
+                        <a></a>
                     </div>
                     <div>
                         <p></p>
@@ -57,6 +57,7 @@ function generateGrid(imageUrls, userName, text, time) {
 
     var divTags = commentGrid.getElementsByTagName("div");
     var pTags = commentGrid.getElementsByTagName("p");
+    var aTags = commentGrid.getElementsByTagName("a");
 
     divTags[0].setAttribute("class","list-group-item");
     divTags[1].setAttribute("class","col-md-12 column");
@@ -72,12 +73,15 @@ function generateGrid(imageUrls, userName, text, time) {
     // insert user name
     divTags[4].setAttribute("class","col-md-4 column");
     var userNameNode = document.createTextNode(userName);
-    pTags[0].appendChild(userNameNode);
+    aTags[0].appendChild(userNameNode);
+    if (userid !== '') {
+        aTags[0].setAttribute('href', '/userInfo/?name=' + userName);
+    }
 
     // insert time
     divTags[5].setAttribute("class","col-md-2 column")
     var timenode = document.createTextNode(time);
-    pTags[1].appendChild(timenode);
+    pTags[0].appendChild(timenode);
 
     var buttonTag = commentGrid.getElementsByTagName("button");
     // insert vote-up
@@ -98,9 +102,9 @@ function generateGrid(imageUrls, userName, text, time) {
 
     // insert comment
     divTags[11].setAttribute("class","col-md-12 column")
-    pTags[2].innerHTML = fixBr(htmlEscape(text));
-    pTags[2].setAttribute("style","word-wrap:break-word")
-    pTags[2].setAttribute("class", "center-vertical")
+    pTags[1].innerHTML = fixBr(htmlEscape(text));
+    pTags[1].setAttribute("style","word-wrap:break-word")
+    pTags[1].setAttribute("class", "center-vertical")
 
     return commentGrid;
 }
@@ -118,7 +122,7 @@ function setComments() {//get comments list from service
         for(var i=0; i<data.comments.length; i++){
             //generate a new row
             var cmt = data.comments[i];
-            var Grid = generateGrid(cmt.avator, cmt.userName, cmt.text, cmt.time);
+            var Grid = generateGrid(cmt.avator, cmt.userName, cmt.userid, cmt.text, cmt.time);
             //insert this new row
             parents.appendChild(Grid);
         }
