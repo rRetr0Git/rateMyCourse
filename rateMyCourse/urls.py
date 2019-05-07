@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search'),
     url(r'^course/(?P<courseTeacherId>[0-9A-Za-z\-]+)/$', views.coursePage, name='coursePage'),
     url(r'^course/(?P<courseTeacherId>[0-9A-Za-z\-]+)/rate/$', views.ratePage, name='ratePage'),
+    url(r'^teacher/(?P<teacherId>[0-9A-Za-z\-]+)/$', views.teacherPage, name='teacherPage'),
 
     #POST
     url(r'^signIn/$', views.signIn, name='signIn'),

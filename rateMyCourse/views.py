@@ -179,6 +179,7 @@ def search(request):
             'name': course.name,
             'courseTeacher' : ct.id,
             'teacher': teacher.name,
+            'teacherId': teacher.id,
             'type': course.type,
             'department': course.department,
             'rateScore': '%.1f' % avg_score,
@@ -225,7 +226,7 @@ def coursePage(request, courseTeacherId):
             other_avg_score = 3
         else:
             other_avg_score = (other_teacher.allHomeworkScore + other_teacher.allDifficultyScore + other_teacher.allKnowledgeScore + other_teacher.allSatisfactionScore) / 4 / other_count
-        other_teacher_info.append({"id":other_ct.id, "name":other_teacher.name, "score":'%.1f'%other_avg_score})
+        other_teacher_info.append({"id":other_ct.id, "name":other_teacher.name, "teacherId":other_teacher.id,"score":'%.1f'%other_avg_score})
 
     other_course_info = []
     other_cts = CourseTeacher.objects.filter(teacherId=teacher.id).filter(~Q(courseId=course.id))
@@ -235,7 +236,7 @@ def coursePage(request, courseTeacherId):
             other_avg_score = 3
         else:
             other_avg_score = (other_ct.allHomeworkScore + other_ct.allDifficultyScore + other_ct.allKnowledgeScore + other_ct.allSatisfactionScore) / 4 / other_count
-        other_course_info.append({"id":other_ct.id, "name":other_ct.courseId.name, "score":'%.1f'%other_avg_score})
+        other_course_info.append({"id":other_ct.id, "name":other_ct.courseId.name, "teacherId":other_ct.teacherId.id,"score":'%.1f'%other_avg_score})
 
     return render(request, "rateMyCourse/coursePage_new.html", {
         'course_name': course.name,
@@ -253,6 +254,7 @@ def coursePage(request, courseTeacherId):
         'course_website': course.website if course.website != '' else '.',
         'profession_website': "https://baidu.com",
         'course_teacher': teacher.name,
+        'teacherId':teacher.id,
         'courseteacherid': courseTeacher.id,
         'other_teacher_info': other_teacher_info,
         'other_course_info': other_course_info
@@ -278,6 +280,17 @@ def ratePage(request, courseTeacherId):
             'aspect4': '满意度',
         })
 
+@timeit
+def teacherPage(request, teacherId):
+    # addHitCount()
+    teacher = Teacher.objects.get(id=teacherId)
+    teacherId=teacher.id
+    courseList = []
+    return render(request, "rateMyCourse/teacherPage.html",{
+        'teacherName':teacher.name,
+        'teacherImg':teacher.img if teacher.img != "user.png" else '/static/ratemycourse/images/upload/user/user.png',
+        'teacherWeb':teacher.website,
+    })
 
 @timeit
 def signIn(request):
