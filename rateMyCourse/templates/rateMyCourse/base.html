@@ -39,10 +39,14 @@
           {% if request.session.is_login %}
               <div class="dropdown" id="menuUser">
                 <a class="btn text-white btn-primary" href="javascript:void(0)" data-toggle="dropdown" id="navUser">{{ request.session.username }}</a>
-                <div class="dropdown-menu" style="padding:17px;">
+                <ul class="dropdown-menu" style="padding:17px;">
+                  <li>
                   <a href="javascript:void(0)" id="buttonLogOut" class="dropdown-item btn btn-primary school" onclick="Func_signOut()">注销</a>
+                  </li>
+                  <li>
                   <a href="javascript:void(0)" id="buttonUserInfo" class="dropdown-item btn btn-primary school" onclick="Func_toUserInfo()">个人信息</a>
-                </div>
+                  </li>
+                </ul>
               </div>
           {% else %}
               <div class="dropdown open" id="menuLogin">
