@@ -1,6 +1,8 @@
 {% extends '../rateMyCourse/base.html' %}
 {% block title %}个人信息 - {{ block.super }}{% endblock %}
 {% block content %}
+<br>
+<br>
 <div class="container">
     <div class="row clearfix">
         <div class="col-md-6 column">
@@ -94,20 +96,30 @@
             <p class="text-center">
                 <strong>昵称：</strong><strong id="nickName">{{username}}</strong>
             </p>
+            {% if request.session.username == username %}
             <p class="text-center column">
                 <button class="btn btn-primary btn-lg col-md-5 column" data-toggle="modal" data-target="#modalPicture-container">
 	            修改个人头像
                 </button>
             </p>
+            {% else %}
+            <br>
+            <br>
+            {% endif %}
             <p class="text-center">
                 <img alt="200x200" width="200" height="200" src={{ img }} class="img-rounded"/>
             </p>
             <br>
+            {% if request.session.username == username %}
             <p class="text-center column">
                 <button class="btn btn-primary btn-lg col-md-5 column" data-toggle="modal" data-target="#modalInfo-container">
 	            修改个人信息
                 </button>
             </p>
+            {% else %}
+            <br>
+            <br>
+            {% endif %}
             <p class="text-center" id="schoolName">
                 <strong>学校：{{schoolName}}</strong>
             </p>
