@@ -409,7 +409,10 @@ def getComment(request):
             'userid': str(user.id) if cmt.anonymous == False else '',
             'text': cmt.content.replace("\n", "<br>"),
             'time': cmt.time.strftime('%y/%m/%d'),
-            'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png'
+            'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png',
+            'goodTimes': cmt.like,
+            'badTimes': cmt.dislike,
+            'commentId': str(cmt.id)
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -715,3 +718,17 @@ def getRank(request):
         'top_courses': top_courses,
         'top_teachers': top_teachers
     })
+
+@timeit
+def addLike(request):
+    commentId = request.POST['commentId']
+    like = Comment.objects.get(id=commentId).like
+    Comment.objects.filter(id=commentId).update(like=like + 1)
+    return render(request, "rateMyCourse/coursePage_new.html", {})
+
+@timeit
+def addDislike(request):
+    commentId = request.POST['commentId']
+    dislike = Comment.objects.get(id=commentId).dislike
+    Comment.objects.filter(id=commentId).update(dislike=dislike + 1)
+    return render(request, "rateMyCourse/coursePage_new.html", {})

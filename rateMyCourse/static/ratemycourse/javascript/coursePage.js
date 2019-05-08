@@ -9,12 +9,38 @@ function htmlEscape(text){
   });
 }
 
+function Func_addLike(commentId){
+    $.ajax("/addLike/", {
+        dataType: 'json',
+        type: 'POST',
+        async : false,
+        data: {
+          "commentId": commentId
+        }
+    });
+    location.replace(location);
+    return false;
+}
+
+function Func_addDislike(commentId){
+    $.ajax("/addDislike/", {
+        dataType: 'json',
+        type: 'POST',
+        async : false,
+        data: {
+          "commentId": commentId
+        }
+    });
+    location.replace(location);
+    return false;
+}
+
 function fixBr(text){
     return text.replace(RegExp("&lt;br&gt;", "g"),"<br>");
 }
 
 
-function generateGrid(imageUrls, userName, userid, text, time) {
+function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTimes, commentId) {
     var ScreenGridHtml =
         `
         <div>
@@ -30,10 +56,16 @@ function generateGrid(imageUrls, userName, userid, text, time) {
                         <p></p>
                     </div>
                     <div>
-<!--                        <button></button>-->
+                        <button></button>
                     </div>
                     <div>
-<!--                        <button></button>-->
+                        <p></p>
+                    </div>
+                    <div>
+                        <button></button>
+                    </div>
+                    <div>
+                        <p></p>
                     </div>
                 </div>
             </div>
@@ -85,26 +117,33 @@ function generateGrid(imageUrls, userName, userid, text, time) {
 
     var buttonTag = commentGrid.getElementsByTagName("button");
     // insert vote-up
-    divTags[6].setAttribute("class","col-md-2 column")
-    // buttonTag[0].type = "button";
-    // buttonTag[0].setAttribute("class","btn btn-sm btn-success");
-    // buttonTag[0].innerHTML = "👍";
+    divTags[6].setAttribute("class","col-md-1 column")
+    buttonTag[0].type = "button";
+    buttonTag[0].setAttribute("class","btn btn-sm btn-success");
+    buttonTag[0].setAttribute("onclick", "this.disabled=true;Func_addLike('"+commentId+"')");
+    buttonTag[0].innerHTML = "👍";
+    divTags[7].setAttribute("class","col-md-1 column")
+    pTags[1].appendChild(document.createTextNode(goodTimes));
 
     // insert vote-down
-    divTags[7].setAttribute("class","col-md-2 column")
-    // buttonTag[1].type = "button";
-    // buttonTag[1].setAttribute("class","btn btn-sm btn-danger");
-    // buttonTag[1].innerHTML = "👎";
+    divTags[8].setAttribute("class","col-md-1 column")
+    buttonTag[1].type = "button";
+    buttonTag[1].setAttribute("class","btn btn-sm btn-danger");
+    buttonTag[1].setAttribute("onclick", "this.disabled=true;Func_addDislike('"+commentId+"')");
+    buttonTag[1].innerHTML = "👎";
+    divTags[9].setAttribute("class","col-md-1 column")
+    var badnode = document.createTextNode(badTimes);
+    pTags[2].appendChild(badnode);
 
-    divTags[8].setAttribute("class","list-group-item");
-    divTags[9].setAttribute("class","col-md-12 column");
-    divTags[10].setAttribute("class","row clearfix");
+    divTags[10].setAttribute("class","list-group-item");
+    divTags[11].setAttribute("class","col-md-12 column");
+    divTags[12].setAttribute("class","row clearfix");
 
     // insert comment
-    divTags[11].setAttribute("class","col-md-12 column")
-    pTags[1].innerHTML = fixBr(htmlEscape(text));
-    pTags[1].setAttribute("style","word-wrap:break-word")
-    pTags[1].setAttribute("class", "center-vertical")
+    divTags[13].setAttribute("class","col-md-12 column")
+    pTags[3].innerHTML = fixBr(htmlEscape(text));
+    pTags[3].setAttribute("style","word-wrap:break-word")
+    pTags[3].setAttribute("class", "center-vertical")
 
     return commentGrid;
 }
@@ -122,7 +161,7 @@ function setComments() {//get comments list from service
         for(var i=0; i<data.comments.length; i++){
             //generate a new row
             var cmt = data.comments[i];
-            var Grid = generateGrid(cmt.avator, cmt.userName, cmt.userid, cmt.text, cmt.time);
+            var Grid = generateGrid(cmt.avator, cmt.userName, cmt.userid, cmt.text, cmt.time, cmt.goodTimes, cmt.badTimes, cmt.commentId);
             //insert this new row
             parents.appendChild(Grid);
         }
