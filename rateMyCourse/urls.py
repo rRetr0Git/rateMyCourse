@@ -31,5 +31,7 @@ urlpatterns = [
     url(r'^userInfo/$', views.userInfo, name='userInfo'),
     url(r'^saveUserInfo/$', views.saveUserInfo, name='saveUserInfo'),
     url(r'^saveUserPic/$', views.saveUserPic, name='saveUserPic'),
-    url(r'^rank/$', views.getRank,name='getRank'),
+    url(r'^rank/$', views.getRank, name='getRank'),
+    url(r'^addLike/$', views.addLike, name='addLike'),
+    url(r'^addDislike/$', views.addDislike, name='addDislike')
 ]
