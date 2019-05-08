@@ -7,7 +7,7 @@
 <div class="container">
 
     <div class="row clearfix">
-        <div class="col-md-6 column">
+        <div class="col-md-5 column">
             <p class="text-center">
                 <strong>姓名：</strong><strong id="name">{{teacherName}}</strong>
             </p>
@@ -29,38 +29,33 @@
                 </p>
             {% endif %}
         </div>
-        <div class="col-md-6 column">
+        <div class="col-md-7 column">
             <p class="text-center">
                 <strong>授课课程</strong>
             </p>
-            <div style="width: 650px;">
-                <div class="table-head">
-                    <table>
-                        <colgroup>
-                            <col style="width: 330px;" />
-                            <col style="width: 320px; " />
-                        </colgroup>
-                        <thead>
-                        <tr><th>课程</th><th>评分</th></tr>
-                        </thead>
-                    </table>
-                </div>
-                <div class="table-body">
-                    <table>
-                        <colgroup>
-                            <col style="width: 330px;" />
-                            <col style="width: 320px; " />
-                        </colgroup>
-                        <tbody>
-                        <!--{% for item in commentList %}-->
-                        <tr>
-                            <td><a href="http://114.116.51.151/course/23062f0b-b1ea-45cc-965f-1e95eca422e6/">数据挖掘导论</a></td>
-                            <td>4.9</td>
-                        </tr>
-                        <!--{% endfor %}-->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-head">
+            <table>
+                <colgroup>
+                    <col style="width: 60%;" />
+                    <col style="width: 40%;" />
+                </colgroup>
+                <thead>
+                    <tr><th>课程名</th><th>评分</th></tr>
+                </thead>
+            </table>
+            </div>
+            <div class="table-body">
+            <table>
+                <colgroup>
+                    <col style="width: 60%; text-overflow: ellipsis;" />
+                    <col style="width: 40%; text-overflow: ellipsis;" />
+                </colgroup>
+                <tbody>
+                    {% for item in courseList %}
+                    <tr><td><a href="/course/{{item.courseId}}">{{item.courseName}}</a></td><td>{{item.courseScore}}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             </div>
         </div>
     </div>

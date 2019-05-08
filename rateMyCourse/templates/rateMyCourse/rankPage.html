@@ -82,7 +82,7 @@
                         <a title={{course.courseName}} href="/course/{{course.courseTeacherId}}/">{{course.courseName}}</a>
                     </td>
                     <td width="30%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
-                        {{course.teacherName}}
+                        <a href="/teacher/{{course.teacherId}}/">{{course.teacherName}}</a>
                     </td>
                     <td width="20%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                         {{course.avgScore}}
@@ -102,9 +102,9 @@
                 {% for teacher in top_teachers %}
                 <tr>
                     <td width="50%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
-                        {{teacher.teacherName}}
+                        <a href="/teacher/{{teacher.teacherId}}/">{{teacher.teacherName}}</a>
                     </td>
-                    <td width="50%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                    <td width="50%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                         {{teacher.avgScore}}
                     </td>
                 </tr>
