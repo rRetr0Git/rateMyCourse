@@ -71,8 +71,8 @@ def signUp(request):
             }))
     try:
         new_password = make_password(password)
-        User(username=username, mail=mail, password=new_password).save()
         status = send_register_email(request, mail, 'register')
+        User(username=username, mail=mail, password=new_password).save()
     except Exception as err:
         errmsg = str(err)
         if("mail" in errmsg):
