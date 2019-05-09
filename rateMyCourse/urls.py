@@ -33,5 +33,7 @@ urlpatterns = [
     url(r'^saveUserPic/$', views.saveUserPic, name='saveUserPic'),
     url(r'^rank/$', views.getRank, name='getRank'),
     url(r'^addLike/$', views.addLike, name='addLike'),
-    url(r'^addDislike/$', views.addDislike, name='addDislike')
+    url(r'^addDislike/$', views.addDislike, name='addDislike'),
+
+    url(r'^active/(?P<active_code>\w*)/$', views.active, name='userActive')
 ]
