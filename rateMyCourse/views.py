@@ -10,6 +10,7 @@ import numpy as np
 import time
 import os
 from django.contrib.auth.hashers import make_password, check_password
+from rateMyCourse.utils.send_email import send_register_email
 
 # Create your views here.
 
@@ -57,9 +58,6 @@ def getIndex(request):
 
 @timeit
 def signUp(request):
-    """
-    注册后登录的代码复制了signIn，很蠢
-    """
     if request.session.get('is_login', False):
         request.session.flush()
     try:
@@ -74,6 +72,7 @@ def signUp(request):
     try:
         new_password = make_password(password)
         User(username=username, mail=mail, password=new_password).save()
+        status = send_register_email(request, mail, 'register')
     except Exception as err:
         errmsg = str(err)
         if("mail" in errmsg):
@@ -92,43 +91,9 @@ def signUp(request):
                 'errormessage': 'something wrong in ... well i don\'t know',
                 }))
     else:
-        try:
-            username = request.POST['username']
-            password = request.POST['password']
-        except Exception:
-            return HttpResponse(json.dumps({
-                'statCode': -1,
-                'errormessage': 'can not get username or mail or password',
-            }))
-        try:
-            u = User.objects.get(username=username)
-        except Exception:
-            try:
-                u = User.objects.get(mail=username)
-            except Exception:
-                return HttpResponse(json.dumps({
-                    'statCode': -2,
-                    'errormessage': 'username or mail doesn\'t exists',
-                }))
-        if not check_password(password, u.password):
-            return HttpResponse(json.dumps({
-                'statCode': -3,
-                'errormessage': 'wrong password',
-            }))
-        else:
-            addHitCount()
-            request.session['userid'] = str(u.id)
-            request.session['username'] = u.username
-            request.session['is_login'] = True
-            return HttpResponse(json.dumps({
-                'statCode': 0,
-                'username': u.username,
-            }))
-
-    '''
-    textBox = request.GET.get('textBox');
-    return HttpResponse("textBox: "+textBox)
-    '''
+        return HttpResponse(json.dumps({
+            'statCode': 0,
+        }))
 
 
 @timeit
@@ -325,6 +290,11 @@ def signIn(request):
             'statCode': -3,
             'errormessage': 'wrong password',
             }))
+    elif u.status == 1:
+        return HttpResponse(json.dumps({
+            'statCode': -4,
+            'errormessage': 'account isn\'t active',
+        }))
     else:
         addHitCount()
         request.session['userid'] = str(u.id)
@@ -732,3 +702,13 @@ def addDislike(request):
     dislike = Comment.objects.get(id=commentId).dislike
     Comment.objects.filter(id=commentId).update(dislike=dislike + 1)
     return render(request, "rateMyCourse/coursePage_new.html", {})
+
+
+@timeit
+def active(request, active_code):
+    try:
+        record = EmailVerifyRecord.objects.get(code=active_code)
+        User.objects.filter(mail=record.email).update(status=0)
+        return render(request, 'rateMyCourse/index.html', {'msg': '激活成功'})
+    except:
+        return render(request, 'rateMyCourse/index.html', {'msg': '激活失败'})
