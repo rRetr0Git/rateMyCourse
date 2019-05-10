@@ -1,4 +1,5 @@
 import unittest
+import pandas as pd
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
@@ -7,9 +8,13 @@ import string
 import time
 
 
+# 目前测试目标代码为release-1.5
+# 5.10更新，加入pandas读取filter.csv源数据进行课程查找和匹配。
+
 # 继承至TestCase，表示这是一个测试用例类
 class rateMyCourseCase(unittest.TestCase):
     # 初始化的一部分
+
     def setUp(self):
         self.driver = Chrome("C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
 
@@ -39,32 +44,40 @@ class rateMyCourseCase(unittest.TestCase):
         time.sleep(1)
         assert UserName in self.driver.page_source
 
+    # 搜索课程并评价
     def test_comment(self):
-        self.regist()
-        self.driver.find_element_by_id("buttonSelectSchool").click()
-        assert "北京航空航天大学" in self.driver.page_source
-        self.driver.find_element_by_xpath("//a[text()='北京航空航天大学']").click()
-        self.driver.find_element_by_id("buttonSelectDepartment").click()
-        self.driver.find_element_by_xpath("//a[text()='计算机学院']").click()
-        self.driver.find_element_by_xpath("//a[text()='搜索课程']").click()
-        self.driver.find_element_by_id("searchboxCourse").send_keys('数据')
-        self.driver.find_element_by_id("searchboxCourse").send_keys(Keys.RETURN)
-        time.sleep(1)
-        assert "大数据与人工智能实训" in self.driver.page_source
-        assert "大数据科学导论" in self.driver.page_source
-        assert "大数据分析" in self.driver.page_source
-        assert "数据挖据导论" in self.driver.page_source
-        assert "数据库原理课程设计" in self.driver.page_source
-        self.driver.find_element_by_xpath("//a[text()='大数据科学导论']").click()
-        self.driver.find_element_by_xpath("//a[text()='撰写评价']").click()
-        self.driver.find_element_by_id("B14").click()
-        self.driver.find_element_by_id("B21").click()
-        self.driver.find_element_by_id("B32").click()
-        self.driver.find_element_by_id("B45").click()
-        commentText = ''.join(random.sample(string.ascii_letters + string.digits, random.randint(16, 128)))
-        self.driver.find_element_by_id("writeCommentText").send_keys(commentText)
-        time.sleep(1)
+        data = pd.read_csv('C:\\Users\\WML\\Desktop\\rateMyCourse\\filtered.csv')
+        searchList = [data.iloc[random.randint(1, len(data))]['课程名称'] for _ in range(8)]
+        data.set_index("课程名称", inplace=True)
 
+        self.regist()
+        for searchData in searchList:
+            self.driver.find_element_by_id("buttonSelectSchool").click()
+            assert "北京航空航天大学" in self.driver.page_source
+            self.driver.find_element_by_xpath("//a[text()='北京航空航天大学']").click()
+            self.driver.find_element_by_id("buttonSelectDepartment").click()
+            self.driver.find_element_by_xpath("//a[text()='搜索课程']").click()
+            self.driver.find_element_by_id("searchboxCourse").send_keys(searchData)
+            self.driver.find_element_by_id("searchboxCourse").send_keys(Keys.RETURN)
+            time.sleep(1)
+            assert searchData in self.driver.page_source
+            self.driver.find_element_by_xpath("//a[text()='" + searchData + "']").click()
+            self.driver.find_element_by_xpath("//a[text()='撰写评价']").click()
+            self.driver.find_element_by_id("B1" + str(random.randint(1, 5))).click()
+            self.driver.find_element_by_id("B2" + str(random.randint(1, 5))).click()
+            self.driver.find_element_by_id("B3" + str(random.randint(1, 5))).click()
+            self.driver.find_element_by_id("B4" + str(random.randint(1, 5))).click()
+            time.sleep(1)
+            commentText = ''.join(random.sample(string.ascii_letters + string.digits, random.randint(16, 32)))
+            self.driver.find_element_by_id("writeCommentText").send_keys(commentText)
+            time.sleep(1)
+            self.driver.find_element_by_xpath("//input[@value='提交']").click()
+            time.sleep(1)
+            self.driver.switch_to.alert.accept()
+            time.sleep(1)
+            assert commentText in self.driver.page_source
+            self.driver.find_element_by_xpath("//a[text()='💙公客💙']").click()
+            time.sleep(1)
 
     # 在执行完各种测试用例方法之后会执行，为一个清理操作
     def tearDown(self):
