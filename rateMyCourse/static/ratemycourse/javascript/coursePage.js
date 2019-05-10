@@ -18,7 +18,7 @@ function Func_addLike(commentId){
           "commentId": commentId
         }
     });
-    location.replace(location);
+    document.getElementById("goodTime").innerHTML=parseInt(document.getElementById("goodTime").innerHTML)+1;
     return false;
 }
 
@@ -31,7 +31,7 @@ function Func_addDislike(commentId){
           "commentId": commentId
         }
     });
-    location.replace(location);
+    document.getElementById("badTime").innerHTML=parseInt(document.getElementById("badTime").innerHTML)+1;
     return false;
 }
 
@@ -123,6 +123,7 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     buttonTag[0].setAttribute("onclick", "this.disabled=true;Func_addLike('"+commentId+"')");
     buttonTag[0].innerHTML = "👍";
     divTags[7].setAttribute("class","col-md-1 column")
+    pTags[1].setAttribute("id","goodTime");
     pTags[1].appendChild(document.createTextNode(goodTimes));
 
     // insert vote-down
@@ -133,6 +134,7 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     buttonTag[1].innerHTML = "👎";
     divTags[9].setAttribute("class","col-md-1 column")
     var badnode = document.createTextNode(badTimes);
+    pTags[2].setAttribute("id","badTime");
     pTags[2].appendChild(badnode);
 
     divTags[10].setAttribute("class","list-group-item");
