@@ -11,6 +11,7 @@ import time
 import os
 from django.contrib.auth.hashers import make_password, check_password
 from rateMyCourse.utils.send_email import send_register_email
+from rateMyCourse.utils.generate_captcha import get_captcha
 
 # Create your views here.
 
@@ -53,7 +54,11 @@ def addHitCount():
 @timeit
 def getIndex(request):
     #addHitCount()
-    return render(request, "rateMyCourse/index.html")
+    sign_in_captcha_path, sign_in_captcha_string = get_captcha()
+    sign_up_captcha_path, sign_up_captcha_string = get_captcha()
+    request.session['sign_in_captcha_string'] = sign_in_captcha_string
+    request.session['sign_up_captcha_string'] = sign_up_captcha_string
+    return render(request, "rateMyCourse/index.html", {'sign_in_captcha_url': sign_in_captcha_path[14:], 'sign_up_captcha_url': sign_up_captcha_path[14:]})
 
 
 @timeit
@@ -64,11 +69,20 @@ def signUp(request):
         username = request.POST['username']
         mail = request.POST['mail']
         password = request.POST['password']
+        captcha = request.POST['captcha']
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
             'errormessage': 'can not get username, mail or password',
             }))
+    print('input: ' + captcha)
+    print('correct: ' + request.session.get('sign_up_captcha_string', False))
+    # if captcha.lower() != request.session.get('sign_up_captcha_string', False).lower():
+    #     return HttpResponse(json.dumps({
+    #         'statCode': -5,
+    #         'errormessage': 'captcha error',
+    #     }))
+
     try:
         new_password = make_password(password)
         status = send_register_email(request, mail, 'register')
@@ -265,16 +279,22 @@ def teacherPage(request, teacherId):
 
 @timeit
 def signIn(request):
-    if request.session.get('is_login', False):
-        request.session.flush()
     try:
         username = request.POST['username']
         password = request.POST['password']
+        captcha = request.POST['captcha']
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get username or mail or password',
+            'errormessage': 'can not get username or mail, password or captcha',
             }))
+    if captcha.lower() != request.session.get('sign_in_captcha_string', False).lower():
+        return HttpResponse(json.dumps({
+            'statCode': -5,
+            'errormessage': 'captcha error',
+        }))
+    if request.session.get('is_login', False):
+        request.session.flush()
     try:
         u = User.objects.get(username=username)
     except Exception:

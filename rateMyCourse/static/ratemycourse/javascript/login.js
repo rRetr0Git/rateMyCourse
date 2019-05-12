@@ -77,6 +77,7 @@ function Func_signUp() {
       "username": $("#inputUsername").val(),
       "mail": $("#inputEmail").val(),
       "password": $("#inputPassword").val(),
+      "captcha": $("#inputCaptcha").val()
     }
   }).done(function(data) {
     if (data.statCode != 0) {
@@ -101,7 +102,8 @@ function Func_signIn() {
     type: 'POST',
     data: {
       "username": $("#username").val(),
-      "password": $("#password").val()
+      "password": $("#password").val(),
+      "captcha": $("#captcha").val()
     }
   }).done(function(data) {
     if(data.statCode !== 0) {
