@@ -63,8 +63,6 @@ def getIndex(request):
 
 @timeit
 def signUp(request):
-    if request.session.get('is_login', False):
-        request.session.flush()
     try:
         username = request.POST['username']
         mail = request.POST['mail']
@@ -73,16 +71,17 @@ def signUp(request):
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get username, mail or password',
+            'errormessage': 'can not get username or mail, password or captcha',
             }))
     print('input: ' + captcha)
     print('correct: ' + request.session.get('sign_up_captcha_string', False))
-    # if captcha.lower() != request.session.get('sign_up_captcha_string', False).lower():
-    #     return HttpResponse(json.dumps({
-    #         'statCode': -5,
-    #         'errormessage': 'captcha error',
-    #     }))
-
+    if captcha.lower() != request.session.get('sign_up_captcha_string', False).lower():
+        return HttpResponse(json.dumps({
+            'statCode': -5,
+            'errormessage': 'captcha error',
+        }))
+    if request.session.get('is_login', False):
+        request.session.flush()
     try:
         new_password = make_password(password)
         status = send_register_email(request, mail, 'register')
