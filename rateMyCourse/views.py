@@ -51,13 +51,18 @@ def addHitCount():
     hit.save()
 
 
-@timeit
-def getIndex(request):
-    #addHitCount()
+def get_captcha_and_save_session(request):
     sign_in_captcha_path, sign_in_captcha_string = get_captcha()
     sign_up_captcha_path, sign_up_captcha_string = get_captcha()
     request.session['sign_in_captcha_string'] = sign_in_captcha_string
     request.session['sign_up_captcha_string'] = sign_up_captcha_string
+    return sign_in_captcha_path, sign_up_captcha_path
+
+
+@timeit
+def getIndex(request):
+    #addHitCount()
+    sign_in_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
     return render(request, "rateMyCourse/index.html", {'sign_in_captcha_url': sign_in_captcha_path[14:], 'sign_up_captcha_url': sign_up_captcha_path[14:]})
 
 
@@ -287,6 +292,8 @@ def signIn(request):
             'statCode': -1,
             'errormessage': 'can not get username or mail, password or captcha',
             }))
+    print('input: ' + captcha)
+    print('correct: ' + request.session.get('sign_in_captcha_string', False))
     if captcha.lower() != request.session.get('sign_in_captcha_string', False).lower():
         return HttpResponse(json.dumps({
             'statCode': -5,
