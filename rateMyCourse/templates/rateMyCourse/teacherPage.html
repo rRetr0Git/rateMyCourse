@@ -2,6 +2,36 @@
 {% block title %}个人信息 - {{ block.super }}{% endblock %}
 {% block content %}
 
+<style type="text/css">
+    #hor-minimalist-t
+    {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 16px;
+        background: #fff;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+    }
+    #hor-minimalist-t th
+    {
+        font-size: 18px;
+        font-weight: normal;
+        color: #039;
+        padding: 10px 8px;
+        border-bottom: 2px solid #6678b1;
+    }
+    #hor-minimalist-t td
+    {
+        border-bottom: 1px solid #ccc;
+        color: #669;
+        padding: 6px 8px;
+    }
+    #hor-minimalist-t tbody tr:hover td
+    {
+        color: #009;
+    }
+</style>
+
 <br>
 <br>
 <div class="container">
@@ -33,8 +63,8 @@
             <p class="text-center">
                 <strong>授课课程</strong>
             </p>
-            <div class="table-head">
-            <table>
+            <div>
+            <table id="hor-minimalist-t">
                 <colgroup>
                     <col style="width: 60%;" />
                     <col style="width: 40%;" />
@@ -44,8 +74,8 @@
                 </thead>
             </table>
             </div>
-            <div class="table-body">
-            <table>
+            <div>
+            <table id="hor-minimalist-t">
                 <colgroup>
                     <col style="width: 60%; text-overflow: ellipsis;" />
                     <col style="width: 40%; text-overflow: ellipsis;" />
