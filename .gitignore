@@ -7,9 +7,11 @@
 settings.py
 .DS_Store
 __pycache__
-migrations
+rateMyCourse/migrations/*
+!rateMyCourse/migrations/__init__.py
 db.sqlite3
 media
 rateMyCourse/static/ratemycourse/images/upload/user/*
 !rateMyCourse/static/ratemycourse/images/upload/user/user.png
 Server.md
+rateMyCourse/static/captcha/*
