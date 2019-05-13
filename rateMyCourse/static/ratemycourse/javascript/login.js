@@ -196,3 +196,19 @@ function Func_saveUserPic(){
     location.replace(location);
     return false;
 }
+
+function Func_getCaptcha(){
+    $.ajax("/getCaptcha/", {
+        dataType: 'json',
+        type: 'POST',
+        data: {}
+    }).done(function(data) {
+        var captchaImg1 = $("#captchaImg1");
+        captchaImg1.children().remove();
+        captchaImg1.append("<img src=\"" + data.sign_in_captcha_url +"\">");
+        var captchaImg2 = $("#captchaImg2");
+        captchaImg2.children().remove();
+        captchaImg2.append("<img src=\"" + data.sign_up_captcha_url +"\">");
+    });
+    return false;
+}

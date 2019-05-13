@@ -35,5 +35,6 @@ urlpatterns = [
     url(r'^addLike/$', views.addLike, name='addLike'),
     url(r'^addDislike/$', views.addDislike, name='addDislike'),
 
-    url(r'^active/(?P<active_code>\w*)/$', views.active, name='userActive')
+    url(r'^active/(?P<active_code>\w*)/$', views.active, name='userActive'),
+    url(r'^getCaptcha/$', views.getCaptcha, name='getCaptcha')
 ]

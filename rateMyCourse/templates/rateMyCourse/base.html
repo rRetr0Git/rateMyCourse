@@ -51,7 +51,7 @@
           {% else %}
               <div class="dropdown open" id="menuLogin">
                 <a class="btn text-white btn-primary" href="javascript:void(0)"
-                data-toggle="dropdown" id="navLogin">
+                data-toggle="dropdown" id="navLogin" onclick="Func_getCaptcha()">
                 <i class="fa d-inline fa-lg fa-user-circle-o mr-1"></i>登录/注册</a>
                 <div class="dropdown-menu dropdown-menu-right">
                   <div class="container px-3 py-2" style="width:260px;">
@@ -66,9 +66,7 @@
                         <input id="password" type="password" placeholder="密码" class="form-control has-warning" name="password" required>
                         <small class="invalid-feedback">密码不能为空</small>
                       </div>
-                      <div class="form-group">
-                        <img id="captchaImg" src={{ sign_in_captcha_url }}>
-                        <div class="help-block with-errors"></div>
+                      <div class="form-group" id="captchaImg1">
                       </div>
                       <div class="form-group">
                         <input id="captcha" type="text" placeholder="验证码"
@@ -94,8 +92,7 @@
                       <div class="form-group">
                         <input id="inputVerify" name="inputVerify" type="password" placeholder="确认密码" class="form-control" required>
                       </div>
-                      <div class="form-group">
-                        <img id="captchaImg" src={{ sign_up_captcha_url }}>
+                      <div class="form-group" id="captchaImg2">
                       </div>
                       <div class="form-group">
                         <input id="inputCaptcha" name="inputCaptcha" type="text" placeholder="验证码" class="form-control" required>
