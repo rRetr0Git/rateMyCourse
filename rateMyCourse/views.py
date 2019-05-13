@@ -62,9 +62,15 @@ def get_captcha_and_save_session(request):
 @timeit
 def getIndex(request):
     #addHitCount()
-    sign_in_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
-    return render(request, "rateMyCourse/index.html", {'sign_in_captcha_url': sign_in_captcha_path[14:], 'sign_up_captcha_url': sign_up_captcha_path[14:]})
+    return render(request, "rateMyCourse/index.html")
 
+@timeit
+def getCaptcha(request):
+    sign_in_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
+    return HttpResponse(json.dumps({
+        'sign_in_captcha_url': sign_in_captcha_path,
+        'sign_up_captcha_url': sign_up_captcha_path,
+    }))
 
 @timeit
 def signUp(request):
