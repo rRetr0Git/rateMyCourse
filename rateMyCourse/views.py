@@ -16,6 +16,14 @@ from rateMyCourse.utils.generate_captcha import get_captcha
 # Create your views here.
 
 def timeit(method):
+    """装饰器，记录函数运行时间
+
+    Args:
+        method: method to be timed.
+
+    Returns:
+        timed: time of running the method.
+    """
     def timed(*args, **kw):
         ts = time.time()
         result = method(*args, **kw)
@@ -42,6 +50,9 @@ def timeit(method):
 
 @timeit
 def addHitCount():
+    """访问次数统计，登录时被调用。访问次数保存在数据库中
+
+    """
     try:
         hit = HitCount.objects.get(name='hit')
     except Exception:
@@ -52,6 +63,12 @@ def addHitCount():
 
 
 def get_captcha_and_save_session(request):
+    """获取验证码，将正确结果存入session
+
+        Returns:
+            sign_in_captcha_path: path of captcha when sign in.
+            sign_up_captcha_path: path of captcha when sign up.
+    """
     sign_in_captcha_path, sign_in_captcha_string = get_captcha()
     sign_up_captcha_path, sign_up_captcha_string = get_captcha()
     request.session['sign_in_captcha_string'] = sign_in_captcha_string
@@ -61,11 +78,20 @@ def get_captcha_and_save_session(request):
 
 @timeit
 def getIndex(request):
+    """定向到主页
+
+    """
     #addHitCount()
     return render(request, "rateMyCourse/index.html")
 
 @timeit
 def getCaptcha(request):
+    """生成验证码，返回验证码路径和值
+
+        Returns:
+            sign_in_captcha_path: path of captcha.
+            sign_up_captcha_path: correct value of captcha.
+    """
     sign_in_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
     return HttpResponse(json.dumps({
         'sign_in_captcha_url': sign_in_captcha_path,
@@ -74,6 +100,11 @@ def getCaptcha(request):
 
 @timeit
 def signUp(request):
+    """用户注册，保证用户名和邮箱唯一后，发送注册邮件。邮件未验证时无法登陆
+
+    Returns:
+        statCode: status of current sign up.
+    """
     try:
         username = request.POST['username']
         mail = request.POST['mail']
