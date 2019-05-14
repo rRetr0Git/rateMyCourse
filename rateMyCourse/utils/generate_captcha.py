@@ -30,7 +30,7 @@ for i in range(256):
     table.append(i * 1.97)
 
 captcha_picture_num = 0
-max_captcha_picture_num = 30
+max_captcha_picture_num = 300
 
 
 # rewrite the method to generate captcha
@@ -58,7 +58,7 @@ class MyImageCaptcha(ImageCaptcha):
 
             # rotate
             im = im.crop(im.getbbox())
-            im = im.rotate(random.uniform(0, 0), Image.BILINEAR, expand=1)
+            im = im.rotate(random.uniform(-10, 10), Image.BILINEAR, expand=1)
 
             # warp
             dx = w * random.uniform(0.1, 0.3)
