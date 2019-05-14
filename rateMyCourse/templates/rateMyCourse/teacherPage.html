@@ -1,0 +1,99 @@
+{% extends '../rateMyCourse/base.html' %}
+{% block title %}个人信息 - {{ block.super }}{% endblock %}
+{% block content %}
+
+<style type="text/css">
+    #hor-minimalist-t
+    {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 16px;
+        background: #fff;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+    }
+    #hor-minimalist-t th
+    {
+        font-size: 18px;
+        font-weight: normal;
+        color: #039;
+        padding: 10px 8px;
+        border-bottom: 2px solid #6678b1;
+    }
+    #hor-minimalist-t td
+    {
+        border-bottom: 1px solid #ccc;
+        color: #669;
+        padding: 6px 8px;
+    }
+    #hor-minimalist-t tbody tr:hover td
+    {
+        color: #009;
+    }
+</style>
+
+<br>
+<br>
+<div class="container">
+
+    <div class="row clearfix">
+        <div class="col-md-5 column">
+            <p class="text-center">
+                <strong>姓名：</strong><strong id="name">{{teacherName}}</strong>
+            </p>
+            <p class="text-center">
+                <img alt="200x200" width="200" height="200" src={{ teacherImg }} class="img-rounded"/>
+            </p>
+            <br>
+            {% if teacherImg != '/static/ratemycourse/images/upload/user/user.png' %}
+                <p class="text-center" id="personalSite">
+                    <strong>个人主页：<a href={{ teacherWeb }}>点击跳转</a></strong>
+                </p>
+            {% else %}
+                <p class="text-center" id="personalSiteNull">
+                    <strong>信息暂无</strong>
+                </p>
+            {% endif %}
+        </div>
+        <div class="col-md-7 column">
+            <p class="text-center">
+                <strong>授课课程</strong>
+            </p>
+            <div>
+            <table id="hor-minimalist-t">
+                <colgroup>
+                    <col style="width: 60%;" />
+                    <col style="width: 40%;" />
+                </colgroup>
+                <thead>
+                    <tr><th>课程名</th><th>评分</th></tr>
+                </thead>
+            </table>
+            </div>
+            <div>
+            <table id="hor-minimalist-t">
+                <colgroup>
+                    <col style="width: 60%; text-overflow: ellipsis;" />
+                    <col style="width: 40%; text-overflow: ellipsis;" />
+                </colgroup>
+                <tbody>
+                    {% for item in courseList %}
+                    <tr><td><a href="/course/{{item.courseId}}">{{item.courseName}}</a></td><td>{{item.courseScore}}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/ratemycourse/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+<script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>-->
+<script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+<script src="/static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+<script src="/static/ratemycourse/javascript/userInfo.js"></script>
+{% endblock %}

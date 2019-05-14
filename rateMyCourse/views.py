@@ -10,10 +10,20 @@ import numpy as np
 import time
 import os
 from django.contrib.auth.hashers import make_password, check_password
+from rateMyCourse.utils.send_email import send_register_email
+from rateMyCourse.utils.generate_captcha import get_captcha
 
 # Create your views here.
 
 def timeit(method):
+    """装饰器，记录函数运行时间
+
+    Args:
+        method: method to be timed.
+
+    Returns:
+        timed: time of running the method.
+    """
     def timed(*args, **kw):
         ts = time.time()
         result = method(*args, **kw)
@@ -40,6 +50,9 @@ def timeit(method):
 
 @timeit
 def addHitCount():
+    """访问次数统计，登录时被调用。访问次数保存在数据库中
+
+    """
     try:
         hit = HitCount.objects.get(name='hit')
     except Exception:
@@ -49,30 +62,71 @@ def addHitCount():
     hit.save()
 
 
+def get_captcha_and_save_session(request):
+    """获取验证码，将正确结果存入session
+
+        Returns:
+            sign_in_captcha_path: path of captcha when sign in.
+            sign_up_captcha_path: path of captcha when sign up.
+    """
+    sign_in_captcha_path, sign_in_captcha_string = get_captcha()
+    sign_up_captcha_path, sign_up_captcha_string = get_captcha()
+    request.session['sign_in_captcha_string'] = sign_in_captcha_string
+    request.session['sign_up_captcha_string'] = sign_up_captcha_string
+    return sign_in_captcha_path, sign_up_captcha_path
+
+
 @timeit
 def getIndex(request):
+    """定向到主页
+
+    """
     #addHitCount()
     return render(request, "rateMyCourse/index.html")
 
+@timeit
+def getCaptcha(request):
+    """生成验证码，返回验证码路径和值
+
+        Returns:
+            sign_in_captcha_path: path of captcha.
+            sign_up_captcha_path: correct value of captcha.
+    """
+    sign_in_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
+    return HttpResponse(json.dumps({
+        'sign_in_captcha_url': sign_in_captcha_path,
+        'sign_up_captcha_url': sign_up_captcha_path,
+    }))
 
 @timeit
 def signUp(request):
+    """用户注册，保证用户名和邮箱唯一后，发送注册邮件。邮件未验证时无法登陆
+
+    Returns:
+        statCode: status of current sign up.
     """
-    注册后登录的代码复制了signIn，很蠢
-    """
-    if request.session.get('is_login', False):
-        request.session.flush()
     try:
         username = request.POST['username']
         mail = request.POST['mail']
         password = request.POST['password']
+        captcha = request.POST['captcha']
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get username, mail or password',
+            'errormessage': 'can not get username or mail, password or captcha',
             }))
+    print('input: ' + captcha)
+    print('correct: ' + request.session.get('sign_up_captcha_string', False))
+    if captcha.lower() != request.session.get('sign_up_captcha_string', False).lower():
+        return HttpResponse(json.dumps({
+            'statCode': -5,
+            'errormessage': 'captcha error',
+        }))
+    if request.session.get('is_login', False):
+        request.session.flush()
     try:
         new_password = make_password(password)
+        status = send_register_email(request, mail, 'register')
         User(username=username, mail=mail, password=new_password).save()
     except Exception as err:
         errmsg = str(err)
@@ -92,43 +146,9 @@ def signUp(request):
                 'errormessage': 'something wrong in ... well i don\'t know',
                 }))
     else:
-        try:
-            username = request.POST['username']
-            password = request.POST['password']
-        except Exception:
-            return HttpResponse(json.dumps({
-                'statCode': -1,
-                'errormessage': 'can not get username or mail or password',
-            }))
-        try:
-            u = User.objects.get(username=username)
-        except Exception:
-            try:
-                u = User.objects.get(mail=username)
-            except Exception:
-                return HttpResponse(json.dumps({
-                    'statCode': -2,
-                    'errormessage': 'username or mail doesn\'t exists',
-                }))
-        if not check_password(password, u.password):
-            return HttpResponse(json.dumps({
-                'statCode': -3,
-                'errormessage': 'wrong password',
-            }))
-        else:
-            addHitCount()
-            request.session['userid'] = str(u.id)
-            request.session['username'] = u.username
-            request.session['is_login'] = True
-            return HttpResponse(json.dumps({
-                'statCode': 0,
-                'username': u.username,
-            }))
-
-    '''
-    textBox = request.GET.get('textBox');
-    return HttpResponse("textBox: "+textBox)
-    '''
+        return HttpResponse(json.dumps({
+            'statCode': 0,
+        }))
 
 
 @timeit
@@ -179,6 +199,7 @@ def search(request):
             'name': course.name,
             'courseTeacher' : ct.id,
             'teacher': teacher.name,
+            'teacherId': teacher.id,
             'type': course.type,
             'department': course.department,
             'rateScore': '%.1f' % avg_score,
@@ -225,7 +246,7 @@ def coursePage(request, courseTeacherId):
             other_avg_score = 3
         else:
             other_avg_score = (other_teacher.allHomeworkScore + other_teacher.allDifficultyScore + other_teacher.allKnowledgeScore + other_teacher.allSatisfactionScore) / 4 / other_count
-        other_teacher_info.append({"id":other_ct.id, "name":other_teacher.name, "score":'%.1f'%other_avg_score})
+        other_teacher_info.append({"id":other_ct.id, "name":other_teacher.name, "teacherId":other_teacher.id,"score":'%.1f'%other_avg_score})
 
     other_course_info = []
     other_cts = CourseTeacher.objects.filter(teacherId=teacher.id).filter(~Q(courseId=course.id))
@@ -235,7 +256,7 @@ def coursePage(request, courseTeacherId):
             other_avg_score = 3
         else:
             other_avg_score = (other_ct.allHomeworkScore + other_ct.allDifficultyScore + other_ct.allKnowledgeScore + other_ct.allSatisfactionScore) / 4 / other_count
-        other_course_info.append({"id":other_ct.id, "name":other_ct.courseId.name, "score":'%.1f'%other_avg_score})
+        other_course_info.append({"id":other_ct.id, "name":other_ct.courseId.name, "teacherId":other_ct.teacherId.id,"score":'%.1f'%other_avg_score})
 
     return render(request, "rateMyCourse/coursePage_new.html", {
         'course_name': course.name,
@@ -253,6 +274,7 @@ def coursePage(request, courseTeacherId):
         'course_website': course.website if course.website != '' else '.',
         'profession_website': "https://baidu.com",
         'course_teacher': teacher.name,
+        'teacherId':teacher.id,
         'courseteacherid': courseTeacher.id,
         'other_teacher_info': other_teacher_info,
         'other_course_info': other_course_info
@@ -278,19 +300,43 @@ def ratePage(request, courseTeacherId):
             'aspect4': '满意度',
         })
 
+@timeit
+def teacherPage(request, teacherId):
+    # addHitCount()
+    teacher = Teacher.objects.get(id=teacherId)
+    teacherId = teacher.id
+    courseList = []
+    cts = CourseTeacher.objects.filter(teacherId=teacherId)
+    for ct in cts:
+        course = ct.courseId
+        courseList.append({'courseId': ct.id, 'courseName': course.name, 'courseScore': '%.1f' % ((ct.allHomeworkScore + ct.allKnowledgeScore + ct.allSatisfactionScore + ct.allDifficultyScore) / ct.commentCnt / 4) if ct.commentCnt!=0 else "暂无评分"})
+    return render(request, "rateMyCourse/teacherPage.html",{
+        'teacherName':teacher.name,
+        'teacherImg':teacher.img if teacher.img != "user.png" else '/static/ratemycourse/images/upload/user/user.png',
+        'teacherWeb':teacher.website,
+        'courseList':courseList,
+        'teacherScore': '%.1f' % ((ct.allHomeworkScore + ct.allKnowledgeScore + ct.allSatisfactionScore + ct.allDifficultyScore) / ct.commentCnt / 4) if ct.commentCnt != 0 else "暂无评分"    })
 
 @timeit
 def signIn(request):
-    if request.session.get('is_login', False):
-        request.session.flush()
     try:
         username = request.POST['username']
         password = request.POST['password']
+        captcha = request.POST['captcha']
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get username or mail or password',
+            'errormessage': 'can not get username or mail, password or captcha',
             }))
+    print('input: ' + captcha)
+    print('correct: ' + request.session.get('sign_in_captcha_string', False))
+    if captcha.lower() != request.session.get('sign_in_captcha_string', False).lower():
+        return HttpResponse(json.dumps({
+            'statCode': -5,
+            'errormessage': 'captcha error',
+        }))
+    if request.session.get('is_login', False):
+        request.session.flush()
     try:
         u = User.objects.get(username=username)
     except Exception:
@@ -306,6 +352,11 @@ def signIn(request):
             'statCode': -3,
             'errormessage': 'wrong password',
             }))
+    elif u.status == 1:
+        return HttpResponse(json.dumps({
+            'statCode': -4,
+            'errormessage': 'account isn\'t active',
+        }))
     else:
         addHitCount()
         request.session['userid'] = str(u.id)
@@ -387,9 +438,13 @@ def getComment(request):
         cmt = cuct.commentId
         cmtList.append({
             'userName': user.username if cmt.anonymous == False else '匿名用户',
+            'userid': str(user.id) if cmt.anonymous == False else '',
             'text': cmt.content.replace("\n", "<br>"),
             'time': cmt.time.strftime('%y/%m/%d'),
-            'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png'
+            'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png',
+            'goodTimes': cmt.like,
+            'badTimes': cmt.dislike,
+            'commentId': str(cmt.id)
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -695,3 +750,27 @@ def getRank(request):
         'top_courses': top_courses,
         'top_teachers': top_teachers
     })
+
+@timeit
+def addLike(request):
+    commentId = request.POST['commentId']
+    like = Comment.objects.get(id=commentId).like
+    Comment.objects.filter(id=commentId).update(like=like + 1)
+    return render(request, "rateMyCourse/coursePage_new.html", {})
+
+@timeit
+def addDislike(request):
+    commentId = request.POST['commentId']
+    dislike = Comment.objects.get(id=commentId).dislike
+    Comment.objects.filter(id=commentId).update(dislike=dislike + 1)
+    return render(request, "rateMyCourse/coursePage_new.html", {})
+
+
+@timeit
+def active(request, active_code):
+    try:
+        record = EmailVerifyRecord.objects.get(code=active_code)
+        User.objects.filter(mail=record.email).update(status=0)
+        return render(request, 'rateMyCourse/index.html', {'msg': '激活成功'})
+    except:
+        return render(request, 'rateMyCourse/index.html', {'msg': '激活失败'})

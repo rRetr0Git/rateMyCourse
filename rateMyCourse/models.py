@@ -1,6 +1,5 @@
 #-*- coding: UTF-8 -*-
 from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
 import uuid
 # Create your models here.
 
@@ -29,23 +28,23 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
-class CourseRate(models.Model):
-    # attributes
-    id = models.ForeignKey(
-        Course,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        editable=False
-    )
-    score = models.FloatField(default=3.0)
-    homework = models.FloatField(default=3.0) # 作业量
-    difficulty = models.FloatField(default=3.0) # 难易度
-    knowledge = models.FloatField(default=3.0) # 收获度
-    satisfaction = models.FloatField(default=3.0) # 满意度
-    rateCount = models.IntegerField(default=0)
-
-    def __str__(self):
-        return str(self.id) + " " + str(self.score)
+# class CourseRate(models.Model):
+#     # attributes
+#     id = models.ForeignKey(
+#         Course,
+#         on_delete=models.CASCADE,
+#         primary_key=True,
+#         editable=False
+#     )
+#     score = models.FloatField(default=3.0)
+#     homework = models.FloatField(default=3.0) # 作业量
+#     difficulty = models.FloatField(default=3.0) # 难易度
+#     knowledge = models.FloatField(default=3.0) # 收获度
+#     satisfaction = models.FloatField(default=3.0) # 满意度
+#     rateCount = models.IntegerField(default=0)
+#
+#     def __str__(self):
+#         return str(self.id) + " " + str(self.score)
 
 class CourseKeyWord(models.Model):
     # attributes
@@ -71,6 +70,7 @@ class User(models.Model):
     departmentName = models.CharField(max_length=20,null=True)
     img = models.ImageField(default='user.png')
     mail = models.CharField(max_length=40)
+    status = models.IntegerField(default=1)
     def __str__(self):
         return self.username
 
@@ -176,3 +176,9 @@ class CommentUserCourseTeacher(models.Model):
 class HitCount(models.Model):
     name = models.CharField(max_length=50)
     count = models.IntegerField()
+
+
+class EmailVerifyRecord(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    email = models.CharField(max_length=40, unique=True)
+    type = models.CharField(max_length=10)

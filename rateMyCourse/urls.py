@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search'),
     url(r'^course/(?P<courseTeacherId>[0-9A-Za-z\-]+)/$', views.coursePage, name='coursePage'),
     url(r'^course/(?P<courseTeacherId>[0-9A-Za-z\-]+)/rate/$', views.ratePage, name='ratePage'),
+    url(r'^teacher/(?P<teacherId>[0-9A-Za-z\-]+)/$', views.teacherPage, name='teacherPage'),
 
     #POST
     url(r'^signIn/$', views.signIn, name='signIn'),
@@ -30,5 +31,10 @@ urlpatterns = [
     url(r'^userInfo/$', views.userInfo, name='userInfo'),
     url(r'^saveUserInfo/$', views.saveUserInfo, name='saveUserInfo'),
     url(r'^saveUserPic/$', views.saveUserPic, name='saveUserPic'),
-    url(r'^rank/$', views.getRank,name='getRank'),
+    url(r'^rank/$', views.getRank, name='getRank'),
+    url(r'^addLike/$', views.addLike, name='addLike'),
+    url(r'^addDislike/$', views.addDislike, name='addDislike'),
+
+    url(r'^active/(?P<active_code>\w*)/$', views.active, name='userActive'),
+    url(r'^getCaptcha/$', views.getCaptcha, name='getCaptcha')
 ]

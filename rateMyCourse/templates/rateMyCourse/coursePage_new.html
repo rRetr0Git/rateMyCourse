@@ -33,7 +33,7 @@
                                 <p class="text-dark text-center" style="margin-top:8px;">{{course_type}}</p>
                             </td>
                             <td width="25%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
-                                <p class="text-dark text-center" style="margin-top:8px;">{{course_teacher}}</p>
+                                <p class="text-dark text-center" style="margin-top:8px;"><a href="/teacher/{{teacherId}}/">{{course_teacher}}</a></p>
                             </td>
                             <td width="25%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                                 <p class="text-dark text-center" style="margin-top:8px;">{{course_scores}}</p>
@@ -132,7 +132,7 @@
                                         <a title={{course_name}} href="/course/{{item.id}}/">{{course_name}}</a>
                                     </td>
                                     <td width="100px" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
-                                        {{item.name}}
+                                        <a href="/teacher/{{item.teacherId}}/">{{item.name}}</a>
                                     </td>
                                     <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
                                         {{item.score}}
@@ -161,7 +161,7 @@
                                         <a title={{item.name}} href="/course/{{item.id}}/">{{item.name}}</a>
                                     </td>
                                     <td width="100px" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
-                                        {{course_teacher}}
+                                        <a href="/teacher/{{item.teacherId}}/">{{course_teacher}}</a>
                                     </td>
                                     <td rowspan=$rowspan style='vertical-align: middle;text-align: center;'>
                                         {{item.score}}
