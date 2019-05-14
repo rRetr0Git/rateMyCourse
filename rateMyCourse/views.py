@@ -12,6 +12,8 @@ import os
 from django.contrib.auth.hashers import make_password, check_password
 from rateMyCourse.utils.send_email import send_register_email
 from rateMyCourse.utils.generate_captcha import get_captcha
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 
@@ -98,6 +100,16 @@ def getCaptcha(request):
         'sign_up_captcha_url': sign_up_captcha_path,
     }))
 
+
+def ValidateEmail( email ):
+
+    try:
+        validate_email( email )
+        return True
+    except ValidationError:
+        return False
+
+
 @timeit
 def signUp(request):
     """用户注册，保证用户名和邮箱唯一后，发送注册邮件。邮件未验证时无法登陆
@@ -115,6 +127,13 @@ def signUp(request):
             'statCode': -1,
             'errormessage': 'can not get username or mail, password or captcha',
             }))
+    try:
+        validate_email(mail)
+    except ValidationError:
+        return HttpResponse(json.dumps({
+            'statCode': -6,
+            'errormessage': 'email invalid',
+        }))
     print('input: ' + captcha)
     print('correct: ' + request.session.get('sign_up_captcha_string', False))
     if captcha.lower() != request.session.get('sign_up_captcha_string', False).lower():
@@ -130,6 +149,7 @@ def signUp(request):
         User(username=username, mail=mail, password=new_password).save()
     except Exception as err:
         errmsg = str(err)
+        print(errmsg)
         if("mail" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -2,
