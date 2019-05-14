@@ -2,7 +2,7 @@ import pandas as pd
 from rateMyCourse.models import *
 import string
 print('cleaning data......')
-for table in [School, Course, Teacher, SchoolCourse, CourseTeacher]:
+for table in [School, Course, Teacher, SchoolCourse, CourseTeacher,CommentUserCourseTeacher,Comment]:
 	table.objects.all().delete()
 print('cleaning finished!')
 print('importing data......')
