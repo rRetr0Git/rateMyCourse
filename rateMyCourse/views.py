@@ -145,8 +145,8 @@ def signUp(request):
         request.session.flush()
     try:
         new_password = make_password(password)
-        status = send_register_email(request, mail, 'register')
-        User(username=username, mail=mail, password=new_password).save()
+        # status = send_register_email(request, mail, 'register')
+        User(username=username, mail=mail, password=new_password, status=0).save()# status为0表示有效用户
     except Exception as err:
         errmsg = str(err)
         print(errmsg)

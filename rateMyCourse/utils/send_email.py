@@ -46,8 +46,8 @@ def send_register_email(request, email, send_type='register'):
     email_record.code = random_str  # how to ensure unique
     email_record.email = email  # how to ensure unique
     email_record.type = send_type
-    email_title = '点击验证公课网账户'
-    email_body = '请点击下边的链接激活 ' + request.build_absolute_uri('/') +'active/{0}'.format(random_str)
+    email_title = '公课网账户激活'
+    email_body = '点击链接激活公课网账户 ' + request.build_absolute_uri('/') +'active/{0}'.format(random_str)
     print('start sending email')
     send_status = send_mail(email_title, email_body, EMAIL_FROM, [email], html_message=email_body)
     print('sending email succeeds')
