@@ -309,14 +309,13 @@ def teacherPage(request, teacherId):
     cts = CourseTeacher.objects.filter(teacherId=teacherId)
     for ct in cts:
         course = ct.courseId
-        courseList.append({'courseId': ct.id, 'courseName': course.name, 'courseScore': (ct.allHomeworkScore + ct.allKnowledgeScore + ct.allSatisfactionScore + ct.allDifficultyScore) / ct.commentCnt / 4 if ct.commentCnt!=0 else "暂无评分"})
+        courseList.append({'courseId': ct.id, 'courseName': course.name, 'courseScore': '%.1f' % ((ct.allHomeworkScore + ct.allKnowledgeScore + ct.allSatisfactionScore + ct.allDifficultyScore) / ct.commentCnt / 4) if ct.commentCnt!=0 else "暂无评分"})
     return render(request, "rateMyCourse/teacherPage.html",{
         'teacherName':teacher.name,
         'teacherImg':teacher.img if teacher.img != "user.png" else '/static/ratemycourse/images/upload/user/user.png',
         'teacherWeb':teacher.website,
         'courseList':courseList,
-        'teacherScore': (teacher.allDifficultyScore + teacher.allSatisfactionScore + teacher.allKnowledgeScore + teacher.allHomeworkScore) / teacher.commentCnt / 4 if teacher.commentCnt!=0 else "暂无评分",
-    })
+        'teacherScore': '%.1f' % ((ct.allHomeworkScore + ct.allKnowledgeScore + ct.allSatisfactionScore + ct.allDifficultyScore) / ct.commentCnt / 4) if ct.commentCnt != 0 else "暂无评分"    })
 
 @timeit
 def signIn(request):
