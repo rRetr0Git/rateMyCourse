@@ -205,10 +205,38 @@ function Func_getCaptcha(){
     }).done(function(data) {
         var captchaImg1 = $("#captchaImg1");
         captchaImg1.children().remove();
-        captchaImg1.append("<img src=\"" + data.sign_in_captcha_url +"\">");
+        captchaImg1.append("<img src=\"" + data.sign_in_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
+        captchaImg1.append("<ul class=\"list-unstyled\">\n" +
+                           "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
+                           "</ul>");
         var captchaImg2 = $("#captchaImg2");
         captchaImg2.children().remove();
-        captchaImg2.append("<img src=\"" + data.sign_up_captcha_url +"\">");
+        captchaImg2.append("<img src=\"" + data.sign_up_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
+        captchaImg2.append("<ul class=\"list-unstyled\">\n" +
+                           "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
+                           "</ul>");
+    });
+    return false;
+}
+
+function Func_changeCaptcha(){
+    $.ajax("/getCaptcha/", {
+        dataType: 'json',
+        type: 'POST',
+        data: {}
+    }).done(function(data) {
+        var captchaImg1 = $("#captchaImg1");
+        captchaImg1.children().remove();
+        captchaImg1.append("<img src=\"" + data.sign_in_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
+        captchaImg1.append("<ul class=\"list-unstyled\">\n" +
+                           "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
+                           "</ul>");
+        var captchaImg2 = $("#captchaImg2");
+        captchaImg2.children().remove();
+        captchaImg2.append("<img src=\"" + data.sign_up_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
+        captchaImg2.append("<ul class=\"list-unstyled\">\n" +
+                           "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
+                           "</ul>");
     });
     return false;
 }
