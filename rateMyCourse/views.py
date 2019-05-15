@@ -101,15 +101,6 @@ def getCaptcha(request):
     }))
 
 
-def ValidateEmail( email ):
-
-    try:
-        validate_email( email )
-        return True
-    except ValidationError:
-        return False
-
-
 @timeit
 def signUp(request):
     """用户注册，保证用户名和邮箱唯一后，发送注册邮件。邮件未验证时无法登陆
@@ -135,8 +126,8 @@ def signUp(request):
             'errormessage': 'email invalid',
         }))
     print('input: ' + captcha)
-    print('correct: ' + request.session.get('sign_up_captcha_string', False))
-    if captcha.lower() != request.session.get('sign_up_captcha_string', False).lower():
+    print('correct: ' + request.session.get('sign_up_captcha_string', 'False'))
+    if captcha.lower() != request.session.get('sign_up_captcha_string', 'False').lower():
         return HttpResponse(json.dumps({
             'statCode': -5,
             'errormessage': 'captcha error',
@@ -145,8 +136,18 @@ def signUp(request):
         request.session.flush()
     try:
         new_password = make_password(password)
-        # status = send_register_email(request, mail, 'register')
-        User(username=username, mail=mail, password=new_password, status=0).save()# status为0表示有效用户
+        if len(User.objects.filter(mail=mail)) != 0:
+            return HttpResponse(json.dumps({
+                'statCode': -2,
+                'errormessage': 'mail repeats',
+            }))
+        if len(User.objects.filter(username=username)) != 0:
+            return HttpResponse(json.dumps({
+                'statCode': -3,
+                'errormessage': 'username repeats',
+            }))
+        status = send_register_email(request, mail, 'register')
+        User(username=username, mail=mail, password=new_password, status=1).save()# status为0表示有效用户
     except Exception as err:
         errmsg = str(err)
         print(errmsg)
@@ -349,8 +350,8 @@ def signIn(request):
             'errormessage': 'can not get username or mail, password or captcha',
             }))
     print('input: ' + captcha)
-    print('correct: ' + request.session.get('sign_in_captcha_string', False))
-    if captcha.lower() != request.session.get('sign_in_captcha_string', False).lower():
+    print('correct: ' + request.session.get('sign_in_captcha_string', 'False'))
+    if captcha.lower() != request.session.get('sign_in_captcha_string', 'False').lower():
         return HttpResponse(json.dumps({
             'statCode': -5,
             'errormessage': 'captcha error',

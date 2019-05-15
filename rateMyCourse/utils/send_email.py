@@ -50,6 +50,6 @@ def send_register_email(request, email, send_type='register'):
     email_body = '点击链接激活公课网账户 ' + request.build_absolute_uri('/') +'active/{0}'.format(random_str)
     print('start sending email')
     send_status = send_mail(email_title, email_body, EMAIL_FROM, [email], html_message=email_body)
-    print('sending email succeeds')
+    print('sending email end')
     email_record.save()
     return send_status
