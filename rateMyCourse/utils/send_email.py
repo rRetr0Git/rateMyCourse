@@ -3,8 +3,27 @@ from django.core.mail import send_mail
 from rateMyCourse.models import *
 from stupidSE.settings import EMAIL_FROM
 import os
+import time
 
 
+def timeit(method):
+    """装饰器，记录函数运行时间
+
+    Args:
+        method: method to be timed.
+
+    Returns:
+        timed: time of running the method.
+    """
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        print('%r  %2.2f sec' % (method.__name__, te - ts))
+        return result
+    return timed
+
+@timeit
 def get_random_str(count):
     random_str = ''
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
@@ -16,6 +35,7 @@ def get_random_str(count):
     return random_str
 
 
+@timeit
 def send_register_email(request, email, send_type='register'):
     email_record = EmailVerifyRecord()
     while(1):
@@ -26,8 +46,10 @@ def send_register_email(request, email, send_type='register'):
     email_record.code = random_str  # how to ensure unique
     email_record.email = email  # how to ensure unique
     email_record.type = send_type
-    email_record.save()
-    email_title = '点击验证公课网账户'
-    email_body = '请点击下边的链接激活 ' + request.build_absolute_uri('/') +'active/{0}'.format(random_str)
+    email_title = '公课网账户激活'
+    email_body = '点击链接激活公课网账户 ' + request.build_absolute_uri('/') +'active/{0}'.format(random_str)
+    print('start sending email')
     send_status = send_mail(email_title, email_body, EMAIL_FROM, [email], html_message=email_body)
+    print('sending email end')
+    email_record.save()
     return send_status
