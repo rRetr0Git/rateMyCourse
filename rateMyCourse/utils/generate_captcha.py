@@ -107,6 +107,12 @@ class MyImageCaptcha(ImageCaptcha):
 
 
 def get_captcha():
+    """生成验证码
+
+    Returns:
+        url: path of captcha.
+        captcha_string: value of captcha.
+    """
     global captcha_picture_num
     captcha_picture_path = './rateMyCourse/static/captcha/' + str(captcha_picture_num) + '.jpg'
     url = '/static/captcha/' + str(captcha_picture_num) + '.jpg'
