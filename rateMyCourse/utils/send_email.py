@@ -25,6 +25,14 @@ def timeit(method):
 
 @timeit
 def get_random_str(count):
+    """生成激活密钥
+
+    Args:
+        count: length of code.
+
+    Returns:
+        random_str: code to activate user.
+    """
     random_str = ''
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
     str_len = len(chars) - 1
@@ -37,6 +45,14 @@ def get_random_str(count):
 
 @timeit
 def send_register_email(request, email, send_type='register'):
+    """发送激活邮件
+
+    Args:
+        email: email to receive code.
+
+    Returns:
+        send_status: 1 if sending secceeds, else 0.
+    """
     email_record = EmailVerifyRecord()
     while(1):
         random_str = get_random_str(15)
