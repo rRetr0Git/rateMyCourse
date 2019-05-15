@@ -510,7 +510,10 @@ def getComment(request):
 def submitComment(request):
     # addHitCount()
     if not request.session.get('is_login', False):
-        return render(request, "rateMyCourse/index.html")
+        return HttpResponse(json.dumps({
+            'statCode': -2,
+            'errormessage': 'not login',
+        }))
     try:
         username = request.session['username']
         content = request.POST['comment']
