@@ -89,8 +89,8 @@ function Func_signUp() {
       //$("#menuUser").show()
       //$("#navUser").text(data.username)
       //$.cookie('userid', data.userid, {path: '/'})
-        //alert("激活邮件已发送至您的邮箱，请及时查看")
-        alert("注册成功！");
+        alert("激活邮件已发送至您的邮箱，请及时查看")
+        //alert("注册成功！");
         location.replace(location);
     }
   })
