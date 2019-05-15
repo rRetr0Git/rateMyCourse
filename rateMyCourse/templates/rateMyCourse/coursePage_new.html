@@ -42,9 +42,15 @@
                     </tbody>
                 </table>
                 <br>
-                <p class="text-center">
-                    <a class="btn btn-lg btn-default" id="toComment" href="/course/{{courseteacherid}}/rate/">撰写评价</a>
-                </p>
+                {% if request.session.is_login %}
+                    <p class="text-center">
+                        <a class="btn btn-lg btn-default" id="toComment" href="/course/{{courseteacherid}}/rate/">撰写评价</a>
+                    </p>
+                {% else %}
+                    <p class="text-center">
+                        <a class="btn btn-lg btn-warning">登陆后评价</a>
+                    </p>
+                {% endif %}
             </div>
 
             <div class="col-md-4 column">
