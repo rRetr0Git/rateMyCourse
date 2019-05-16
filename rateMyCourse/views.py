@@ -65,7 +65,7 @@ def addHitCount():
 
 
 def get_captcha_and_save_session(request):
-    """获取验证码，将正确结果存入session
+    """获取验证码，将正确结果存入session。每次点击登录/注册时被调用
 
         Returns:
             sign_in_captcha_path: path of captcha when sign in.
@@ -88,7 +88,7 @@ def getIndex(request):
 
 @timeit
 def getCaptcha(request):
-    """生成验证码，返回验证码路径和值
+    """生成验证码，返回验证码路径和值。具体过程调用get_captcha_and_save_session
 
         Returns:
             sign_in_captcha_path: path of captcha.
@@ -174,6 +174,16 @@ def signUp(request):
 
 @timeit
 def simpleSearch(school, department, keywords):
+    """完成数据库查找工作
+
+    Args:
+        school: school name to search.
+        department: department to search.
+        keywords: keywords to search.
+
+    Return:
+        courseTeacherList: courses information.
+    """
     if school == None:
         courseList = Course.objects.filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
         courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
@@ -193,6 +203,16 @@ def simpleSearch(school, department, keywords):
 
 @timeit
 def search(request):
+    """根据学校、专业进行搜索。调用simpleSearch完成数据库查找工作
+
+    Args:
+        request: contains school, department and keyword.
+
+    Returns:
+        courses: courses information.
+        count: count of courses.
+        pages: count of pages to display courses.
+    """
     # addHitCount()
     keywords = request.GET['keywords']
     if('school' in request.GET):
@@ -239,6 +259,32 @@ def search(request):
 
 @timeit
 def coursePage(request, courseTeacherId):
+    """得到课程具体信息。courseTeacherId标识了一门课程和一个教师的组合
+
+    Args:
+        courseTeacherId: id to identify a course of one teacher.
+
+    Returns:
+        course_name: name of course.
+        course_profession: department of course.
+        course_type: type of course.
+        course_scores: avg score of course.
+        percent1: the first score of course.
+        percent2: the second score of course.
+        percent3: the third score of course.
+        percent4: the fourth score of course.
+        detail1: description of the first score.
+        detail2: description of the second score.
+        detail3: description of the third score.
+        detail4: description of the fourth score.
+        course_website: website of course.
+        profession_website: website of teacher.
+        course_teacher: name of teacher.
+        teacherId: id of teacher.
+        courseteacherid: id of the course-teacher pair.
+        other_teacher_info: other info of teacher to recommendation.
+        other_course_info: other info of course to recommendation.
+    """
     # addHitCount()
     courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
     course = Course.objects.get(id=courseTeacher.courseId.id)
@@ -304,6 +350,19 @@ def coursePage(request, courseTeacherId):
 
 @timeit
 def ratePage(request, courseTeacherId):
+    """得到评分页信息。未登录时无法点击
+
+    Args:
+        courseTeacherId: id to identify a course of one teacher.
+
+    Returns:
+        course: information of course.
+        teacher: name of teacher.
+        aspect1: description of the first score.
+        aspect2: description of the second score.
+        aspect3: description of the third score.
+        aspect4: description of the fourth score.
+    """
     # addHitCount()
     courseTeacher = CourseTeacher.objects.get(id=courseTeacherId)
     course = courseTeacher.courseId
@@ -323,6 +382,18 @@ def ratePage(request, courseTeacherId):
 
 @timeit
 def teacherPage(request, teacherId):
+    """得到教师页信息
+
+    Args:
+        teacherId: id of teacher.
+
+    Returns:
+        teacherName: name of teacher.
+        teacherImg: image path of teacher.
+        teacherWeb: website of teacher.
+        courseList: courses info of teacher.
+        teacherScore: avg score of teacher.
+    """
     # addHitCount()
     teacher = Teacher.objects.get(id=teacherId)
     teacherId = teacher.id
@@ -340,6 +411,9 @@ def teacherPage(request, teacherId):
 
 @timeit
 def signIn(request):
+    """用户登录，将信息写入session
+
+    """
     try:
         username = request.POST['username']
         password = request.POST['password']
@@ -391,6 +465,9 @@ def signIn(request):
 
 @timeit
 def signOut(request):
+    """用户注销，清除session信息
+
+    """
     if request.session.get("is_login", False):
         request.session.flush()
         return HttpResponse(json.dumps({
@@ -404,6 +481,11 @@ def signOut(request):
 
 @timeit
 def getSchool(request):
+    """主页得到学校信息
+
+    Returns:
+        school: list of school.
+    """
     result = {
         'school': [s.name for s in School.objects.all()],
     }
@@ -412,6 +494,11 @@ def getSchool(request):
 
 @timeit
 def getDepartment(request):
+    """主页得到专业信息
+
+    Returns:
+        department: list of department.
+    """
     try:
         school = School.objects.get(name=request.GET['school'])
         department_set = SchoolCourse.objects.filter(schoolId=school.id).values("courseId__department").distinct()
@@ -442,6 +529,11 @@ def getDepartment(request):
 
 @timeit
 def getComment(request):
+    """得到课程评论
+
+    Returns:
+         comments: info of comments.
+    """
     try:
         courseTeacherId = request.GET['courseTeacherId']
         ct = CourseTeacher.objects.get(id=courseTeacherId)
@@ -453,7 +545,7 @@ def getComment(request):
             'errormessage': 'can not get courseId or courseId not exists',
             }))
     cmtList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher)
+    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher).order_by("-commentId__time")
     for cuct in cuctList:
         user = cuct.userId
         cmt = cuct.commentId
@@ -508,6 +600,9 @@ def getComment(request):
 
 @timeit
 def submitComment(request):
+    """提交评论，更新课程和教师评分
+
+    """
     # addHitCount()
     if not request.session.get('is_login', False):
         return HttpResponse(json.dumps({
@@ -603,6 +698,17 @@ def submitComment(request):
 
 @timeit
 def userInfo(request):
+    """得到用户信息
+
+    Returns:
+        username: name of user.
+	    isTeacher: identify if user is a teacher.
+	    schoolName: school of user.
+	    departmentName: department of user.
+	    img: image of user.
+	    commentList: comment of user.
+        departments: departments list to change user department.
+    """
     name = request.GET['name']
     user = User.objects.get(username = name)
     commentList=[]
@@ -636,7 +742,13 @@ def userInfo(request):
     })
 
 
+@timeit
 def saveUserPic(request):
+    """更改用户头像
+
+    Returns:
+        the same as userInfo.
+    """
     if not request.session.get('is_login', False):
         return render(request, "rateMyCourse/index.html")
     username = request.session.get('username')
@@ -681,6 +793,11 @@ def saveUserPic(request):
 
 @timeit
 def saveUserInfo(request):
+    """更改用户头像
+
+    Returns:
+        the same as userInfo.
+    """
     if not request.session.get('is_login', False):
         return render(request, "rateMyCourse/index.html")
     school = request.POST['school']
@@ -718,6 +835,12 @@ def saveUserInfo(request):
 
 @timeit
 def getRank(request):
+    """得到排名页信息
+
+    Returns:
+        top_courses: top courses info.
+        top_teachers: top teachers info.
+    """
     top_course_ids = []
     top_course_scores = []
     top_course_counts = []
@@ -777,6 +900,9 @@ def getRank(request):
 
 @timeit
 def addLike(request):
+    """相应点赞
+
+    """
     commentId = request.POST['commentId']
     like = Comment.objects.get(id=commentId).like
     Comment.objects.filter(id=commentId).update(like=like + 1)
@@ -784,6 +910,9 @@ def addLike(request):
 
 @timeit
 def addDislike(request):
+    """相应点踩
+
+    """
     commentId = request.POST['commentId']
     dislike = Comment.objects.get(id=commentId).dislike
     Comment.objects.filter(id=commentId).update(dislike=dislike + 1)
@@ -792,6 +921,11 @@ def addDislike(request):
 
 @timeit
 def active(request, active_code):
+    """激活邮箱验证用户
+
+    Args:
+         active_code: code to make user active.
+    """
     try:
         record = EmailVerifyRecord.objects.get(code=active_code)
         User.objects.filter(mail=record.email).update(status=0)
