@@ -545,7 +545,7 @@ def getComment(request):
             'errormessage': 'can not get courseId or courseId not exists',
             }))
     cmtList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher).order_by("commentId__time")
+    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher).order_by("-commentId__time")
     for cuct in cuctList:
         user = cuct.userId
         cmt = cuct.commentId
