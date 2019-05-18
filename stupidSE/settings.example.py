@@ -127,7 +127,7 @@ USE_TZ = True
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-SESSION_COOKIE_AGE = 10 * 60
+SESSION_COOKIE_AGE = 20 * 60
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/

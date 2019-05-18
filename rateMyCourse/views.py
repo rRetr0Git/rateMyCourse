@@ -116,21 +116,21 @@ def signUp(request):
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get username or mail, password or captcha',
+            'errormessage': '请填写信息',
             }))
     try:
         validate_email(mail)
     except ValidationError:
         return HttpResponse(json.dumps({
             'statCode': -6,
-            'errormessage': 'email invalid',
+            'errormessage': '邮箱格式错误',
         }))
     print('input: ' + captcha)
     print('correct: ' + request.session.get('sign_up_captcha_string', 'False'))
     if captcha.lower() != request.session.get('sign_up_captcha_string', 'False').lower():
         return HttpResponse(json.dumps({
             'statCode': -5,
-            'errormessage': 'captcha error',
+            'errormessage': '验证码错误',
         }))
     if request.session.get('is_login', False):
         request.session.flush()
@@ -139,12 +139,12 @@ def signUp(request):
         if len(User.objects.filter(mail=mail)) != 0:
             return HttpResponse(json.dumps({
                 'statCode': -2,
-                'errormessage': 'mail repeats',
+                'errormessage': '邮箱重复',
             }))
         if len(User.objects.filter(username=username)) != 0:
             return HttpResponse(json.dumps({
                 'statCode': -3,
-                'errormessage': 'username repeats',
+                'errormessage': '用户名重复',
             }))
         status = send_register_email(request, mail, 'register')
         User(username=username, mail=mail, password=new_password, status=1).save()# status为0表示有效用户
@@ -154,17 +154,17 @@ def signUp(request):
         if("mail" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -2,
-                'errormessage': 'something wrong in mail',
+                'errormessage': '邮箱格式错误或邮箱已存在',
                 }))
         elif("username" in errmsg):
             return HttpResponse(json.dumps({
                 'statCode': -3,
-                'errormessage': 'something wrong in username',
+                'errormessage': '用户名格式错误或用户名已存在',
                 }))
         else:
             return HttpResponse(json.dumps({
                 'statCode': -4,
-                'errormessage': 'something wrong in ... well i don\'t know',
+                'errormessage': '出了一些bug……',
                 }))
     else:
         return HttpResponse(json.dumps({
@@ -421,14 +421,14 @@ def signIn(request):
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get username or mail, password or captcha',
+            'errormessage': '请填写信息',
             }))
     print('input: ' + captcha)
     print('correct: ' + request.session.get('sign_in_captcha_string', 'False'))
     if captcha.lower() != request.session.get('sign_in_captcha_string', 'False').lower():
         return HttpResponse(json.dumps({
             'statCode': -5,
-            'errormessage': 'captcha error',
+            'errormessage': '验证码错误',
         }))
     if request.session.get('is_login', False):
         request.session.flush()
@@ -440,17 +440,17 @@ def signIn(request):
         except Exception:
             return HttpResponse(json.dumps({
             'statCode': -2,
-            'errormessage': 'username or mail doesn\'t exists',
+            'errormessage': '用户名或邮箱不存在',
             }))
     if not check_password(password, u.password):
         return HttpResponse(json.dumps({
             'statCode': -3,
-            'errormessage': 'wrong password',
+            'errormessage': '密码错误',
             }))
     elif u.status == 1:
         return HttpResponse(json.dumps({
             'statCode': -4,
-            'errormessage': 'account isn\'t active',
+            'errormessage': '账户未激活，请查收邮件',
         }))
     else:
         addHitCount()
@@ -542,7 +542,7 @@ def getComment(request):
     except Exception:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'can not get courseId or courseId not exists',
+            'errormessage': '课程不存在',
             }))
     cmtList = []
     cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher).order_by("-commentId__time")
@@ -607,7 +607,7 @@ def submitComment(request):
     if not request.session.get('is_login', False):
         return HttpResponse(json.dumps({
             'statCode': -2,
-            'errormessage': 'not login',
+            'errormessage': '请登录后再评论',
         }))
     try:
         username = request.session['username']
@@ -620,7 +620,7 @@ def submitComment(request):
     except Exception as err:
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'post information not complete! ',
+            'errormessage': '请填写评价信息',
         }))
     user = User.objects.get(username=username)
     ct = CourseTeacher.objects.get(id=courseTeacherId)
@@ -629,16 +629,16 @@ def submitComment(request):
     if(rate[0]<=0 or rate[0]>5 or rate[1]<=0 or rate[1]>5 or rate[2]<=0 or rate[2]>5 or rate[3]<=0 or rate[3]>5):
         return HttpResponse(json.dumps({
             'statCode': -1,
-            'errormessage': 'post information invalid! ',
+            'errormessage': '评分格式错误',
         }))
     postCheckStatus=0
     for i in range(len(content)):
         if content[i]=='<':
-            postCheckStatus += 1;
+            postCheckStatus += 1
         elif content[i]=='>' and postCheckStatus>0:
             return HttpResponse(json.dumps({
                 'statCode': -1,
-                'errormessage': '\'<\' or \'>\' is forbidden in comment',
+                'errormessage': '评论内容不合法，请勿包含\'<\'或\'>\'',
             }))
     preComment = CommentUserCourseTeacher.objects.filter(userId=user,courseId=course,teacherId=teacher)
     if(len(preComment)==0):
