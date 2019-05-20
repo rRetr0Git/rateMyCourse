@@ -117,7 +117,7 @@ def get_captcha():
     captcha_picture_path = './rateMyCourse/static/captcha/' + str(captcha_picture_num) + '.jpg'
     url = '/static/captcha/' + str(captcha_picture_num) + '.jpg'
     captcha_picture_num = (captcha_picture_num + 1) % max_captcha_picture_num
-    seed = "34abcdefhjkmnpqruvwxyACDEFGHJKMNPRUVWXY"
+    seed = "34bcdefhjkmnpqruvwxyACEFGHJKMNPRUVWXY"
     sa = []
     for i in range(0, 6):
         sa.append(random.choice(seed))
