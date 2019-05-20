@@ -227,14 +227,15 @@ def search(request):
         page = int(request.GET['page'])
     except:
         return render(request, "rateMyCourse/index.html")
+    print(keywords, page)
     courses = []
     pages = []
     courseTeacherList = simpleSearch(school, department, keywords)
     courses_count = len(courseTeacherList)
-    if page > ((courses_count-1)/10+1) or page < 0:
+    if courses_count != 0 and page > ((courses_count-1)/10+1) or page < 0:
         return render(request, "rateMyCourse/index.html")
     for ctcnt in range((page - 1) * 10, page * 10):
-        if(ctcnt>=len(courseTeacherList)):
+        if(courses_count == 0 or ctcnt >= len(courseTeacherList)):
             break
         ct = courseTeacherList[ctcnt]
         course = ct.courseId
