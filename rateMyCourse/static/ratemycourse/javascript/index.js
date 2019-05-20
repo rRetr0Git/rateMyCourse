@@ -6,7 +6,8 @@ function Func_search() {
     if($("#buttonSelectDepartment").text() != "选择专业"){
       url += "department=" + $("#buttonSelectDepartment").text() + "&"
     }
-    url += "keywords=" + $("#searchboxCourse").val()
+    url += "keywords=" + $("#searchboxCourse").val() + "&"
+    url += "page=" + "1"
     window.location.href = url
 }
 
