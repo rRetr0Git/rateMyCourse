@@ -223,11 +223,20 @@ def search(request):
         department = request.GET['department']
     else:
         department = None
-
+    try:
+        page = int(request.GET['page'])
+    except:
+        return render(request, "rateMyCourse/index.html")
     courses = []
     pages = []
     courseTeacherList = simpleSearch(school, department, keywords)
-    for ct in courseTeacherList:
+    courses_count = len(courseTeacherList)
+    if page > ((courses_count-1)/10+1) or page < 0:
+        return render(request, "rateMyCourse/index.html")
+    for ctcnt in range((page - 1) * 10, page * 10):
+        if(ctcnt>=len(courseTeacherList)):
+            break
+        ct = courseTeacherList[ctcnt]
         course = ct.courseId
         teacher = ct.teacherId
 
@@ -252,7 +261,7 @@ def search(request):
         pages.append({'number': i+1})
     return render(request, "rateMyCourse/searchResult_new.html", {
     	'courses': courses,
-    	'count': len(courses),
+    	'count': courses_count,
     	'pages': pages,
     	})
 
