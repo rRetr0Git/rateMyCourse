@@ -769,7 +769,7 @@ def saveUserPic(request):
     if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/rateMyCourse/rateMyCourse/static/ratemycourse/images/upload/user/user.png':
         os.remove(old_img_url)
 
-    img_name.name = str(user.id) + '.png'
+    img_name.name = str(user.id) + str(time.time()) + '.png'
     new_img = IMG(img=img_name)
     new_img.save()
     User.objects.filter(username=username).update(img=img_name)
@@ -803,7 +803,7 @@ def saveUserPic(request):
 
 @timeit
 def saveUserInfo(request):
-    """更改用户头像
+    """更改用户信息
 
     Returns:
         the same as userInfo.
