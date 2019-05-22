@@ -1,6 +1,7 @@
 function Func_search_course() {
     url = '/search/?'
     url += "keywords=" + $("#searchCourse").val()
+    url += "&page=1"
     window.location.href = url
 }
 

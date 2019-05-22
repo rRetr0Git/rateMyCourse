@@ -177,23 +177,79 @@
         </div>
     </div>
     <script>
-        currentPage = 1;
-        function toPage(p){
-           for(i=1;i<=parseInt({{count}});i++){
-               var s="#course".concat(i.toString());
-               if(i>(parseInt(p)-1)*10&&i<=parseInt(p)*10){
-                   $(s).show()
-               }else{
-                   $(s).hide()
-               }
+        function goToPage() {
+            var v = $("#toPageP").val();
+            if(isNaN(v) || v < 1 || v > Math.floor(parseInt({{count}})/10)+1 || Math.floor(v) != v)
+                alert("请输入正确的页码");
+            else
+            {
+                currentPage = v;
+                var url = window.location.href;
+                var part = url.split('&');
+                var newurl = "";
+                for(var i=0;i<part.length-1;i++){
+                    newurl += part[i]+"&";
+                }
+                newurl += "page="+v;
+                window.location.href = newurl;
             }
+        }
 
+
+        // $('#applyCertNum').bind('keypress',function(event){
+        //
+        //
+        //     if(event.keyCode == 13)
+        //
+        //     {
+        //         alert('你输入的内容为1：' + $('#applyCertNum').val());
+        //     }
+        //
+        // });
+
+        function toLastPage() {
+            var url = window.location.href;
+            var part = url.split('&');
+            var newurl = "";
+            currentPage=part[part.length-1].split('=')[1];
+            if(currentPage != 1)
+            {
+                currentPage--;
+                for(var i=0;i<part.length-1;i++){
+                    newurl += part[i]+"&";
+                }
+                newurl += "page="+currentPage;
+                window.location.href = newurl;
+            }
+        }
+
+        function toNextPage() {
+            var url = window.location.href;
+            var part = url.split('&');
+            var newurl = "";
+            currentPage=part[part.length-1].split('=')[1];
+            if(currentPage != Math.floor(parseInt({{count}})/10)+1)
+            {
+                currentPage++;
+                for(var i=0;i<part.length-1;i++){
+                    newurl += part[i]+"&";
+                }
+                newurl += "page="+currentPage;
+                window.location.href = newurl;
+            }
+        }
+
+        window.onload = function() {
+            var url = window.location.href;
+            var part = url.split('&');
+            var newurl = "";
+            currentPage=part[part.length-1].split('=')[1];
             var pagen = "#numOfPage";
-           // console.log("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
-           $(pagen).text("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页, 当前第" + currentPage.toString() + "页");
+            // console.log("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
+            $(pagen).text("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页, 当前第" + currentPage.toString() + "页");
 
-           var pagep = "#pagesP";
-           $(pagep).text("页/" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
+            var pagep = "#pagesP";
+            $(pagep).text("页/" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
 
             var lastp = "#lastPage";
             if(currentPage ==1)
@@ -218,60 +274,6 @@
                 $(nextp).removeClass("btn disabled");
                 $(nextp).addClass("page-link");
             }
-           // for(i=1;i<=parseInt({{count}})/10+1;i++){
-           //     var s="#p".concat(i.toString());
-           //     if(i==parseInt(p)){
-           //         $(s).removeClass("page-link ");
-           //         $(s).addClass("page-link bg-info text-dark");
-           //     }else{
-           //         $(s).removeClass("page-link bg-info text-dark");
-           //         $(s).addClass("page-link");
-           //     }
-           // }
-        }
-        
-        function goToPage() {
-            var v = $("#toPageP").val();
-            if(isNaN(v) || v < 1 || v > Math.floor(parseInt({{count}})/10)+1 || Math.floor(v) != v)
-                alert("请输入正确的页码");
-            else
-            {
-                currentPage = v;
-                toPage(v);
-            }
-        }
-
-
-        // $('#applyCertNum').bind('keypress',function(event){
-        //
-        //
-        //     if(event.keyCode == 13)
-        //
-        //     {
-        //         alert('你输入的内容为1：' + $('#applyCertNum').val());
-        //     }
-        //
-        // });
-
-        function toLastPage() {
-            if(currentPage != 1)
-            {
-                currentPage--;
-                toPage(currentPage);
-            }
-        }
-
-        function toNextPage() {
-            if(currentPage != Math.floor(parseInt({{count}})/10)+1)
-            {
-                currentPage++;
-                toPage(currentPage);
-            }
-        }
-
-        window.onload = function() {
-            var count=0;
-            toPage("1");
         }
     </script>
     <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
