@@ -6,11 +6,14 @@ import re
 
 print('washing teacher name......')
 
-dirtyTeachers = Teacher.objects.filter(name__regex=".*[\s].*")
+dirtyTeachers = Teacher.objects.filter(name__regex=".*[ ].*")
+for i in dirtyTeachers:
+    print(i.name)
 for dirtyTeacher in dirtyTeachers:
     if re.match(r".*[a-zA-Z].*", dirtyTeacher.name):
         continue
     else:
+        print(dirtyTeacher.name + 'need to be processed')
         dirtyTeacherId = dirtyTeacher.id
         dirtyTeacherName = dirtyTeacher.name
 
@@ -29,7 +32,7 @@ for dirtyTeacher in dirtyTeachers:
                     CourseTeacher.objects.filter(courseId=dirtyCT.courseId, teacherId=dirtyTeacherId).delete()
                     dirtyCUCTs = CommentUserCourseTeacher.objects.filter(courseId=dirtyCT.courseId, teacherId=dirtyTeacherId)
                     for dirtyCUCT in dirtyCUCTs:
-                        Comment.objects.filter(id=dirtyCUCT.commentId).delete()
+                        Comment.objects.filter(id=dirtyCUCT.commentId.id).delete()
                     CommentUserCourseTeacher.objects.filter(courseId=dirtyCT.courseId, teacherId=dirtyTeacherId).delete()
                 else:
                     CourseTeacher.objects.filter(courseId=dirtyCT.courseId, teacherId=dirtyTeacherId).update(teacherId=cleanTeacherId)
