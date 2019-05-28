@@ -27,9 +27,10 @@ for row in df1.iterrows():
 	sc.save()
 	for each in teachers:
 		if each != "N/A":
+			each=each.replace(' ','')
 			teacher = Teacher.objects.filter(name=each)
 			if len(teacher)==0:
-				search = df2.loc[df2['姓名']==each.replace(' ','')]
+				search = df2.loc[df2['姓名']==each]
 				if search.empty!=True:
 					t_row = search.iloc[0]
 					t_website = t_row['个人主页']
