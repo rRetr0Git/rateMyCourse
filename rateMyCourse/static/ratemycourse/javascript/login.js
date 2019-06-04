@@ -241,3 +241,21 @@ function Func_changeCaptcha(){
     });
     return false;
 }
+
+function Func_forgetPassword() {
+    $.ajax("/getCaptcha/", {
+        dataType: 'json',
+        type: 'POST',
+        data: {}
+    }).done(function(data) {
+        var forgetPassword = $("#forgetPassword");
+        forgetPassword.children().remove();
+        forgetPassword.append("<div class=\"form-group\">\n" +
+            "                         <input id=\"email\" type=\"text\" placeholder=\"邮箱地址\"\n" +
+            "                          class=\"form-control\" name=\"email\">\n" +
+            "                         <div class=\"help-block with-errors\"></div>\n" +
+            "                      </div>");
+        forgetPassword.append("<input type=\"submit\" id=\"btnforgetPassword\" class=\"btn btn-primary\" value=\"重置密码\">");
+    });
+    return false;
+}
