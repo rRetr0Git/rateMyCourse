@@ -765,14 +765,21 @@ def saveUserPic(request):
     img_name = request.FILES.get('file')
     user = User.objects.get(username=username)
 
-    old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + '/rateMyCourse' + User.objects.get(username=username).img.url
-    if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/rateMyCourse/rateMyCourse/static/ratemycourse/images/upload/user/user.png':
-        os.remove(old_img_url)
+    import filetype
+    kind = filetype.guess(img_name)
+    if kind is None:
+        print("Wrong picture type")
+    elif kind.extension != "jpg" and kind.extension != "png":
+        print("Wrong picture type 2")
+    else:
+        old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + '/rateMyCourse' + User.objects.get(username=username).img.url
+        if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/rateMyCourse/rateMyCourse/static/ratemycourse/images/upload/user/user.png':
+            os.remove(old_img_url)
 
-    img_name.name = str(user.id) + str(time.time()) + '.png'
-    new_img = IMG(img=img_name)
-    new_img.save()
-    User.objects.filter(username=username).update(img=img_name)
+        img_name.name = str(user.id) + str(time.time()) + "." + kind.extension
+        new_img = IMG(img=img_name)
+        new_img.save()
+        User.objects.filter(username=username).update(img=img_name)
 
     commentList = []
     cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
