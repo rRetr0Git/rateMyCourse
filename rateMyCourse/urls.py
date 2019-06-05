@@ -18,10 +18,13 @@ urlpatterns = [
     url(r'^signIn/$', views.signIn, name='signIn'),
     url(r'^signUp/$', views.signUp, name='signUp'),
     url(r'^signOut/$', views.signOut, name='signOut'),
+    url(r'^send_resetPWD_email/$', views.send_resetPWD_email, name='send_resetPWD_email'),
+    url(r'^toResetPWD/(\w*)/$', views.toResetPWD, name='toResetPWD'),
+    url(r'^resetPWD/$', views.resetPWD, name='resetPWD'),
     url(r'^submitComment/$', views.submitComment, name='submitComment'),
 
     #TMP GET IN INDEX
-    url(r'^getSchool/$', views.getSchool, name='getSchool'),
+    # url(r'^getSchool/$', views.getSchool, name='getSchool'),
     url(r'^getDepartment/$', views.getDepartment, name='getDepartment'),
     # url(r'^getCourse/$', views.getCourse, name='getCourse'),
     url(r'^getComment/$', views.getComment, name='getComment'),
