@@ -89,7 +89,7 @@ function Func_signUp() {
       //$("#menuUser").show()
       //$("#navUser").text(data.username)
       //$.cookie('userid', data.userid, {path: '/'})
-        alert("激活邮件已发送至您的邮箱，请及时查看")
+        alert("激活邮件已发送至您的邮箱，请及时查收")
         //alert("注册成功！");
         location.replace(location);
     }
@@ -242,20 +242,21 @@ function Func_changeCaptcha(){
     return false;
 }
 
-function Func_forgetPassword() {
-    $.ajax("/getCaptcha/", {
+function Func_send_resetPWD_email() {
+    $.ajax("/send_resetPWD_email/", {
         dataType: 'json',
         type: 'POST',
-        data: {}
-    }).done(function(data) {
-        var forgetPassword = $("#forgetPassword");
-        forgetPassword.children().remove();
-        forgetPassword.append("<div class=\"form-group\">\n" +
-            "                         <input id=\"email\" type=\"text\" placeholder=\"邮箱地址\"\n" +
-            "                          class=\"form-control\" name=\"email\">\n" +
-            "                         <div class=\"help-block with-errors\"></div>\n" +
-            "                      </div>");
-        forgetPassword.append("<input type=\"submit\" id=\"btnforgetPassword\" class=\"btn btn-primary\" value=\"重置密码\">");
+        async : false,
+        data: {
+            "email": $("#inputResetEmail").val(),
+        }
+    }).done(function (data) {
+        if (data.statCode != 0) {
+            alert(data.errormessage);
+            location.replace(location);
+        } else{
+            alert('重置密码邮件已发送至您的邮箱，请在10分钟内查收');
+            location.replace(location);
+        }
     });
-    return false;
 }

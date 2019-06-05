@@ -10,7 +10,7 @@ import numpy as np
 import time
 import os
 from django.contrib.auth.hashers import make_password, check_password
-from rateMyCourse.utils.send_email import send_register_email
+from rateMyCourse.utils.send_email import send_my_email
 from rateMyCourse.utils.generate_captcha import get_captcha
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -146,7 +146,12 @@ def signUp(request):
                 'statCode': -3,
                 'errormessage': '用户名重复',
             }))
-        status = send_register_email(request, mail, 'register')
+        status, email_id = send_my_email(request, mail, 'register')
+        if status == -1:
+            return HttpResponse(json.dumps({
+                'statCode': -7,
+                'errormessage': '邮件发送失败',
+            }))
         User(username=username, mail=mail, password=new_password, status=1).save()# status为0表示有效用户
     except Exception as err:
         errmsg = str(err)
@@ -944,8 +949,73 @@ def active(request, active_code):
          active_code: code to make user active.
     """
     try:
-        record = EmailVerifyRecord.objects.get(code=active_code)
+        record = EmailVerifyRecord.objects.get(code=active_code, type='register', valid=0)
         User.objects.filter(mail=record.email).update(status=0)
+        EmailVerifyRecord.objects.filter(code=active_code, type='register', valid=0).update(valid=1)
         return render(request, 'rateMyCourse/index.html', {'msg': '激活成功'})
     except:
         return render(request, 'rateMyCourse/index.html', {'msg': '激活失败'})
+
+
+@timeit
+def send_resetPWD_email(request):
+    """发送重置密码邮件
+
+    """
+    try:
+        email = request.POST['email']
+        user = User.objects.get(mail=email)
+        status, emailRecordId = send_my_email(request, email, 'resetPWD')
+        if status == -1:
+            return HttpResponse(json.dumps({
+                'statCode': -1,
+                'errormessage': '邮件发送失败',
+            }))
+        return HttpResponse(json.dumps({
+            'statCode': 0,
+        }))
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '用户不存在',
+        }))
+
+
+@timeit
+def toResetPWD(request, reset_code):
+    """点击重置密码邮件，跳转到重置页面，10分钟内有效
+
+    """
+    try:
+        record = EmailVerifyRecord.objects.get(code=reset_code, type='resetPWD', valid=0)
+        prevtime = record.time
+        if (timezone.now() - prevtime).seconds > 600:
+            return render(request, "rateMyCourse/index.html", {'msg': '重置密码失败，重置链接已过期。'})
+        else:
+            return render(request, "rateMyCourse/resetPassword.html")
+    except:
+        return render(request, "rateMyCourse/index.html", {'msg': '重置密码失败。'})
+
+@timeit
+def resetPWD(request):
+    """重置密码
+
+    Args:
+        reset_code：code to reset password
+    """
+    try:
+        password = request.POST['password']
+        reset_code = request.POST['reset_code']
+        record = EmailVerifyRecord.objects.get(code=reset_code, type='resetPWD', valid=0)
+        record.valid=1
+        record.save()
+        email = EmailVerifyRecord.objects.get(code=reset_code, type='resetPWD').email
+        User.objects.filter(mail=email).update(password=make_password(password), status=0)
+        return HttpResponse(json.dumps({
+            'statCode': 0,
+        }))
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '重置密码失败',
+        }))

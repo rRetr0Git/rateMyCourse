@@ -72,14 +72,22 @@
                          class="form-control" name="captcha">
                         <div class="help-block with-errors"></div>
                       </div>
-                      <nobr>
-                      <input type="submit" id="btnLogin" class="btn btn-primary" value="登录">&nbsp;&nbsp;&nbsp;
-                      <a href="javascript:void(0)" onclick="Func_forgetPassword()" class="text-muted">忘记密码</a>
-                      </nobr>
-                     </form><br>
-                    <form>
-                    <div class="form-group" id="forgetPassword">
-                    </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                            <input type="submit" id="btnLogin" class="btn btn-primary" value="登录">&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="col-md-6">
+                            <form class="mt-2" action="ResetPWDTrigger" method="post">
+                                <a href="javascript:void(0)" id="btnNewUser" data-toggle="collapse" data-target="#formResetPWD" class="">忘记密码？</a>
+                            </form>
+                        </div>
+                      </div>
+                      <form id="formResetPWD" class="form in collapse mt-2" style="height: auto;" novalidate>
+                        <div class="form-group has-success">
+                          <input type="email" id="inputResetEmail" name="inputEmail" placeholder="邮箱" class="form-control form-control-success" required>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="找回密码" onclick="Func_send_resetPWD_email()">
+                      </form>
                     </form>
                   </div>
                 </div>
