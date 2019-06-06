@@ -14,6 +14,7 @@ from rateMyCourse.utils.send_email import send_my_email
 from rateMyCourse.utils.generate_captcha import get_captcha
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+import filetype
 
 # Create your views here.
 
@@ -770,7 +771,6 @@ def saveUserPic(request):
     img_name = request.FILES.get('file')
     user = User.objects.get(username=username)
 
-    import filetype
     kind = filetype.guess(img_name)
     if kind is None:
         print("Wrong picture type")

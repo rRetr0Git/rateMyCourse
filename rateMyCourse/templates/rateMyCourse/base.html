@@ -82,9 +82,14 @@
                             </form>
                         </div>
                       </div>
+                      <div class="dropdown-divider"></div>
                       <form id="formResetPWD" class="form in collapse mt-2" style="height: auto;" novalidate>
                         <div class="form-group has-success">
                           <input type="email" id="inputResetEmail" name="inputEmail" placeholder="邮箱" class="form-control form-control-success" required>
+                        </div>
+                        <div class="form-group" id="captchaImg3"></div>
+                        <div class="form-group">
+                          <input id="inputCaptchaResetPWD" name="inputCaptcha" type="text" placeholder="6位验证码，不区分大小写" class="form-control" required>
                         </div>
                         <input type="submit" class="btn btn-primary" value="找回密码" onclick="Func_send_resetPWD_email()">
                       </form>
