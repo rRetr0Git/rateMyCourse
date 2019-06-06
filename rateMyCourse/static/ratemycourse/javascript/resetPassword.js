@@ -1,3 +1,36 @@
+$.validator.setDefaults({
+    submitHandler: function() {
+        Func_resetPWD();
+    }
+});
+
+$(document).ready(function() {
+    $("#passwordform").validate({
+        rules: {
+            new_pass: {
+                required: true,
+                minlength: 5
+            },
+            new_confirm_pass: {
+                required: true,
+                minlength: 5,
+                equalTo: "#new_password"
+            }
+        },
+        messages: {
+            new_pass: {
+                required: "请输入密码",
+                minlength: "密码长度不能小于5个字符"
+            },
+            new_confirm_pass: {
+                required: "请再次输入密码",
+                minlength: "密码长度不能小于5个字符",
+                equalTo: "密码输入不一致"
+            }
+        }
+    })
+});
+
 function Func_resetPWD(){
   $.ajax("/resetPWD/", {
     dataType: 'json',

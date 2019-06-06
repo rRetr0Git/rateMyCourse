@@ -24,7 +24,7 @@ $(document).ready(function() {
   // Form validation for Sign in / Sign up forms
   validateSignUp()
   validateSignIn()
-
+  validateResetPwd()
   // Login widget set according to cookie
   // if($.cookie('username') == undefined || $.cookie('userid') == undefined) {
   //     $("#menuUser").prop("hidden",true)

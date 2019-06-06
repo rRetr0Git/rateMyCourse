@@ -17,6 +17,7 @@ $(document).ready(function() {
   //$("#menuLogin").load("./test.html")
   validateSignUp()
   validateSignIn()
+    validateResetPwd()
 
   // Login widget set according to cookie
   // if($.cookie('userid') == undefined || $.cookie('username') == undefined) {
