@@ -212,7 +212,7 @@ function Func_getCaptcha(){
                            "</ul>");
         var captchaImg3 = $("#captchaImg3");
         captchaImg3.children().remove();
-        captchaImg3.append("<img src=\"" + data.sign_in_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
+        captchaImg3.append("<img src=\"" + data.resetPWD_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
         captchaImg3.append("<ul class=\"list-unstyled\">\n" +
                            "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
                            "</ul>");
@@ -240,7 +240,7 @@ function Func_changeCaptcha(){
                            "</ul>");
         var captchaImg3 = $("#captchaImg3");
         captchaImg3.children().remove();
-        captchaImg3.append("<img src=\"" + data.sign_in_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
+        captchaImg3.append("<img src=\"" + data.resetPWD_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
         captchaImg3.append("<ul class=\"list-unstyled\">\n" +
                            "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
                            "</ul>");
@@ -261,6 +261,7 @@ function Func_send_resetPWD_email() {
         async : false,
         data: {
             "email": $("#inputResetEmail").val(),
+            "captcha": $("#inputCaptchaResetPWD").val(),
         }
     }).done(function (data) {
         if (data.statCode != 0) {

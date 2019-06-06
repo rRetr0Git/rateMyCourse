@@ -73,10 +73,12 @@ def get_captcha_and_save_session(request):
             sign_up_captcha_path: path of captcha when sign up.
     """
     sign_in_captcha_path, sign_in_captcha_string = get_captcha()
+    resetPWD_captcha_path, resetPWD_captcha_string = get_captcha()
     sign_up_captcha_path, sign_up_captcha_string = get_captcha()
     request.session['sign_in_captcha_string'] = sign_in_captcha_string
+    request.session['resetPWD_captcha_string'] = resetPWD_captcha_string
     request.session['sign_up_captcha_string'] = sign_up_captcha_string
-    return sign_in_captcha_path, sign_up_captcha_path
+    return sign_in_captcha_path, resetPWD_captcha_path, sign_up_captcha_path
 
 
 @timeit
@@ -95,9 +97,10 @@ def getCaptcha(request):
             sign_in_captcha_path: path of captcha.
             sign_up_captcha_path: correct value of captcha.
     """
-    sign_in_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
+    sign_in_captcha_path, resetPWD_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
     return HttpResponse(json.dumps({
         'sign_in_captcha_url': sign_in_captcha_path,
+        'resetPWD_captcha_url': resetPWD_captcha_path,
         'sign_up_captcha_url': sign_up_captcha_path,
     }))
 
@@ -964,6 +967,27 @@ def send_resetPWD_email(request):
     """
     try:
         email = request.POST['email']
+        captcha = request.POST['captcha']
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '请填写信息',
+        }))
+    try:
+        validate_email(email)
+    except ValidationError:
+        return HttpResponse(json.dumps({
+            'statCode': -6,
+            'errormessage': '邮箱格式错误',
+        }))
+    print('input: ' + captcha)
+    print('correct: ' + request.session.get('resetPWD_captcha_string', 'False'))
+    if captcha.lower() != request.session.get('resetPWD_captcha_string', 'False').lower():
+        return HttpResponse(json.dumps({
+            'statCode': -5,
+            'errormessage': '验证码错误',
+        }))
+    try:
         user = User.objects.get(mail=email)
         status, emailRecordId = send_my_email(request, email, 'resetPWD')
         if status == -1:
