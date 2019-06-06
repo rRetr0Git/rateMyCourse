@@ -1,10 +1,11 @@
-$(document).ready(function() {
+var jQuery = $(document).ready(function() {
   //alert("!!!")
   //$("#navbarContainer").load("./components/indexNavbarContainer.html")
 
   // Form validation for Sign in / Sign up forms
   validateSignUp()
   validateSignIn()
+  validateResetPwd()
 
   // Login widget set according to cookie
   // if($.cookie('username') == undefined || $.cookie('userid') == undefined) {

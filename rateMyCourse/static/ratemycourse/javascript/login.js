@@ -254,6 +254,23 @@ function Func_changeCaptcha(){
     return false;
 }
 
+function validateResetPwd() {
+    $("#formResetPWD").validate({
+        submitHandler: function() {
+            Func_send_resetPWD_email();
+        },
+        rules: {
+            inputEmail: {
+                required: true,
+                email: true
+            }
+        },
+        messages: {
+            inputEmail: "请输入正确的邮箱地址",
+        }
+    })
+}
+
 function Func_send_resetPWD_email() {
     $.ajax("/send_resetPWD_email/", {
         dataType: 'json',
