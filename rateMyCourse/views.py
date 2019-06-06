@@ -762,7 +762,7 @@ def saveUserPic(request):
     if not request.session.get('is_login', False):
         return render(request, "rateMyCourse/index.html")
     username = request.session.get('username')
-    img_name = request.FILES.get('file')
+    img_name = request.FILES['smfile']
     user = User.objects.get(username=username)
 
     import filetype

@@ -99,27 +99,48 @@
     </div>
 
     <!--修改信息模态框-->
-    <div class="modal fade" id="modalPicture-container" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+
+    <div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" >
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myPictureLabel">
-                        修改个人头像
+                    <!--模态框的头部-->
+                    <h4 class="modal-title float-md-none">
+                        <i class="fa fa-pencil"></i>更换头像
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="close_modal">×</button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <input type="file" id="inputfile">
+                    <!-- 模态框的中部，用于裁剪并显示预览 预览图和裁剪图都是默认隐藏的-->
+                    <p class="tip-info text-center">
+                        未选择图片
+                    </p>
+                    <!--裁剪图片的地方-->
+                    <div class="img-container" style="display: none">
+                        <img src="" alt="" id="photo">
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> <button type="button" class="btn btn-primary" onclick=Func_saveUserPic() data-dismiss="modal">保存</button>
+                    <!--图片预览的地方-->
+                    <div class="img-preview-box" style="display: none">
+                        <hr>
+                        <span>预览:</span>
+                        <div id="testid" class="img-preview img-preview-md" style="width: 100px;height: 100px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- 模态框的底部，用于选择图片等-->
+                    <div class="container">
+                        <label class="btn mybtn col-md-3" for="photoInput">
+                            <input type="file" class="sr-only" id="photoInput" accept="image/*">
+                                <span>打开图片</span>
+                        </label>
+                        <button class="btn mybtn disabled col-md-2 offset-md-4 mb-2" disabled="true" onclick="sendPhoto();">提交</button>
+                        <button class="btn mybtn col-md-2 mb-2" aria-hidden="true" data-dismiss="modal">取消</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="row clearfix">
         <div class="col-md-5 column">
@@ -128,13 +149,11 @@
             </p>
             {% if request.session.username == username %}
             <p class="text-center column">
-                <button class="btn btn-primary btn-lg col-md-5 column" data-toggle="modal" data-target="#modalPicture-container">
-	            修改个人头像
-                </button>
+                <button type="button" class="btn btn-primary btn-lg col-md-5 column" data-toggle="modal" data-target="#changeModal" id="show_modal">上传头像</button>
             </p>
             {% else %}
-            <br>
-            <br>
+                <br/>
+                <br/>
             {% endif %}
             <p class="text-center">
                 <img alt="200x200" width="200" height="200" src={{ img }} class="img-rounded"/>
@@ -201,5 +220,6 @@
   <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/popper.min.js"></script>-->
   <script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
   <script src="/static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+  <script src="https://cdn.bootcss.com/cropper/3.1.3/cropper.min.js"></script>
   <script src="/static/ratemycourse/javascript/userInfo.js"></script>
 {% endblock %}
