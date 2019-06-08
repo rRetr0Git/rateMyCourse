@@ -156,10 +156,6 @@
             <div class="col-md-4 column">
                 <nav aria-label="Page navigation">
                     <ul id="c_pagination" class="pagination">
-                        <!--{% for page in pages %}-->
-                        <!--<li class="page-item">-->
-                        <!--<a class="page-link " id="p{{page.number}}" onclick="toPage({{page.number}})" href="javascript:void(0)">{{page.number}}</a>-->
-                        <!--</li> {% endfor %}-->
 
                         <li class="page-item">
                             <a class="page-link" onclick="toLastPage()" id="lastPage">
@@ -179,7 +175,7 @@
     <script>
         function goToPage() {
             var v = $("#toPageP").val();
-            if(isNaN(v) || v < 1 || v > Math.floor(parseInt({{count}})/10)+1 || Math.floor(v) != v)
+            if(isNaN(v) || v < 1 || v > {{pages}} || Math.floor(v) != v)
                 alert("请输入正确的页码");
             else
             {
@@ -228,7 +224,7 @@
             var part = url.split('&');
             var newurl = "";
             currentPage=part[part.length-1].split('=')[1];
-            if(currentPage != Math.floor(parseInt({{count}})/10)+1)
+            if(currentPage != {{pages}})
             {
                 currentPage++;
                 for(var i=0;i<part.length-1;i++){
@@ -245,11 +241,11 @@
             var newurl = "";
             currentPage=part[part.length-1].split('=')[1];
             var pagen = "#numOfPage";
-            // console.log("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
-            $(pagen).text("共" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页, 当前第" + currentPage.toString() + "页");
+            // console.log("共" + ({{pages}}).toString() + "页");
+            $(pagen).text("共" + ({{pages}}).toString() + "页, 当前第" + currentPage.toString() + "页");
 
             var pagep = "#pagesP";
-            $(pagep).text("页/" + (Math.floor(parseInt({{count}})/10)+1).toString() + "页");
+            $(pagep).text("页/" + ({{pages}}).toString() + "页");
 
             var lastp = "#lastPage";
             if(currentPage ==1)
@@ -264,7 +260,7 @@
             }
 
             var nextp = "#nextPage";
-            if(currentPage == Math.floor(parseInt({{count}})/10)+1)
+            if(currentPage == {{pages}})
             {
                 $(nextp).removeClass("page-link ");
                 $(nextp).addClass("btn disabled");

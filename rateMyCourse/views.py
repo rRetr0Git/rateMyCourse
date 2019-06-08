@@ -265,14 +265,14 @@ def search(request):
             'rateScore': '%.1f' % avg_score,
             'ratenumber': count
         })
-
-    pn=int(len(courses)/10)+1
-    for i in range(pn):
-        pages.append({'number': i+1})
+    if courses_count%10==0:
+        pn = int(courses_count / 10)
+    else:
+        pn=int(courses_count/10)+1
     return render(request, "rateMyCourse/searchResult_new.html", {
     	'courses': courses,
     	'count': courses_count,
-    	'pages': pages,
+    	'pages': pn,
     	})
 
 
