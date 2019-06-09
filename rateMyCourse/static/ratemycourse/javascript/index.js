@@ -39,7 +39,6 @@ $(document).ready(function() {
   //   //$("#menuUser").show()
   //   $("#navUser").text($.cookie('username'))
   // }
-    console.log($("#buttonSelectSchool").text())
     $.ajax('/getDepartment/',{
       dataType:'json',
       data:{'school':$("#buttonSelectSchool").text()}
