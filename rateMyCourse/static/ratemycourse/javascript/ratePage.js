@@ -34,6 +34,7 @@ $(document).ready(function() {
   //$("#menuLogin").load("./test.html")
   validateSignUp()
   validateSignIn()
+  validateResetPwd()
 
   // Login widget set according to cookie
   // if($.cookie('username') == undefined || $.cookie('userid') == undefined) {
@@ -76,12 +77,12 @@ function Func_submit() {
 //  	return false
 //  }
   if($('#writeCommentText').val().length < 10){
-    alert('please write more for your course!(more than 10 characters)')
+    alert('请输入至少10个字的评价！')
 	return false
   }
   for(i = 0; i　< score.length; i++){
     if(score[i] == 0){
-      alert('please rate for all aspect!')
+      alert('请完成所有评分！')
       return false
     }
   }
@@ -100,7 +101,7 @@ function Func_submit() {
     }
   }).done(function (data) {
     if(data.statCode == 0){
-      alert("your comment submited succesfully!")
+      alert("评价成功！")
       window.location.href = '../'
     }
     else {

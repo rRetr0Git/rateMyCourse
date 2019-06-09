@@ -10,10 +10,11 @@ import numpy as np
 import time
 import os
 from django.contrib.auth.hashers import make_password, check_password
-from rateMyCourse.utils.send_email import send_register_email
+from rateMyCourse.utils.send_email import send_my_email
 from rateMyCourse.utils.generate_captcha import get_captcha
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+import filetype
 
 # Create your views here.
 
@@ -72,10 +73,12 @@ def get_captcha_and_save_session(request):
             sign_up_captcha_path: path of captcha when sign up.
     """
     sign_in_captcha_path, sign_in_captcha_string = get_captcha()
+    resetPWD_captcha_path, resetPWD_captcha_string = get_captcha()
     sign_up_captcha_path, sign_up_captcha_string = get_captcha()
     request.session['sign_in_captcha_string'] = sign_in_captcha_string
+    request.session['resetPWD_captcha_string'] = resetPWD_captcha_string
     request.session['sign_up_captcha_string'] = sign_up_captcha_string
-    return sign_in_captcha_path, sign_up_captcha_path
+    return sign_in_captcha_path, resetPWD_captcha_path, sign_up_captcha_path
 
 
 @timeit
@@ -94,9 +97,10 @@ def getCaptcha(request):
             sign_in_captcha_path: path of captcha.
             sign_up_captcha_path: correct value of captcha.
     """
-    sign_in_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
+    sign_in_captcha_path, resetPWD_captcha_path, sign_up_captcha_path = get_captcha_and_save_session(request)
     return HttpResponse(json.dumps({
         'sign_in_captcha_url': sign_in_captcha_path,
+        'resetPWD_captcha_url': resetPWD_captcha_path,
         'sign_up_captcha_url': sign_up_captcha_path,
     }))
 
@@ -146,7 +150,12 @@ def signUp(request):
                 'statCode': -3,
                 'errormessage': '用户名重复',
             }))
-        status = send_register_email(request, mail, 'register')
+        status, email_id = send_my_email(request, mail, 'register')
+        if status == -1:
+            return HttpResponse(json.dumps({
+                'statCode': -7,
+                'errormessage': '邮件发送失败',
+            }))
         User(username=username, mail=mail, password=new_password, status=1).save()# status为0表示有效用户
     except Exception as err:
         errmsg = str(err)
@@ -256,14 +265,14 @@ def search(request):
             'rateScore': '%.1f' % avg_score,
             'ratenumber': count
         })
-
-    pn=int(len(courses)/10)+1
-    for i in range(pn):
-        pages.append({'number': i+1})
+    if courses_count%10==0:
+        pn = int(courses_count / 10)
+    else:
+        pn=int(courses_count/10)+1
     return render(request, "rateMyCourse/searchResult_new.html", {
     	'courses': courses,
     	'count': courses_count,
-    	'pages': pages,
+    	'pages': pn,
     	})
 
 
@@ -744,8 +753,8 @@ def userInfo(request):
     return render(request, "rateMyCourse/userInfo.html",{
 	    'username': name,
 	    'isTeacher': user.isTeacher,
-	    'schoolName': user.schoolName,
-	    'departmentName': user.departmentName,
+	    'schoolName': user.schoolName if user.schoolName != None else '暂无',
+	    'departmentName': user.departmentName if user.departmentName != None else '暂无',
 	    'img': user.img.url,
 	    'commentList': commentList,
         'departments': departments,
@@ -762,17 +771,23 @@ def saveUserPic(request):
     if not request.session.get('is_login', False):
         return render(request, "rateMyCourse/index.html")
     username = request.session.get('username')
-    img_name = request.FILES.get('file')
+    img_name = request.FILES['smfile']
     user = User.objects.get(username=username)
 
-    old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + '/rateMyCourse' + User.objects.get(username=username).img.url
-    if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/rateMyCourse/rateMyCourse/static/ratemycourse/images/upload/user/user.png':
-        os.remove(old_img_url)
+    kind = filetype.guess(img_name)
+    if kind is None:
+        print("Wrong picture type")
+    elif kind.extension != "jpg" and kind.extension != "png":
+        print("Wrong picture type 2")
+    else:
+        old_img_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/') + '/rateMyCourse' + User.objects.get(username=username).img.url
+        if old_img_url != os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('\\', '/') + '/rateMyCourse/rateMyCourse/static/ratemycourse/images/upload/user/user.png':
+            os.remove(old_img_url)
 
-    img_name.name = str(user.id) + str(time.time()) + '.png'
-    new_img = IMG(img=img_name)
-    new_img.save()
-    User.objects.filter(username=username).update(img=img_name)
+        img_name.name = str(user.id) + str(time.time()) + "." + kind.extension
+        new_img = IMG(img=img_name)
+        new_img.save()
+        User.objects.filter(username=username).update(img=img_name)
 
     commentList = []
     cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
@@ -851,58 +866,40 @@ def getRank(request):
         top_courses: top courses info.
         top_teachers: top teachers info.
     """
+    top_courses = []
     top_course_ids = []
+    top_course_avg_scores = []
     top_course_scores = []
-    top_course_counts = []
-    top_teacher_ids = []
-    top_teacher_scores = []
-    top_teacher_counts = []
-    for cuct in CommentUserCourseTeacher.objects.all():
-        ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
-        count = ct.commentCnt
-        avg_score = (ct.allHomeworkScore + ct.allDifficultyScore + ct.allKnowledgeScore + ct.allSatisfactionScore) / 4 / count
-        if ct.id in top_course_ids:
-            index = top_course_ids.index(ct.id)
-            top_course_scores[index] += avg_score
-            top_course_counts[index] += 1
-        else:
-            top_course_ids.append(ct.id)
-            top_course_scores.append(avg_score)
-            top_course_counts.append(1)
-        if ct.teacherId.id in top_teacher_ids:
-            index = top_teacher_ids.index(ct.teacherId.id)
-            top_teacher_scores[index] += avg_score
-            top_teacher_counts[index] += 1
-        else:
-            top_teacher_ids.append(ct.teacherId.id)
-            top_teacher_scores.append(avg_score)
-            top_teacher_counts.append(1)
-    for i in range(len(top_course_scores)):
-        top_course_scores[i] /= top_course_counts[i]
-    for i in range(len(top_teacher_scores)):
-        top_teacher_scores[i] /= top_teacher_counts[i]
-
-    if len(top_course_scores) < 20:
-        courseRange = len(top_course_scores)
+    for ct in CourseTeacher.objects.filter(commentCnt__gt=0):
+        top_course_ids.append(ct.id)
+        top_course_scores.append({'s1': '%.1f' % (ct.allHomeworkScore / ct.commentCnt), 's2': '%.1f' % (ct.allDifficultyScore / ct.commentCnt), 's3': '%.1f' % (ct.allKnowledgeScore / ct.commentCnt), 's4': '%.1f' % (ct.allSatisfactionScore / ct.commentCnt), 'c': ct.commentCnt})
+        top_course_avg_scores.append((ct.allHomeworkScore + ct.allDifficultyScore + ct.allKnowledgeScore + ct.allSatisfactionScore) / ct.commentCnt / 4)
+    score_sorted_index = np.argsort(-np.array(top_course_avg_scores))
+    if len(top_course_avg_scores) < 20:
+        courseRange = len(top_course_avg_scores)
     else:
         courseRange = 20
-
-    if len(top_teacher_scores) < 20:
-        teacherRange = len(top_teacher_scores)
-    else:
-        teacherRange = 20
-
-    top_courses = []
-    score_sorted_index = np.argsort(-np.array(top_course_scores))
     for i in range(courseRange):
         ct = CourseTeacher.objects.get(id=top_course_ids[score_sorted_index[i]])
-        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': '%.1f' % top_course_scores[score_sorted_index[i]]})
+        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': '%.1f' % top_course_avg_scores[score_sorted_index[i]], 'score': top_course_scores[score_sorted_index[i]]})
 
     top_teachers = []
-    score_sorted_index = np.argsort(-np.array(top_teacher_scores))
+    top_teacher_ids = []
+    top_teacher_avg_scores = []
+    top_teacher_scores = []
+    for teacher in Teacher.objects.filter(commentCnt__gt=0):
+        top_teacher_ids.append(teacher.id)
+        top_teacher_scores.append({'s1': '%.1f' % (teacher.allHomeworkScore / teacher.commentCnt), 's2': '%.1f' % (teacher.allDifficultyScore / teacher.commentCnt), 's3': '%.1f' % (teacher.allKnowledgeScore / teacher.commentCnt), 's4': '%.1f' % (teacher.allSatisfactionScore / teacher.commentCnt), 'c': teacher.commentCnt})
+        top_teacher_avg_scores.append((teacher.allHomeworkScore + teacher.allDifficultyScore + teacher.allKnowledgeScore + teacher.allSatisfactionScore) / teacher.commentCnt / 4)
+    score_sorted_index = np.argsort(-np.array(top_teacher_avg_scores))
+    if len(top_teacher_avg_scores) < 20:
+        teacherRange = len(top_teacher_avg_scores)
+    else:
+        teacherRange = 20
     for i in range(teacherRange):
         teacher = Teacher.objects.get(id=top_teacher_ids[score_sorted_index[i]])
-        top_teachers.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': '%.1f' % top_teacher_scores[score_sorted_index[i]]})
+        top_teachers.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': '%.1f' % top_teacher_avg_scores[score_sorted_index[i]], 'score': top_teacher_scores[score_sorted_index[i]]})
+
     return render(request, "rateMyCourse/rankPage.html", {
         'top_courses': top_courses,
         'top_teachers': top_teachers
@@ -937,8 +934,94 @@ def active(request, active_code):
          active_code: code to make user active.
     """
     try:
-        record = EmailVerifyRecord.objects.get(code=active_code)
+        record = EmailVerifyRecord.objects.get(code=active_code, type='register', valid=0)
         User.objects.filter(mail=record.email).update(status=0)
+        EmailVerifyRecord.objects.filter(code=active_code, type='register', valid=0).update(valid=1)
         return render(request, 'rateMyCourse/index.html', {'msg': '激活成功'})
     except:
         return render(request, 'rateMyCourse/index.html', {'msg': '激活失败'})
+
+
+@timeit
+def send_resetPWD_email(request):
+    """发送重置密码邮件
+
+    """
+    try:
+        email = request.POST['email']
+        captcha = request.POST['captcha']
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '请填写信息',
+        }))
+    try:
+        validate_email(email)
+    except ValidationError:
+        return HttpResponse(json.dumps({
+            'statCode': -6,
+            'errormessage': '邮箱格式错误',
+        }))
+    print('input: ' + captcha)
+    print('correct: ' + request.session.get('resetPWD_captcha_string', 'False'))
+    if captcha.lower() != request.session.get('resetPWD_captcha_string', 'False').lower():
+        return HttpResponse(json.dumps({
+            'statCode': -5,
+            'errormessage': '验证码错误',
+        }))
+    try:
+        user = User.objects.get(mail=email)
+        status, emailRecordId = send_my_email(request, email, 'resetPWD')
+        if status == -1:
+            return HttpResponse(json.dumps({
+                'statCode': -1,
+                'errormessage': '邮件发送失败',
+            }))
+        return HttpResponse(json.dumps({
+            'statCode': 0,
+        }))
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '用户不存在',
+        }))
+
+
+@timeit
+def toResetPWD(request, reset_code):
+    """点击重置密码邮件，跳转到重置页面，10分钟内有效
+
+    """
+    try:
+        record = EmailVerifyRecord.objects.get(code=reset_code, type='resetPWD', valid=0)
+        prevtime = record.time
+        if (timezone.now() - prevtime).seconds > 600:
+            return render(request, "rateMyCourse/index.html", {'msg': '重置密码失败，重置链接已过期。'})
+        else:
+            return render(request, "rateMyCourse/resetPassword.html")
+    except:
+        return render(request, "rateMyCourse/index.html", {'msg': '重置密码失败。'})
+
+@timeit
+def resetPWD(request):
+    """重置密码
+
+    Args:
+        reset_code：code to reset password
+    """
+    try:
+        password = request.POST['password']
+        reset_code = request.POST['reset_code']
+        record = EmailVerifyRecord.objects.get(code=reset_code, type='resetPWD', valid=0)
+        record.valid=1
+        record.save()
+        email = EmailVerifyRecord.objects.get(code=reset_code, type='resetPWD').email
+        User.objects.filter(mail=email).update(password=make_password(password), status=0)
+        return HttpResponse(json.dumps({
+            'statCode': 0,
+        }))
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '重置密码失败',
+        }))

@@ -10,7 +10,9 @@ $(document).ready(function() {
   // Form validation for Sign in / Sign up forms
   validateSignUp()
   validateSignIn()
-  $("#searchCourse").keyup(function(event) {
+  validateResetPwd()
+
+    $("#searchCourse").keyup(function(event) {
           if (event.keyCode == 13) {
               Func_search_course()
           }

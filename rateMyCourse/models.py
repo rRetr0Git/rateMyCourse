@@ -1,6 +1,7 @@
 #-*- coding: UTF-8 -*-
 from django.db import models
 import uuid
+from django.utils import timezone
 # Create your models here.
 
 class IMG(models.Model):
@@ -180,5 +181,7 @@ class HitCount(models.Model):
 
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=50, unique=True)
-    email = models.CharField(max_length=40, unique=True)
+    email = models.CharField(max_length=40)
     type = models.CharField(max_length=10)
+    time = models.DateTimeField(default=timezone.now())
+    valid = models.IntegerField(default=0) # 0有效 1无效

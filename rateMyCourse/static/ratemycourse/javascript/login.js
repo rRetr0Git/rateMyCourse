@@ -89,7 +89,7 @@ function Func_signUp() {
       //$("#menuUser").show()
       //$("#navUser").text(data.username)
       //$.cookie('userid', data.userid, {path: '/'})
-        alert("激活邮件已发送至您的邮箱，请及时查看")
+        alert("激活邮件已发送至您的邮箱，请及时查收")
         //alert("注册成功！");
         location.replace(location);
     }
@@ -210,6 +210,12 @@ function Func_getCaptcha(){
         captchaImg1.append("<ul class=\"list-unstyled\">\n" +
                            "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
                            "</ul>");
+        var captchaImg3 = $("#captchaImg3");
+        captchaImg3.children().remove();
+        captchaImg3.append("<img src=\"" + data.resetPWD_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
+        captchaImg3.append("<ul class=\"list-unstyled\">\n" +
+                           "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
+                           "</ul>");
         var captchaImg2 = $("#captchaImg2");
         captchaImg2.children().remove();
         captchaImg2.append("<img src=\"" + data.sign_up_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
@@ -232,6 +238,12 @@ function Func_changeCaptcha(){
         captchaImg1.append("<ul class=\"list-unstyled\">\n" +
                            "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
                            "</ul>");
+        var captchaImg3 = $("#captchaImg3");
+        captchaImg3.children().remove();
+        captchaImg3.append("<img src=\"" + data.resetPWD_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
+        captchaImg3.append("<ul class=\"list-unstyled\">\n" +
+                           "<a href=\"javascript:void(0)\" onclick=\"Func_changeCaptcha()\" class=\"text-muted\">看不清，换一张</a>\n" +
+                           "</ul>");
         var captchaImg2 = $("#captchaImg2");
         captchaImg2.children().remove();
         captchaImg2.append("<img src=\"" + data.sign_up_captcha_url +"\" title=\"看不清？换一张\" onclick=\"Func_changeCaptcha()\">");
@@ -240,4 +252,41 @@ function Func_changeCaptcha(){
                            "</ul>");
     });
     return false;
+}
+
+function validateResetPwd() {
+    $("#formResetPWD").validate({
+        submitHandler: function() {
+            Func_send_resetPWD_email();
+        },
+        rules: {
+            inputEmail: {
+                required: true,
+                email: true
+            }
+        },
+        messages: {
+            inputEmail: "请输入正确的邮箱地址",
+        }
+    })
+}
+
+function Func_send_resetPWD_email() {
+    $.ajax("/send_resetPWD_email/", {
+        dataType: 'json',
+        type: 'POST',
+        async : false,
+        data: {
+            "email": $("#inputResetEmail").val(),
+            "captcha": $("#inputCaptchaResetPWD").val(),
+        }
+    }).done(function (data) {
+        if (data.statCode != 0) {
+            alert(data.errormessage);
+            location.replace(location);
+        } else{
+            alert('重置密码邮件已发送至您的邮箱，请在10分钟内查收');
+            location.replace(location);
+        }
+    });
 }
