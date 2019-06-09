@@ -71,21 +71,41 @@
             <table class="table text-center" style="table-layout: fixed;" name="top_courses" id="top_courses">
                 <thead>
                 <tr>
-                    <th width="50%" style='vertical-align: middle;text-align: left;'>课程名称</th>
-                    <th width="30%" style='vertical-align: middle;text-align: left;'>授课教师</th>
-                    <th width="20%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>综合评分</th>
+                    <th onclick = "sortTable('top_courses', 0, 'string');" width="35%" style='vertical-align: middle;text-align: left; cursor:pointer'>课程名称</th>
+                    <th onclick = "sortTable('top_courses', 1, 'string');" width="10%" style='vertical-align: middle;text-align: left; cursor:pointer'>授课教师</th>
+                    <th onclick = "sortTable('top_courses', 2, 'float');" width="8%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>作业量</th>
+                    <th onclick = "sortTable('top_courses', 3, 'float');" width="8%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>难度</th>
+                    <th onclick = "sortTable('top_courses', 4, 'float');" width="8%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>知识量</th>
+                    <th onclick = "sortTable('top_courses', 5, 'float');" width="8%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>满意度</th>
+                    <th onclick = "sortTable('top_courses', 6, 'int');" width="10%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>评价次数</th>
+                    <th onclick = "sortTable('top_courses', 7, 'float');" width="13%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>综合评分</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for course in top_courses %}
                 <tr>
-                    <td width="50%" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                    <td width="35%" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                         <a title={{course.courseName}} href="/course/{{course.courseTeacherId}}/">{{course.courseName}}</a>
                     </td>
-                    <td width="30%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                    <td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                         <a href="/teacher/{{course.teacherId}}/">{{course.teacherName}}</a>
                     </td>
-                    <td width="20%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                    <td width="8%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{course.score.s1}}
+                    </td>
+                    <td width="8%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{course.score.s2}}
+                    </td>
+                    <td width="8%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{course.score.s3}}
+                    </td>
+                    <td width="8%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{course.score.s4}}
+                    </td>
+                    <td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{course.score.c}}
+                    </td>
+                    <td width="13%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                         {{course.avgScore}}
                     </td>
                 </tr>
@@ -95,17 +115,37 @@
             <table class="table text-center" style="table-layout: fixed;" name="top_teachers" id="top_teachers">
                 <thead>
                 <tr>
-                    <th width="50%" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>授课教师</th>
-                    <th width="50%" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>综合评分</th>
+                    <th onclick = "sortTable('top_teachers', 0, 'string');" width="45%" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>授课教师</th>
+                    <th onclick = "sortTable('top_teachers', 1, 'float');" width="8%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>作业量</th>
+                    <th onclick = "sortTable('top_teachers', 2, 'float');" width="8%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>难度</th>
+                    <th onclick = "sortTable('top_teachers', 3, 'float');" width="8%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>知识量</th>
+                    <th onclick = "sortTable('top_teachers', 4, 'float');" width="8%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>满意度</th>
+                    <th onclick = "sortTable('top_teachers', 5, 'int');" width="10%" style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>评价次数</th>
+                    <th onclick = "sortTable('top_teachers', 6, 'float');" width="13%" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap; cursor:pointer'>综合评分</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for teacher in top_teachers %}
                 <tr>
-                    <td width="50%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                    <td width="45%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                         <a href="/teacher/{{teacher.teacherId}}/">{{teacher.teacherName}}</a>
                     </td>
-                    <td width="50%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                    <td width="8%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{teacher.score.s1}}
+                    </td>
+                    <td width="8%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{teacher.score.s2}}
+                    </td>
+                    <td width="8%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{teacher.score.s3}}
+                    </td>
+                    <td width="8%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{teacher.score.s4}}
+                    </td>
+                    <td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
+                        {{teacher.score.c}}
+                    </td>
+                    <td width="13%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>
                         {{teacher.avgScore}}
                     </td>
                 </tr>

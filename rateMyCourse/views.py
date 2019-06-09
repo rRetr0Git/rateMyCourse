@@ -866,58 +866,40 @@ def getRank(request):
         top_courses: top courses info.
         top_teachers: top teachers info.
     """
+    top_courses = []
     top_course_ids = []
+    top_course_avg_scores = []
     top_course_scores = []
-    top_course_counts = []
-    top_teacher_ids = []
-    top_teacher_scores = []
-    top_teacher_counts = []
-    for cuct in CommentUserCourseTeacher.objects.all():
-        ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
-        count = ct.commentCnt
-        avg_score = (ct.allHomeworkScore + ct.allDifficultyScore + ct.allKnowledgeScore + ct.allSatisfactionScore) / 4 / count
-        if ct.id in top_course_ids:
-            index = top_course_ids.index(ct.id)
-            top_course_scores[index] += avg_score
-            top_course_counts[index] += 1
-        else:
-            top_course_ids.append(ct.id)
-            top_course_scores.append(avg_score)
-            top_course_counts.append(1)
-        if ct.teacherId.id in top_teacher_ids:
-            index = top_teacher_ids.index(ct.teacherId.id)
-            top_teacher_scores[index] += avg_score
-            top_teacher_counts[index] += 1
-        else:
-            top_teacher_ids.append(ct.teacherId.id)
-            top_teacher_scores.append(avg_score)
-            top_teacher_counts.append(1)
-    for i in range(len(top_course_scores)):
-        top_course_scores[i] /= top_course_counts[i]
-    for i in range(len(top_teacher_scores)):
-        top_teacher_scores[i] /= top_teacher_counts[i]
-
-    if len(top_course_scores) < 20:
-        courseRange = len(top_course_scores)
+    for ct in CourseTeacher.objects.filter(commentCnt__gt=0):
+        top_course_ids.append(ct.id)
+        top_course_scores.append({'s1': '%.1f' % (ct.allHomeworkScore / ct.commentCnt), 's2': '%.1f' % (ct.allDifficultyScore / ct.commentCnt), 's3': '%.1f' % (ct.allKnowledgeScore / ct.commentCnt), 's4': '%.1f' % (ct.allSatisfactionScore / ct.commentCnt), 'c': ct.commentCnt})
+        top_course_avg_scores.append((ct.allHomeworkScore + ct.allDifficultyScore + ct.allKnowledgeScore + ct.allSatisfactionScore) / ct.commentCnt / 4)
+    score_sorted_index = np.argsort(-np.array(top_course_avg_scores))
+    if len(top_course_avg_scores) < 20:
+        courseRange = len(top_course_avg_scores)
     else:
         courseRange = 20
-
-    if len(top_teacher_scores) < 20:
-        teacherRange = len(top_teacher_scores)
-    else:
-        teacherRange = 20
-
-    top_courses = []
-    score_sorted_index = np.argsort(-np.array(top_course_scores))
     for i in range(courseRange):
         ct = CourseTeacher.objects.get(id=top_course_ids[score_sorted_index[i]])
-        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': '%.1f' % top_course_scores[score_sorted_index[i]]})
+        top_courses.append({'courseTeacherId': ct.id, 'courseName': ct.courseId.name, 'teacherId': ct.teacherId.id, 'teacherName': ct.teacherId.name, 'avgScore': '%.1f' % top_course_avg_scores[score_sorted_index[i]], 'score': top_course_scores[score_sorted_index[i]]})
 
     top_teachers = []
-    score_sorted_index = np.argsort(-np.array(top_teacher_scores))
+    top_teacher_ids = []
+    top_teacher_avg_scores = []
+    top_teacher_scores = []
+    for teacher in Teacher.objects.filter(commentCnt__gt=0):
+        top_teacher_ids.append(teacher.id)
+        top_teacher_scores.append({'s1': '%.1f' % (teacher.allHomeworkScore / ct.commentCnt), 's2': '%.1f' % (teacher.allDifficultyScore / ct.commentCnt), 's3': '%.1f' % (teacher.allKnowledgeScore / ct.commentCnt), 's4': '%.1f' % (teacher.allSatisfactionScore / ct.commentCnt), 'c': teacher.commentCnt})
+        top_teacher_avg_scores.append((teacher.allHomeworkScore + teacher.allDifficultyScore + teacher.allKnowledgeScore + teacher.allSatisfactionScore) / teacher.commentCnt / 4)
+    score_sorted_index = np.argsort(-np.array(top_teacher_avg_scores))
+    if len(top_teacher_avg_scores) < 20:
+        teacherRange = len(top_teacher_avg_scores)
+    else:
+        teacherRange = 20
     for i in range(teacherRange):
         teacher = Teacher.objects.get(id=top_teacher_ids[score_sorted_index[i]])
-        top_teachers.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': '%.1f' % top_teacher_scores[score_sorted_index[i]]})
+        top_teachers.append({'teacherId': teacher.id, 'teacherName': teacher.name, 'avgScore': '%.1f' % top_teacher_avg_scores[score_sorted_index[i]], 'score': top_teacher_scores[score_sorted_index[i]]})
+
     return render(request, "rateMyCourse/rankPage.html", {
         'top_courses': top_courses,
         'top_teachers': top_teachers
