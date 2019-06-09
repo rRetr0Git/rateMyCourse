@@ -753,8 +753,8 @@ def userInfo(request):
     return render(request, "rateMyCourse/userInfo.html",{
 	    'username': name,
 	    'isTeacher': user.isTeacher,
-	    'schoolName': user.schoolName,
-	    'departmentName': user.departmentName,
+	    'schoolName': user.schoolName if user.schoolName != None else '暂无',
+	    'departmentName': user.departmentName if user.departmentName != None else '暂无',
 	    'img': user.img.url,
 	    'commentList': commentList,
         'departments': departments,
