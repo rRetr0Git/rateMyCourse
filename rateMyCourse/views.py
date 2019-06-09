@@ -889,7 +889,7 @@ def getRank(request):
     top_teacher_scores = []
     for teacher in Teacher.objects.filter(commentCnt__gt=0):
         top_teacher_ids.append(teacher.id)
-        top_teacher_scores.append({'s1': '%.1f' % (teacher.allHomeworkScore / ct.commentCnt), 's2': '%.1f' % (teacher.allDifficultyScore / ct.commentCnt), 's3': '%.1f' % (teacher.allKnowledgeScore / ct.commentCnt), 's4': '%.1f' % (teacher.allSatisfactionScore / ct.commentCnt), 'c': teacher.commentCnt})
+        top_teacher_scores.append({'s1': '%.1f' % (teacher.allHomeworkScore / teacher.commentCnt), 's2': '%.1f' % (teacher.allDifficultyScore / teacher.commentCnt), 's3': '%.1f' % (teacher.allKnowledgeScore / teacher.commentCnt), 's4': '%.1f' % (teacher.allSatisfactionScore / teacher.commentCnt), 'c': teacher.commentCnt})
         top_teacher_avg_scores.append((teacher.allHomeworkScore + teacher.allDifficultyScore + teacher.allKnowledgeScore + teacher.allSatisfactionScore) / teacher.commentCnt / 4)
     score_sorted_index = np.argsort(-np.array(top_teacher_avg_scores))
     if len(top_teacher_avg_scores) < 20:
