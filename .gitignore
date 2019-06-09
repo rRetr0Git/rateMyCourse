@@ -15,3 +15,4 @@ rateMyCourse/static/ratemycourse/images/upload/user/*
 !rateMyCourse/static/ratemycourse/images/upload/user/user.png
 Server.md
 rateMyCourse/static/captcha/*
+*.pub
