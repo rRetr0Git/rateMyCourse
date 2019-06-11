@@ -205,7 +205,7 @@
                 </colgroup>
                 <tbody>
                     {% for item in commentList %}
-                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{item.rate}}</td><td><a href="/course/{{item.courseTeacher}}">详情</a><button class="btn btn-sm btn-primary" onclick="Func_userDeleteComment({{item.commentId}})">删除</button></td></tr>
+                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{item.rate}}</td><td><a href="/course/{{item.courseTeacher}}">详情</a><button class="btn btn-sm btn-primary" onclick="Func_userDeleteComment('{{item.commentId}}')">删除</button></td></tr>
                     {% endfor %}
                 </tbody>
             </table>

@@ -1107,7 +1107,7 @@ def adminDeleteComment(request):
             'errormessage': '管理员未登录或评论不存在',
         }))
     try:
-        AdminUser.objects.get(userId__id=userId)
+        AdminUser.objects.get(userId__username=userId)
     except:
         return HttpResponse(json.dumps({
             'statCode': -2,
@@ -1131,9 +1131,8 @@ def adminDeleteComment(request):
         teacher.save()
         comment.save()
         ct.save()
-        new_record = AdminDeleteCommentRecord(CommentUserCourseTeacherID=cuct.id, time=timezone.now(), status=0)
+        new_record = AdminDeleteCommentRecord(CommentUserCourseTeacherID=cuct, time=timezone.now(), status=0)
         new_record.save()
-
         return HttpResponse(json.dumps({
             'statCode': 0
         }))
@@ -1173,6 +1172,7 @@ def adminPage(request):
         if cuct_count != 0 and page > ((cuct_count - 1) / 10 + 1) or page < 0:
             return render(request, "rateMyCourse/index.html")
         all_comments = []
+        print("1")
         for cuctcnt in range((page - 1) * 10, min(page * 10, cuct_count)):
             cuct = cucts[cuctcnt]
             comment = {}
@@ -1186,10 +1186,10 @@ def adminPage(request):
             comment['commentId'] = cuct.commentId.id
             comment['scores'] = [cuct.commentId.homework, cuct.commentId.difficulty, cuct.commentId.knowledge, cuct.commentId.satisfaction]
             all_comments.append(comment)
-        if cuctcnt % 10 == 0:
-            pn = int(cuctcnt / 10)
+        if cuct_count % 10 == 0:
+            pn = int(cuct_count / 10)
         else:
-            pn = int(cuctcnt / 10) + 1
+            pn = int(cuct_count / 10) + 1
         return render(request, "rateMyCourse/admin.html", {'all_comments': all_comments, 'count': len(all_comments), 'pages': pn})
     except:
         return render(request, "rateMyCourse/index.html")

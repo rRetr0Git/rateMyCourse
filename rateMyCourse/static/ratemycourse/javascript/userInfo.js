@@ -126,7 +126,6 @@ function Func_userDeleteComment(commentId){
   $.ajax("/userDeleteComment/", {
     dataType: 'json',
     type: 'POST',
-    traditional: true,
     data: {
       'commentId': commentId
     }
