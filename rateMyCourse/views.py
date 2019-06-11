@@ -559,7 +559,7 @@ def getComment(request):
             'errormessage': '课程不存在',
             }))
     cmtList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher).order_by("-commentId__time")
+    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher, commentId__status=0).order_by("-commentId__time")
     for cuct in cuctList:
         user = cuct.userId
         cmt = cuct.commentId
@@ -571,7 +571,11 @@ def getComment(request):
             'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png',
             'goodTimes': cmt.like,
             'badTimes': cmt.dislike,
-            'commentId': str(cmt.id)
+            'commentId': str(cmt.id),
+            'homework': cmt.homework,
+            'difficulty': cmt.difficulty,
+            'knowledge': cmt.knowledge,
+            'satisfaction': cmt.satisfaction
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -663,7 +667,8 @@ def submitComment(request):
             homework = rate[0],
             difficulty=rate[1],
             knowledge=rate[2],
-            satisfaction=rate[3]
+            satisfaction=rate[3],
+            status=0
         )
         comment.save()
         cuct = CommentUserCourseTeacher(commentId=comment,userId=user,courseId=course,teacherId=teacher)
@@ -785,7 +790,7 @@ def saveUserPic(request):
         User.objects.filter(username=username).update(img=img_name)
 
     commentList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id, commentId__status=0)
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
@@ -828,7 +833,7 @@ def saveUserInfo(request):
 
     user = User.objects.get(username=username)
     commentList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id, commentId__status=0)
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
@@ -1024,14 +1029,15 @@ def resetPWD(request):
 
 def userDeleteComment(request):
     try:
-        commentId = request.POST['comment']
+        commentId = request.POST['commentId']
         userId = request.session.get('username')
-        comment = Comment.objects.get(id=commentId)
+        print(commentId, userId)
+        comment = Comment.objects.get(id=commentId, status=0)
         cuct = CommentUserCourseTeacher.objects.get(commentId=commentId)
         ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
         teacher = cuct.teacherId
 
-        if cuct.userId != userId:
+        if cuct.userId.username != userId:
             return HttpResponse(json.dumps({
                 'statCode': -1,
                 'errormessage': '评论只能由创作用户删除',
@@ -1069,7 +1075,7 @@ def adminDeleteComment(request):
     try:
         commentId = request.POST['comment']
         userId = request.session.get('username')
-        comment = Comment.objects.get(id=commentId)
+        comment = Comment.objects.get(id=commentId, status=0)
         cuct = CommentUserCourseTeacher.objects.get(commentId=commentId)
         ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
         teacher = cuct.teacherId
