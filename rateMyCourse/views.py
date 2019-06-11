@@ -234,7 +234,7 @@ def search(request):
     courses_count = len(courseTeacherList)
     if courses_count != 0 and page > ((courses_count-1)/10+1) or page < 0:
         return render(request, "rateMyCourse/index.html")
-    for ctcnt in range((page - 1) * 10, min(page * 10, cuct_count)):
+    for ctcnt in range((page - 1) * 10, min(page * 10, courses_count)):
         if(courses_count == 0 or ctcnt >= len(courseTeacherList)):
             break
         ct = courseTeacherList[ctcnt]
