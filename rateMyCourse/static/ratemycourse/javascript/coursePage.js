@@ -144,8 +144,14 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     buttonTag[2].setAttribute("id","delete_btn");
     buttonTag[2].setAttribute("class","btn btn-sm btn-primary");
     buttonTag[2].setAttribute('onclick', "Func_userDeleteComment('" + commentId +  "')");
-    buttonTag[2].innerHTML = '删除';
-
+    var login = sessionStorage.getItem('username');
+    alert(login);
+    if (login==null){
+        buttonTag[2].innerHTML = '删除';
+    }
+    else{
+        buttonTag[2].innerHTML = '删除222';
+    }
     divTags[11].setAttribute("class","list-group-item");
     divTags[12].setAttribute("class","col-md-12 column");
     divTags[13].setAttribute("class","row clearfix");
