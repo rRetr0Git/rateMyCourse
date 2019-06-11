@@ -194,4 +194,11 @@ class AdminDeleteCommentRecord(models.Model):
         on_delete=models.CASCADE,
     )
     time = models.DateTimeField(default=timezone.now())
-    valid = models.IntegerField(default=0) # 0未读 1已读
+    status = models.IntegerField(default=0) # 0未读 1已读
+
+
+class AdminUser(models.Model):
+    userId = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
