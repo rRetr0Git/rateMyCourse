@@ -121,3 +121,22 @@ var sendPhoto = function(){
         });
     });
 }
+
+function Func_userDeleteComment(commentId){
+  $.ajax("/userDeleteComment/", {
+    dataType: 'json',
+    type: 'POST',
+    traditional: true,
+    data: {
+      'commentId': commentId
+    }
+  }).done(function (data) {
+    if(data.statCode == 0){
+      alert("删除成功！");
+      location.replace(location);
+    }
+    else {
+      alert(data.errormessage);
+    }
+  })
+}
