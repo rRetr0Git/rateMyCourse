@@ -1143,7 +1143,7 @@ def getMailNum(request):
     if request.session.get('is_login', False):
         username = request.session.get('username', False)
         u = User.objects.get(username=username)
-        deleteCommentListNum = len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId__username=u.name, status=1))
+        deleteCommentListNum = len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId__username=u.username, status=0))
         return HttpResponse(json.dumps({
             'mail_num': deleteCommentListNum,
         }))
