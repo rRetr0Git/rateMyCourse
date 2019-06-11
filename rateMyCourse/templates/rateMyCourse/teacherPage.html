@@ -62,8 +62,8 @@
             <div>
             <table id="hor-minimalist-t">
                 <colgroup>
-                    <col style="width: 60%;" />
-                    <col style="width: 40%;" />
+                    <col style="width: 60%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap" />
+                    <col style="width: 40%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap" />
                 </colgroup>
                 <thead>
                     <tr><th>课程名</th><th>评分</th></tr>
@@ -73,8 +73,8 @@
             <div>
             <table id="hor-minimalist-t">
                 <colgroup>
-                    <col style="width: 60%; text-overflow: ellipsis;" />
-                    <col style="width: 40%; text-overflow: ellipsis;" />
+                    <col style="width: 60%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap" />
+                    <col style="width: 40%; text-overflow: ellipsis;overflow: hidden;white-space: nowrap" />
                 </colgroup>
                 <tbody>
                     {% for item in courseList %}
@@ -90,7 +90,7 @@
 
 <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 <script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
 <!--<script src="../../static/ratemycourse/popper/popper.min.js"></script>-->
 <script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>

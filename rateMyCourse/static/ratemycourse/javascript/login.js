@@ -107,18 +107,23 @@ function Func_signIn() {
       "captcha": $("#captcha").val()
     }
   }).done(function(data) {
-    if(data.statCode !== 0) {
+    if(data.statCode < 0) {
       alert(data.errormessage);
     }
     else {
+        if (data.statCode == 1) {
+            window.location.href = '/adminstrator/?page=1';
+        }
+        else{
+            location.replace(location);
+        }
     //     $("#menuUser").prop("hidden",false);
     //     $("#menuLogin").prop("hidden",true);
     //   //$("#menuLogin").hide()
     //   //$("#menuUser").show()
     //     $("#navUser").text(data.username);
     //   //$("#modalInfo").show()
-    //   //$.cookie('username', data.username, {path: '/'})
-          location.replace(location);
+    //   //$.cookie('username', data.username, {path: '/'}
     }
   });
   return false
@@ -287,6 +292,23 @@ function Func_send_resetPWD_email() {
         } else{
             alert('重置密码邮件已发送至您的邮箱，请在10分钟内查收');
             location.replace(location);
+        }
+    });
+}
+
+function Func_get_mail_num() {
+    $.ajax("/getMailNum/",{
+        dataType: 'json',
+        type: 'POST',
+        async : false,
+    }).done(function (data) {
+        if(data.mail_num != -1){
+            var mail_num = document.getElementById("unreadMailMessageNum");
+            if(data.mail_num == 0){
+                mail_num.innerText = "";
+            } else{
+                mail_num.innerText = data.mail_num;
+            }
         }
     });
 }

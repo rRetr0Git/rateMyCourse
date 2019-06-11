@@ -182,7 +182,7 @@ def signUp(request):
 
 
 @timeit
-def simpleSearch(school, department, keywords):
+def simpleSearch(department, keywords):
     """完成数据库查找工作
 
     Args:
@@ -193,20 +193,12 @@ def simpleSearch(school, department, keywords):
     Return:
         courseTeacherList: courses information.
     """
-    if school == None:
+    if department == None:
         courseList = Course.objects.filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
         courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
     else:
-        if department == None:
-            school = School.objects.get(name=school)
-            courseIdList = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school)]
-            courseList = Course.objects.filter(id__in = courseIdList).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
-            courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
-        else:
-            school = School.objects.get(name=school)
-            courseIdList = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school)]
-            courseList = Course.objects.filter(id__in = courseIdList, department=department).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
-            courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
+        courseList = Course.objects.filter(department=department).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+        courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
     return courseTeacherList
 
 
@@ -224,10 +216,11 @@ def search(request):
     """
     # addHitCount()
     keywords = request.GET['keywords']
-    if('school' in request.GET):
-        school = request.GET['school']
-    else:
-        school = None
+    # if('school' in request.GET):
+    #     school = request.GET['school']
+    # else:
+    #     school = None
+    school = None
     if('department' in request.GET):
         department = request.GET['department']
     else:
@@ -236,14 +229,12 @@ def search(request):
         page = int(request.GET['page'])
     except:
         return render(request, "rateMyCourse/index.html")
-    print(keywords, page)
     courses = []
-    pages = []
-    courseTeacherList = simpleSearch(school, department, keywords)
+    courseTeacherList = simpleSearch(department, keywords)
     courses_count = len(courseTeacherList)
     if courses_count != 0 and page > ((courses_count-1)/10+1) or page < 0:
         return render(request, "rateMyCourse/index.html")
-    for ctcnt in range((page - 1) * 10, page * 10):
+    for ctcnt in range((page - 1) * 10, min(page * 10, courses_count)):
         if(courses_count == 0 or ctcnt >= len(courseTeacherList)):
             break
         ct = courseTeacherList[ctcnt]
@@ -476,6 +467,11 @@ def signIn(request):
         request.session['userid'] = str(u.id)
         request.session['username'] = u.username
         request.session['is_login'] = True
+        if len(AdminUser.objects.filter(userId=u.id)) == 1:
+            return HttpResponse(json.dumps({
+                'statCode': 1,
+                'username': u.username,
+            }))
         return HttpResponse(json.dumps({
             'statCode': 0,
             'username': u.username,
@@ -564,7 +560,7 @@ def getComment(request):
             'errormessage': '课程不存在',
             }))
     cmtList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher).order_by("-commentId__time")
+    cuctList = CommentUserCourseTeacher.objects.filter(courseId=course, teacherId=teacher, commentId__status=0).order_by("-commentId__time")
     for cuct in cuctList:
         user = cuct.userId
         cmt = cuct.commentId
@@ -576,7 +572,11 @@ def getComment(request):
             'avator': User.objects.get(username=user).img.url if cmt.anonymous == False else '/static/ratemycourse/images/upload/user/user.png',
             'goodTimes': cmt.like,
             'badTimes': cmt.dislike,
-            'commentId': str(cmt.id)
+            'commentId': str(cmt.id),
+            'homework': cmt.homework,
+            'difficulty': cmt.difficulty,
+            'knowledge': cmt.knowledge,
+            'satisfaction': cmt.satisfaction
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -659,7 +659,7 @@ def submitComment(request):
                 'statCode': -1,
                 'errormessage': '评论内容不合法，请勿包含\'<\'或\'>\'',
             }))
-    preComment = CommentUserCourseTeacher.objects.filter(userId=user,courseId=course,teacherId=teacher)
+    preComment = CommentUserCourseTeacher.objects.filter(userId=user,courseId=course,teacherId=teacher, commentId__status=0)
     if(len(preComment)==0):
         comment = Comment(
             anonymous=True if anonymous == 'true' else False,
@@ -668,7 +668,8 @@ def submitComment(request):
             homework = rate[0],
             difficulty=rate[1],
             knowledge=rate[2],
-            satisfaction=rate[3]
+            satisfaction=rate[3],
+            status=0
         )
         comment.save()
         cuct = CommentUserCourseTeacher(commentId=comment,userId=user,courseId=course,teacherId=teacher)
@@ -691,7 +692,7 @@ def submitComment(request):
         rate2=comment.difficulty
         rate3=comment.knowledge
         rate4=comment.satisfaction
-        Comment.objects.filter(id=comment.id).update(
+        Comment.objects.filter(id=comment.id, status=0).update(
             anonymous=True if anonymous == 'true' else False,
             content=content,
             time=timezone.now(),
@@ -731,7 +732,7 @@ def userInfo(request):
     name = request.GET['name']
     user = User.objects.get(username = name)
     commentList=[]
-    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id, commentId__status=0)
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
@@ -745,10 +746,26 @@ def userInfo(request):
             'teacher': teacher.name,
             'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
+            'commentId': cmt.id
             })
     school = School.objects.get(name='北京航空航天大学')
     department_set = SchoolCourse.objects.filter(schoolId=school.id).values("courseId__department").distinct()
     departments = [ds['courseId__department'] for ds in department_set]
+
+    deleteCommentList = []
+    adcrs = AdminDeleteCommentRecord.objects.all().order_by("-time")
+    for adcr in adcrs:
+        cuct_deleted = CommentUserCourseTeacher.objects.get(id=adcr.CommentUserCourseTeacherID.id)
+        deleteCommentList.append({
+            'course': cuct_deleted.courseId.name,
+            'courseTeacher': CourseTeacher.objects.get(courseId=cuct_deleted.courseId, teacherId=cuct_deleted.teacherId).id,
+            'teacher': cuct_deleted.teacherId.name,
+            'comment_text': cuct_deleted.commentId.content[0:4] + "..",
+            'time': adcr.time.strftime('%y/%m/%d'),
+            'state': '未读' if adcr.status == 0 else '已读'
+        })
+        adcr.status = 1
+        adcr.save()
 
     return render(request, "rateMyCourse/userInfo.html",{
 	    'username': name,
@@ -757,6 +774,7 @@ def userInfo(request):
 	    'departmentName': user.departmentName if user.departmentName != None else '暂无',
 	    'img': user.img.url,
 	    'commentList': commentList,
+        'deleteCommentList': deleteCommentList,
         'departments': departments,
     })
 
@@ -790,7 +808,7 @@ def saveUserPic(request):
         User.objects.filter(username=username).update(img=img_name)
 
     commentList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id, commentId__status=0)
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
@@ -804,6 +822,7 @@ def saveUserPic(request):
             'teacher': teacher.name,
             'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
+            'commentId': cmt.id
         })
 
     return render(request, "rateMyCourse/userInfo.html", {
@@ -833,7 +852,7 @@ def saveUserInfo(request):
 
     user = User.objects.get(username=username)
     commentList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id, commentId__status=0)
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
@@ -847,6 +866,7 @@ def saveUserInfo(request):
             'teacher': teacher.name,
             'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
+            'commentId': cmt.id
         })
     return render(request, "rateMyCourse/userInfo.html", {
         'username': username,
@@ -1025,3 +1045,151 @@ def resetPWD(request):
             'statCode': -1,
             'errormessage': '重置密码失败',
         }))
+
+
+@timeit
+def userDeleteComment(request):
+    try:
+        commentId = request.POST['commentId']
+        userId = request.session.get('username')
+        print(commentId, userId)
+        comment = Comment.objects.get(id=commentId, status=0)
+        cuct = CommentUserCourseTeacher.objects.get(commentId=commentId)
+        ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
+        teacher = cuct.teacherId
+
+        if cuct.userId.username != userId:
+            return HttpResponse(json.dumps({
+                'statCode': -1,
+                'errormessage': '评论只能由创作用户删除',
+            }))
+
+        comment.status = 1
+
+        teacher.allSatisfactionScore -= comment.satisfaction
+        teacher.allKnowledgeScore -= comment.knowledge
+        teacher.allDifficultyScore -= comment.difficulty
+        teacher.allHomeworkScore -= comment.homework
+        teacher.commentCnt -= 1
+
+        ct.allHomeworkScore -= comment.homework
+        ct.allKnowledgeScore -= comment.knowledge
+        ct.allDifficultyScore -= comment.difficulty
+        ct.allSatisfactionScore -= comment.satisfaction
+        ct.commentCnt -= 1
+
+        teacher.save()
+        comment.save()
+        ct.save()
+
+        return HttpResponse(json.dumps({
+            'statCode': 0
+        }))
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -2,
+            'errormessage': '删除出现错误！',
+        }))
+
+
+@timeit
+def adminDeleteComment(request):
+    try:
+        commentId = request.POST['comment']
+        userId = request.session.get('username')
+        comment = Comment.objects.get(id=commentId, status=0)
+        cuct = CommentUserCourseTeacher.objects.get(commentId=commentId)
+        ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
+        teacher = cuct.teacherId
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '管理员未登录或评论不存在',
+        }))
+    try:
+        AdminUser.objects.get(userId__username=userId)
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -2,
+            'errormessage': '评论只能由管理员删除',
+        }))
+    try:
+        comment.status = 1
+
+        teacher.allSatisfactionScore -= comment.satisfaction
+        teacher.allKnowledgeScore -= comment.knowledge
+        teacher.allDifficultyScore -= comment.difficulty
+        teacher.allHomeworkScore -= comment.homework
+        teacher.commentCnt -= 1
+
+        ct.allHomeworkScore -= comment.homework
+        ct.allKnowledgeScore -= comment.knowledge
+        ct.allDifficultyScore -= comment.difficulty
+        ct.allSatisfactionScore -= comment.satisfaction
+        ct.commentCnt -= 1
+
+        teacher.save()
+        comment.save()
+        ct.save()
+        new_record = AdminDeleteCommentRecord(CommentUserCourseTeacherID=cuct, time=timezone.now(), status=0)
+        new_record.save()
+        return HttpResponse(json.dumps({
+            'statCode': 0
+        }))
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -2,
+            'errormessage': '删除出现错误！',
+        }))
+
+
+@timeit
+def getMailNum(request):
+    if request.session.get('is_login', False):
+        username = request.session.get('username', False)
+        u = User.objects.get(username=username)
+        deleteCommentListNum = len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId__username=u.username, status=0))
+        return HttpResponse(json.dumps({
+            'mail_num': deleteCommentListNum,
+        }))
+    else:
+        return HttpResponse(json.dumps({
+            'mail_num': -1,
+        }))
+
+
+@timeit
+def adminPage(request):
+    try:
+        username = request.session.get('username')
+        page = int(request.GET['page'])
+    except:
+        return render(request, "rateMyCourse/index.html")
+    try:
+        AdminUser.objects.get(userId__username=username)
+        cucts = CommentUserCourseTeacher.objects.filter(commentId__status=0).order_by("-commentId__time")
+        cuct_count = len(cucts)
+        if cuct_count != 0 and page > ((cuct_count - 1) / 10 + 1) or page < 0:
+            return render(request, "rateMyCourse/index.html")
+        all_comments = []
+        print("1")
+        for cuctcnt in range((page - 1) * 10, min(page * 10, cuct_count)):
+            cuct = cucts[cuctcnt]
+            comment = {}
+            comment['username'] = cuct.userId.username
+            comment['time'] = cuct.commentId.time
+            comment['coursename'] = cuct.courseId.name
+            comment['teachercourseId'] = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId).id
+            comment['teachername'] = cuct.teacherId.name
+            comment['teacherId'] = cuct.teacherId.id
+            comment['content'] = cuct.commentId.content
+            comment['commentId'] = cuct.commentId.id
+            comment['scores'] = [cuct.commentId.homework, cuct.commentId.difficulty, cuct.commentId.knowledge, cuct.commentId.satisfaction]
+            all_comments.append(comment)
+        if cuct_count % 10 == 0:
+            pn = int(cuct_count / 10)
+        else:
+            pn = int(cuct_count / 10) + 1
+        return render(request, "rateMyCourse/admin.html", {'all_comments': all_comments, 'count': len(all_comments), 'pages': pn})
+    except:
+        return render(request, "rateMyCourse/index.html")

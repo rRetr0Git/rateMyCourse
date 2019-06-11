@@ -136,7 +136,6 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     var badnode = document.createTextNode(badTimes);
     pTags[2].setAttribute("id","badTime"+commentId+"");
     pTags[2].appendChild(badnode);
-
     divTags[10].setAttribute("class","list-group-item");
     divTags[11].setAttribute("class","col-md-12 column");
     divTags[12].setAttribute("class","row clearfix");
@@ -145,7 +144,7 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     divTags[13].setAttribute("class","col-md-12 column")
     pTags[3].innerHTML = fixBr(htmlEscape(text));
     pTags[3].setAttribute("style","word-wrap:break-word")
-    pTags[3].setAttribute("class", "center-vertical")
+    pTags[3].setAttribute("class", "text-left")
 
     return commentGrid;
 }

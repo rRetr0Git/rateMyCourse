@@ -109,6 +109,7 @@ class Comment(models.Model):
     satisfaction = models.IntegerField(default=3)  # 满意度
     like = models.IntegerField(default=0)
     dislike = models.IntegerField(default=0)
+    status = models.IntegerField(default=0)  # 0未删除，1已删除
     def __str__(self):
         return self.content
 
@@ -185,3 +186,20 @@ class EmailVerifyRecord(models.Model):
     type = models.CharField(max_length=10)
     time = models.DateTimeField(default=timezone.now())
     valid = models.IntegerField(default=0) # 0有效 1无效
+
+
+class AdminDeleteCommentRecord(models.Model):
+    CommentUserCourseTeacherID = models.ForeignKey(
+        CommentUserCourseTeacher,
+        on_delete=models.CASCADE,
+    )
+    time = models.DateTimeField(default=timezone.now())
+    status = models.IntegerField(default=0) # 0未读 1已读
+
+
+class AdminUser(models.Model):
+    userId = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+# insert into ratemycourse_adminuser(userId_id) select id from ratemycourse_user where mail='xxx';
