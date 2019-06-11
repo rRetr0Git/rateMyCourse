@@ -109,6 +109,7 @@ class Comment(models.Model):
     satisfaction = models.IntegerField(default=3)  # 满意度
     like = models.IntegerField(default=0)
     dislike = models.IntegerField(default=0)
+    status = models.IntegerField(default=0)  # 0未删除，1已删除
     def __str__(self):
         return self.content
 
