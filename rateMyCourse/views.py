@@ -731,30 +731,12 @@ def userInfo(request):
     name = request.GET['name']
     user = User.objects.get(username = name)
     commentList=[]
-<<<<<<< HEAD
     cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id, commentId__status=0)
-=======
-    deleteCommentList = []
-    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
->>>>>>> 8106c28c3a1edb352121f3ded40a9b85f3540d85
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
         courseTeacher = CourseTeacher.objects.get(teacherId=teacher,courseId=course)
         cmt = cuct.commentId
-        deleteRecord = AdminDeleteCommentRecord.objects.get(CommentUserCourseTeacherID=cuct)
-        if deleteRecord:
-            deleteCommentList.append({
-                'course': course.name,
-                'courseTeacher': courseTeacher.id,
-                'teacher': teacher.name,
-                'comment_text': cmt.content[0:4] + "..",
-                'time': cmt.time.strftime('%y/%m/%d'),
-                'state': '未读' if deleteRecord.valid == 0 else '已读'
-            })
-            deleteRecord.valid = 1
-            deleteRecord.save()
-            continue
         if cmt.anonymous == True:
             continue
         commentList.append({
@@ -767,6 +749,21 @@ def userInfo(request):
     school = School.objects.get(name='北京航空航天大学')
     department_set = SchoolCourse.objects.filter(schoolId=school.id).values("courseId__department").distinct()
     departments = [ds['courseId__department'] for ds in department_set]
+
+    deleteCommentList = []
+    adcrs = AdminDeleteCommentRecord.objects.all().order_by("-time")
+    for adcr in adcrs:
+        cuct_deleted = CommentUserCourseTeacher.objects.get(id=adcr.CommentUserCourseTeacherID.id)
+        deleteCommentList.append({
+            'course': cuct_deleted.courseId.name,
+            'courseTeacher': CourseTeacher.objects.get(courseId=cuct_deleted.courseId, teacherId=cuct_deleted.teacherId).id,
+            'teacher': cuct_deleted.teacherId.name,
+            'comment_text': cuct_deleted.commentId.content[0:4] + "..",
+            'time': adcr.time.strftime('%y/%m/%d'),
+            'state': '未读' if adcr.status == 0 else '已读'
+        })
+        adcr.status = 1
+        adcr.save()
 
     return render(request, "rateMyCourse/userInfo.html",{
 	    'username': name,
@@ -1046,7 +1043,6 @@ def resetPWD(request):
         }))
 
 
-<<<<<<< HEAD
 def userDeleteComment(request):
     try:
         commentId = request.POST['commentId']
@@ -1142,16 +1138,12 @@ def adminDeleteComment(request):
         }))
 
 
-
 @timeit
 def getMailNum(request):
     if request.session.get('is_login', False):
         username = request.session.get('username', False)
         u = User.objects.get(username=username)
-        cuctList = CommentUserCourseTeacher.objects.filter(userId=u)
-        deleteCommentListNum = 0
-        for comment in cuctList:
-            deleteCommentListNum += len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID=comment, valid=0))
+        deleteCommentListNum = len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId__username=u.name, status=1))
         return HttpResponse(json.dumps({
             'mail_num': deleteCommentListNum,
         }))
