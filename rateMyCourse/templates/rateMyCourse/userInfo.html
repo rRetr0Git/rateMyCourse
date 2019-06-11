@@ -212,6 +212,7 @@
             </div>
             <p></p>
             <p></p>
+            {% if request.session.username == username %}
             <p class="text-center">
                 <strong>近期消息</strong>
             </p>
@@ -245,6 +246,8 @@
                 </tbody>
             </table>
             </div>
+            {% else %}
+            {% endif %}
         </div>
     </div>
 </div>
