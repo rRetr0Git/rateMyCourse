@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^course/(?P<courseTeacherId>[0-9A-Za-z\-]+)/$', views.coursePage, name='coursePage'),
     url(r'^course/(?P<courseTeacherId>[0-9A-Za-z\-]+)/rate/$', views.ratePage, name='ratePage'),
     url(r'^teacher/(?P<teacherId>[0-9A-Za-z\-]+)/$', views.teacherPage, name='teacherPage'),
+    url(r'^adminstrator/$', views.adminPage, name='adminPage'),
 
     #POST
     url(r'^signIn/$', views.signIn, name='signIn'),
@@ -41,5 +42,6 @@ urlpatterns = [
     url(r'^active/(?P<active_code>\w*)/$', views.active, name='userActive'),
     url(r'^getCaptcha/$', views.getCaptcha, name='getCaptcha'),
     url(r'^userDeleteComment/$', views.userDeleteComment, name='userDeleteComment'),
+    url(r'^adminDeleteComment/$', views.adminDeleteComment, name='adminDeleteComment'),
     url(r'^getMailNum/$', views.getMailNum, name='getMailNum')
 ]

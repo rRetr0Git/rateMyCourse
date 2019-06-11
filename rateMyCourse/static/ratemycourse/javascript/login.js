@@ -107,12 +107,12 @@ function Func_signIn() {
       "captcha": $("#captcha").val()
     }
   }).done(function(data) {
-    if(data.statCode !== 0) {
+    if(data.statCode < 0) {
       alert(data.errormessage);
     }
     else {
         if (data.statCode == 1) {
-            // todo : jump to admin.html
+            window.location.href = '/adminstrator/?page=1';
         }
         else{
             location.replace(location);

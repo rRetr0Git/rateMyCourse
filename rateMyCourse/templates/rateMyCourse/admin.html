@@ -13,42 +13,44 @@
     <div class="row clearfix">
         <div class="col-md-12 column">
             <list class="list-group">
-                <ul class="list-group-item">
-                    <div class="col-md-12 column">
-                        <div class="row clearfix">
-                            <div class="col-md-4 column">
-                                用户：<a href="#">test01</a>
+                {% for comment in all_comments %}
+                    <ul class="list-group-item">
+                        <div class="col-md-12 column">
+                            <div class="row clearfix">
+                                <div class="col-md-4 column">
+                                    用户：<a href="/userInfo/?name={{ comment.username }}">{{comment.username}}</a>
+                                </div>
+                                <div class="col-md-4 column">
+                                    时间：{{comment.time}}
+                                </div>
+                                <div class="col-md-4 column">
+                                    评分: {{ comment.scores }}
+                                </div>
                             </div>
-                            <div class="col-md-4 column">
-                                日期：2011/1/1
+                            <br>
+                            <div class="row clearfix">
+                                <div class="col-md-6 column">
+                                    课程名: <a href="/course/{{comment.teachercourseId}}/">{{comment.coursename}}</a>
+                                </div>
+                                <div class="col-md-6 column">
+                                    授课老师：<a href="/teacher/{{comment.teacherId}}/">{{comment.teachername}}</a>
+                                </div>
                             </div>
-                            <div class="col-md-4 column">
-                                评分: [2, 4, 3, 4]
+                            <div class="row clearfix">
+                                <div class="col-md-12 column">
+                                    {{ comment.content }}
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-md-10 column">
+                                </div>
+                                <div class="col-md-2 column">
+                                    <a class="btn btn-lg btn-danger" onclick="Func_adminDeleteComment({{comment.commentId}})" href="javascript:void(0)">删除</a>
+                                </div>
                             </div>
                         </div>
-                        <br>
-                        <div class="row clearfix">
-                            <div class="col-md-6 column">
-                                课程名: <a href="#">软件工程</a>
-                            </div>
-                            <div class="col-md-6 column">
-                                授课老师：<a href="#">任利</a>
-                            </div>
-                        </div>
-                        <div class="row clearfix">
-                            <div class="col-md-12 column">
-                                一门重要的课。
-                            </div>
-                        </div>
-                        <div class="row clearfix">
-                            <div class="col-md-10 column">
-                            </div>
-                            <div class="col-md-2 column">
-                                <a class="btn btn-lg btn-danger">删除</a>
-                            </div>
-                        </div>
-                    </div>
-                </ul>
+                    </ul>
+                {% endfor %}
             </list>
             <!--<table class="table text-center" style="table-layout: fixed;">-->
                 <!--<thead>-->
