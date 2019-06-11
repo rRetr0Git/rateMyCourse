@@ -1,0 +1,236 @@
+{% extends '../rateMyCourse/base.html' %}
+{% block title %}管理评论 - {{ block.super }}{% endblock %}
+{% block content %}
+
+<div class="container">
+    <br>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <h4 id="account">共有{{count}} 条评论</h4>
+        </div>
+    </div>
+    <br>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <list class="list-group">
+                <ul class="list-group-item">
+                    <div class="col-md-12 column">
+                        <div class="row clearfix">
+                            <div class="col-md-4 column">
+                                用户：<a href="#">test01</a>
+                            </div>
+                            <div class="col-md-4 column">
+                                日期：2011/1/1
+                            </div>
+                            <div class="col-md-4 column">
+                                评分: [2, 4, 3, 4]
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row clearfix">
+                            <div class="col-md-6 column">
+                                课程名: <a href="#">软件工程</a>
+                            </div>
+                            <div class="col-md-6 column">
+                                授课老师：<a href="#">任利</a>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                一门重要的课。
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="col-md-10 column">
+                            </div>
+                            <div class="col-md-2 column">
+                                <a class="btn btn-lg btn-danger">删除</a>
+                            </div>
+                        </div>
+                    </div>
+                </ul>
+            </list>
+            <!--<table class="table text-center" style="table-layout: fixed;">-->
+                <!--<thead>-->
+                <!--<tr>-->
+                    <!--<th width="30%" style='vertical-align: middle;text-align: left;'>课程名称</th>-->
+                    <!--<th width="30%" style='vertical-align: middle;text-align: left;'>开设院系</th>-->
+                    <!--<th width="10%" style='vertical-align: middle;text-align: left;'>课程类别</th>-->
+                    <!--<th width="10%" style='vertical-align: middle;text-align: left;'>授课教师</th>-->
+                    <!--<th width="10%" style='vertical-align: middle;text-align: left;'>课程评分</th>-->
+                    <!--<th width="10%" style='vertical-align: middle;text-align: left;'>评价次数</th>-->
+                <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                <!--{% for course in courses %}-->
+                <!--<tr id="course{{forloop.counter}}">-->
+                    <!--<td width="30%" style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>-->
+                        <!--<a title={{course.name}} href="/course/{{course.courseTeacher}}/">{{course.name}}</a>-->
+                    <!--</td>-->
+                    <!--<td width="30%" rowspan=$rowspan style='vertical-align: middle;text-align: left;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>-->
+                        <!--{{course.department}}-->
+                    <!--</td>-->
+                    <!--<td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>-->
+                        <!--{{course.type}}-->
+                    <!--</td>-->
+                    <!--<td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>-->
+                        <!--<a href="/teacher/{{course.teacherId}}/">{{course.teacher}}</a>-->
+                    <!--</td>-->
+                    <!--<td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>-->
+                        <!--{{course.rateScore}}-->
+                    <!--</td>-->
+                    <!--<td width="10%" rowspan=$rowspan style='vertical-align: middle;text-align: center;text-overflow: ellipsis;overflow: hidden;white-space: nowrap'>-->
+                        <!--{{course.ratenumber}}-->
+                    <!--</td>-->
+                <!--</tr>-->
+                <!--{% endfor%}-->
+                <!--</tbody>-->
+            <!--</table>-->
+        </div>
+    </div>
+    <br>
+    <div class="row clearfix">
+        <div class="col-md-4 column">
+            <p id="numOfComments"></p>
+        </div>
+        <div class="col-md-4 colunmn">
+            <ul class="pagination">
+                <li>
+                    <input type="text"  id="toCommentPageP"  placeholder="" class="input" id="input" maxlength="4" style="width: 40px">
+                </li>
+                <li>
+                    <a class="btn disabled" id="commentPagesP"></a>
+                </li>
+                <li>
+                    <a class="page-link" style="width:60px" onclick="goToCommentPage()">跳转</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-4 column">
+            <nav aria-label="Page navigation">
+                <ul id="c_pagination" class="pagination">
+
+                    <li class="page-item">
+                        <a class="page-link" onclick="toLastCommentPage()" id="lastCommentPage">
+                            上一页
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" onclick="toNextCommentPage()" id="nextCommentPage">
+                            下一页
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<script>
+    function goToCommentPage() {
+        var v = $("#toCommentPageP").val();
+        if(isNaN(v) || v < 1 || v > {{pages}} || Math.floor(v) != v)
+        alert("请输入正确的页码");
+    else
+        {
+            currentPage = v;
+            var url = window.location.href;
+            var part = url.split('&');
+            var newurl = "";
+            for(var i=0;i<part.length-1;i++){
+                newurl += part[i]+"&";
+            }
+            newurl += "page="+v;
+            window.location.href = newurl;
+        }
+    }
+
+
+    // $('#applyCertNum').bind('keypress',function(event){
+    //
+    //
+    //     if(event.keyCode == 13)
+    //
+    //     {
+    //         alert('你输入的内容为1：' + $('#applyCertNum').val());
+    //     }
+    //
+    // });
+
+    function toLastCommentPage() {
+        var url = window.location.href;
+        var part = url.split('&');
+        var newurl = "";
+        currentPage=part[part.length-1].split('=')[1];
+        if(currentPage != 1)
+        {
+            currentPage--;
+            for(var i=0;i<part.length-1;i++){
+                newurl += part[i]+"&";
+            }
+            newurl += "page="+currentPage;
+            window.location.href = newurl;
+        }
+    }
+
+    function toNextCommentPage() {
+        var url = window.location.href;
+        var part = url.split('&');
+        var newurl = "";
+        currentPage=part[part.length-1].split('=')[1];
+        if(currentPage != {{pages}})
+        {
+            currentPage++;
+            for(var i=0;i<part.length-1;i++){
+                newurl += part[i]+"&";
+            }
+            newurl += "page="+currentPage;
+            window.location.href = newurl;
+        }
+    }
+
+    window.onload = function() {
+        var url = window.location.href;
+        var part = url.split('&');
+        var newurl = "";
+        currentPage=part[part.length-1].split('=')[1];
+        var pagen = "#numOfComments";
+        // console.log("共" + ({{pages}}).toString() + "页");
+        $(pagen).text("共" + ({{pages}}).toString() + "页, 当前第" + currentPage.toString() + "页");
+
+        var pagep = "#commentPagesP";
+        $(pagep).text("页/" + ({{pages}}).toString() + "页");
+
+        var lastp = "#lastCommentPage";
+        if(currentPage ==1)
+        {
+            $(lastp).removeClass("page-link ");
+            $(lastp).addClass("btn disabled");
+        }
+        else
+        {
+            $(lastp).removeClass("btn disabled");
+            $(lastp).addClass("page-link");
+        }
+
+        var nextp = "#nextCommentPage";
+        if(currentPage == {{pages}})
+        {
+            $(nextp).removeClass("page-link ");
+            $(nextp).addClass("btn disabled");
+        }
+    else
+        {
+            $(nextp).removeClass("btn disabled");
+            $(nextp).addClass("page-link");
+        }
+    }
+</script>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.bundle.js"></script>
+<!--<script src="/static/ratemycourse/popper/popper.min.js"></script>-->
+<script src="/static/ratemycourse/bootstrap-4.0.0-beta.2-dist/js/bootstrap.min.js"></script>
+<script src="/static/ratemycourse/jquery-validation-1.17.0/dist/jquery.validate.js"></script>
+<script src="/static/ratemycourse/javascript/admin.js"></script>
+{% endblock %}
