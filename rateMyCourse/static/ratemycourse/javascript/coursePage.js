@@ -145,7 +145,7 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     divTags[13].setAttribute("class","col-md-12 column")
     pTags[3].innerHTML = fixBr(htmlEscape(text));
     pTags[3].setAttribute("style","word-wrap:break-word")
-    pTags[3].setAttribute("class", "center-vertical")
+    pTags[3].setAttribute("class", "text-left")
 
     return commentGrid;
 }
