@@ -726,12 +726,26 @@ def userInfo(request):
     name = request.GET['name']
     user = User.objects.get(username = name)
     commentList=[]
+    deleteCommentList = []
     cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
         courseTeacher = CourseTeacher.objects.get(teacherId=teacher,courseId=course)
         cmt = cuct.commentId
+        deleteRecord = AdminDeleteCommentRecord.objects.get(CommentUserCourseTeacherID=cuct)
+        if deleteRecord:
+            deleteCommentList.append({
+                'course': course.name,
+                'courseTeacher': courseTeacher.id,
+                'teacher': teacher.name,
+                'comment_text': cmt.content[0:4] + "..",
+                'time': cmt.time.strftime('%y/%m/%d'),
+                'state': '未读' if deleteRecord.valid == 0 else '已读'
+            })
+            deleteRecord.valid = 1
+            deleteRecord.save()
+            continue
         if cmt.anonymous == True:
             continue
         commentList.append({
@@ -752,6 +766,7 @@ def userInfo(request):
 	    'departmentName': user.departmentName if user.departmentName != None else '暂无',
 	    'img': user.img.url,
 	    'commentList': commentList,
+        'deleteCommentList': deleteCommentList,
         'departments': departments,
     })
 
@@ -1019,4 +1034,22 @@ def resetPWD(request):
         return HttpResponse(json.dumps({
             'statCode': -1,
             'errormessage': '重置密码失败',
+        }))
+
+
+@timeit
+def getMailNum(request):
+    if request.session.get('is_login', False):
+        username = request.session.get('username', False)
+        u = User.objects.get(username=username)
+        cuctList = CommentUserCourseTeacher.objects.filter(userId=u)
+        deleteCommentListNum = 0
+        for comment in cuctList:
+            deleteCommentListNum += len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID=comment, valid=0))
+        return HttpResponse(json.dumps({
+            'mail_num': deleteCommentListNum,
+        }))
+    else:
+        return HttpResponse(json.dumps({
+            'mail_num': -1,
         }))

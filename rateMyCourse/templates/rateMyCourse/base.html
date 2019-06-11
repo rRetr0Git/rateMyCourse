@@ -38,7 +38,7 @@
         <!--</ul>-->
         <ul class="navbar-nav">
           {% if request.session.is_login %}
-              <a class="btn text-white btn-primary" href="javascript:void(0)" id="buttonUserInfo" class="dropdown-item btn btn-primary school" onclick="Func_toUserInfo()">️🔔<span class="badge badge-primary">3</span></a>
+              <a class="btn text-white btn-primary" href="javascript:void(0)" id="buttonUserInfo" class="dropdown-item btn btn-primary school" onclick="Func_toUserInfo()">️🔔<span class="badge badge-primary" id="unreadMailMessageNum"></span></a>
               <div class="dropdown" id="menuUser">
                 <a class="btn text-white btn-primary" href="javascript:void(0)" data-toggle="dropdown" id="navUser">{{ request.session.username }}</a>
                 <ul class="dropdown-menu" style="padding:17px;">
@@ -136,5 +136,8 @@
   {% block content %}
   {% endblock %}
   <script src="/static/ratemycourse/javascript/login.js"></script>
+  <script type="text/javascript">
+      window.setTimeout(Func_get_mail_num,500);
+  </script>
 </body>
 </html>

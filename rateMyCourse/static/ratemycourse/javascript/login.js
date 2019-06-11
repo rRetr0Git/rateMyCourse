@@ -290,3 +290,20 @@ function Func_send_resetPWD_email() {
         }
     });
 }
+
+function Func_get_mail_num() {
+    $.ajax("/getMailNum/",{
+        dataType: 'json',
+        type: 'POST',
+        async : false,
+    }).done(function (data) {
+        if(data.mail_num != -1){
+            var mail_num = document.getElementById("unreadMailMessageNum");
+            if(data.mail_num == 0){
+                mail_num.innerText = "";
+            } else{
+                mail_num.innerText = data.mail_num;
+            }
+        }
+    });
+}
