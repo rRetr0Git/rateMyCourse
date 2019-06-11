@@ -182,7 +182,7 @@ def signUp(request):
 
 
 @timeit
-def simpleSearch(school, department, keywords):
+def simpleSearch(department, keywords):
     """完成数据库查找工作
 
     Args:
@@ -193,20 +193,14 @@ def simpleSearch(school, department, keywords):
     Return:
         courseTeacherList: courses information.
     """
-    if school == None:
-        courseList = Course.objects.filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+    if department == None:
+        courseIdList = [c.courseId.id for c in SchoolCourse.objects.all()]
+        courseList = Course.objects.filter(id__in = courseIdList).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
         courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
     else:
-        if department == None:
-            school = School.objects.get(name=school)
-            courseIdList = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school)]
-            courseList = Course.objects.filter(id__in = courseIdList).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
-            courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
-        else:
-            school = School.objects.get(name=school)
-            courseIdList = [c.courseId.id for c in SchoolCourse.objects.filter(schoolId=school)]
-            courseList = Course.objects.filter(id__in = courseIdList, department=department).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
-            courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
+        courseIdList = [c.courseId.id for c in SchoolCourse.objects.all()]
+        courseList = Course.objects.filter(id__in = courseIdList, department=department).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+        courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
     return courseTeacherList
 
 
@@ -224,10 +218,11 @@ def search(request):
     """
     # addHitCount()
     keywords = request.GET['keywords']
-    if('school' in request.GET):
-        school = request.GET['school']
-    else:
-        school = None
+    # if('school' in request.GET):
+    #     school = request.GET['school']
+    # else:
+    #     school = None
+    school = None
     if('department' in request.GET):
         department = request.GET['department']
     else:
@@ -236,10 +231,10 @@ def search(request):
         page = int(request.GET['page'])
     except:
         return render(request, "rateMyCourse/index.html")
-    print(keywords, page)
+    print(department, keywords, page)
     courses = []
     pages = []
-    courseTeacherList = simpleSearch(school, department, keywords)
+    courseTeacherList = simpleSearch(department, keywords)
     courses_count = len(courseTeacherList)
     if courses_count != 0 and page > ((courses_count-1)/10+1) or page < 0:
         return render(request, "rateMyCourse/index.html")
