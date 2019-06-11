@@ -111,14 +111,19 @@ function Func_signIn() {
       alert(data.errormessage);
     }
     else {
+        if (data.statCode == 1) {
+            // todo : jump to admin.html
+        }
+        else{
+            location.replace(location);
+        }
     //     $("#menuUser").prop("hidden",false);
     //     $("#menuLogin").prop("hidden",true);
     //   //$("#menuLogin").hide()
     //   //$("#menuUser").show()
     //     $("#navUser").text(data.username);
     //   //$("#modalInfo").show()
-    //   //$.cookie('username', data.username, {path: '/'})
-          location.replace(location);
+    //   //$.cookie('username', data.username, {path: '/'}
     }
   });
   return false

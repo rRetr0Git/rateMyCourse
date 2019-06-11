@@ -202,3 +202,4 @@ class AdminUser(models.Model):
         User,
         on_delete=models.CASCADE,
     )
+# insert into ratemycourse_adminuser(userId_id) select id from ratemycourse_user where mail='xxx';
