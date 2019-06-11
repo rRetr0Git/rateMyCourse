@@ -11,7 +11,6 @@ function Func_adminDeleteComment(commentId){
   $.ajax("/adminDeleteComment/", {
     dataType: 'json',
     type: 'POST',
-    traditional: true,
     data: {
       'comment': commentId
     }
