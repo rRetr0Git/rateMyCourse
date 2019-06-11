@@ -40,5 +40,6 @@ urlpatterns = [
 
     url(r'^active/(?P<active_code>\w*)/$', views.active, name='userActive'),
     url(r'^getCaptcha/$', views.getCaptcha, name='getCaptcha'),
+    url(r'^userDeleteComment/$', views.userDeleteComment, name='userDeleteComment'),
     url(r'^getMailNum/$', views.getMailNum, name='getMailNum')
 ]
