@@ -471,6 +471,20 @@ def signIn(request):
         request.session['userid'] = str(u.id)
         request.session['username'] = u.username
         request.session['is_login'] = True
+        if len(AdminUser.objects.filter(userId=u.id)) == 1:
+            cucts = CommentUserCourseTeacher.objects.all().order_by("-commentId__time")
+            all_comments = []
+            for cuct in cucts:
+                comment = {}
+                comment['username'] = cuct.userId.username
+                comment['time'] = cuct.commentId.time
+                comment['coursename'] = cuct.courseId.name
+                comment['teachername'] = cuct.teacherId.name
+            # todo: make data
+            return HttpResponse(json.dumps({
+                'statCode': 1,
+                'username': u.username,
+            }))
         return HttpResponse(json.dumps({
             'statCode': 0,
             'username': u.username,
