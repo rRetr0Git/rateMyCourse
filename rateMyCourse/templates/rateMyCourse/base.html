@@ -38,6 +38,7 @@
         <!--</ul>-->
         <ul class="navbar-nav">
           {% if request.session.is_login %}
+              <a class="btn text-white btn-primary" href="javascript:void(0)" id="buttonUserInfo" class="dropdown-item btn btn-primary school" onclick="Func_toUserInfo()">️🔔<span class="badge badge-primary">3</span></a>
               <div class="dropdown" id="menuUser">
                 <a class="btn text-white btn-primary" href="javascript:void(0)" data-toggle="dropdown" id="navUser">{{ request.session.username }}</a>
                 <ul class="dropdown-menu" style="padding:17px;">
