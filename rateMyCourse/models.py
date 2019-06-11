@@ -186,3 +186,12 @@ class EmailVerifyRecord(models.Model):
     type = models.CharField(max_length=10)
     time = models.DateTimeField(default=timezone.now())
     valid = models.IntegerField(default=0) # 0有效 1无效
+
+
+class AdminDeleteCommentRecord(models.Model):
+    CommentUserCourseTeacherID = models.ForeignKey(
+        CommentUserCourseTeacher,
+        on_delete=models.CASCADE,
+    )
+    time = models.DateTimeField(default=timezone.now())
+    valid = models.IntegerField(default=0) # 0未读 1已读
