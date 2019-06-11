@@ -240,8 +240,8 @@
                     <col style="width: 15%;" />
                 </colgroup>
                 <tbody>
-                    {% for item in commentList %}
-                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>待补充</td><td>被删除</td></tr>
+                    {% for item in deleteCommentList %}
+                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{ item.comment_text }}</td><td>{{ item.state }}</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
