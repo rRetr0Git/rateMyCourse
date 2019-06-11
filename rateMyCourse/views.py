@@ -726,7 +726,7 @@ def userInfo(request):
     name = request.GET['name']
     user = User.objects.get(username = name)
     commentList=[]
-    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id)
+    cuctList = CommentUserCourseTeacher.objects.filter(userId=user.id, commentId__status=0)
     for cuct in cuctList:
         teacher = cuct.teacherId
         course = cuct.courseId
@@ -1019,4 +1019,98 @@ def resetPWD(request):
         return HttpResponse(json.dumps({
             'statCode': -1,
             'errormessage': '重置密码失败',
+        }))
+
+
+def userDeleteComment(request):
+    try:
+        commentId = request.POST['comment']
+        userId = request.session.get('username')
+        comment = Comment.objects.get(id=commentId)
+        cuct = CommentUserCourseTeacher.objects.get(commentId=commentId)
+        ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
+        teacher = cuct.teacherId
+
+        if cuct.userId != userId:
+            return HttpResponse(json.dumps({
+                'statCode': -1,
+                'errormessage': '评论只能由创作用户删除',
+            }))
+
+        comment.status = 1
+
+        teacher.allSatisfactionScore -= comment.satisfaction
+        teacher.allKnowledgeScore -= comment.knowledge
+        teacher.allDifficultyScore -= comment.difficulty
+        teacher.allHomeworkScore -= comment.homework
+        teacher.commentCnt -= 1
+
+        ct.allHomeworkScore -= comment.homework
+        ct.allKnowledgeScore -= comment.knowledge
+        ct.allDifficultyScore -= comment.difficulty
+        ct.allSatisfactionScore -= comment.satisfaction
+        ct.commentCnt -= 1
+
+        teacher.save()
+        comment.save()
+        ct.save()
+
+        return HttpResponse(json.dumps({
+            'statCode': 0
+        }))
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -2,
+            'errormessage': '删除出现错误！',
+        }))
+
+
+def adminDeleteComment(request):
+    try:
+        commentId = request.POST['comment']
+        userId = request.session.get('username')
+        comment = Comment.objects.get(id=commentId)
+        cuct = CommentUserCourseTeacher.objects.get(commentId=commentId)
+        ct = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId)
+        teacher = cuct.teacherId
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -1,
+            'errormessage': '管理员未登录或评论不存在',
+        }))
+    try:
+        AdminUser.objects.get(userId__id=userId)
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -2,
+            'errormessage': '评论只能由管理员删除',
+        }))
+    try:
+        comment.status = 1
+
+        teacher.allSatisfactionScore -= comment.satisfaction
+        teacher.allKnowledgeScore -= comment.knowledge
+        teacher.allDifficultyScore -= comment.difficulty
+        teacher.allHomeworkScore -= comment.homework
+        teacher.commentCnt -= 1
+
+        ct.allHomeworkScore -= comment.homework
+        ct.allKnowledgeScore -= comment.knowledge
+        ct.allDifficultyScore -= comment.difficulty
+        ct.allSatisfactionScore -= comment.satisfaction
+        ct.commentCnt -= 1
+
+        teacher.save()
+        comment.save()
+        ct.save()
+        new_record = AdminDeleteCommentRecord(CommentUserCourseTeacherID=cuct.id, time=timezone.now(), status=0)
+        new_record.save()
+
+        return HttpResponse(json.dumps({
+            'statCode': 0
+        }))
+    except:
+        return HttpResponse(json.dumps({
+            'statCode': -2,
+            'errormessage': '删除出现错误！',
         }))
