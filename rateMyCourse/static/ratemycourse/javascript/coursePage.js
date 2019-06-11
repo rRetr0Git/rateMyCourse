@@ -67,9 +67,6 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
                     <div>
                         <p></p>
                     </div>
-                    <div>
-                        <button></button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -106,7 +103,7 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     imageTag[0].height = "35";
 
     // insert user name
-    divTags[4].setAttribute("class","col-md-2 column");
+    divTags[4].setAttribute("class","col-md-4 column");
     var userNameNode = document.createTextNode(userName);
     aTags[0].appendChild(userNameNode);
     if (userid !== '') {
@@ -139,18 +136,12 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     var badnode = document.createTextNode(badTimes);
     pTags[2].setAttribute("id","badTime"+commentId+"");
     pTags[2].appendChild(badnode);
-    divTags[10].setAttribute("class","col-md-2 column")
-    buttonTag[2].type = "button";
-    buttonTag[2].setAttribute("id","delete_btn");
-    buttonTag[2].setAttribute("class","btn btn-sm btn-primary");
-    buttonTag[2].setAttribute('onclick', "Func_userDeleteComment('" + commentId +  "')");
-    buttonTag[2].innerHTML = '删除';
-    divTags[11].setAttribute("class","list-group-item");
-    divTags[12].setAttribute("class","col-md-12 column");
-    divTags[13].setAttribute("class","row clearfix");
+    divTags[10].setAttribute("class","list-group-item");
+    divTags[11].setAttribute("class","col-md-12 column");
+    divTags[12].setAttribute("class","row clearfix");
 
     // insert comment
-    divTags[14].setAttribute("class","col-md-12 column")
+    divTags[13].setAttribute("class","col-md-12 column")
     pTags[3].innerHTML = fixBr(htmlEscape(text));
     pTags[3].setAttribute("style","word-wrap:break-word")
     pTags[3].setAttribute("class", "text-left")
@@ -216,22 +207,3 @@ $(document).ready(function () {
     // })
     setComments();
 })
-
-function Func_userDeleteComment(commentId){
-  $.ajax("/userDeleteComment/", {
-    dataType: 'json',
-    type: 'POST',
-    traditional: true,
-    data: {
-      'commentId': commentId
-    }
-  }).done(function (data) {
-    if(data.statCode == 0){
-      alert("删除成功！");
-      location.replace(location);
-    }
-    else {
-      alert(data.errormessage);
-    }
-  })
-}

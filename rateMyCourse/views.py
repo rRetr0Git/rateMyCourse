@@ -194,12 +194,10 @@ def simpleSearch(department, keywords):
         courseTeacherList: courses information.
     """
     if department == None:
-        courseIdList = [c.courseId.id for c in SchoolCourse.objects.all()]
-        courseList = Course.objects.filter(id__in = courseIdList).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+        courseList = Course.objects.filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
         courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
     else:
-        courseIdList = [c.courseId.id for c in SchoolCourse.objects.all()]
-        courseList = Course.objects.filter(id__in = courseIdList, department=department).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
+        courseList = Course.objects.filter(department=department).filter(Q(name__icontains=keywords) | Q(type__icontains=keywords))
         courseTeacherList = CourseTeacher.objects.filter(courseId__in=courseList)
     return courseTeacherList
 
@@ -231,14 +229,12 @@ def search(request):
         page = int(request.GET['page'])
     except:
         return render(request, "rateMyCourse/index.html")
-    print(department, keywords, page)
     courses = []
-    pages = []
     courseTeacherList = simpleSearch(department, keywords)
     courses_count = len(courseTeacherList)
     if courses_count != 0 and page > ((courses_count-1)/10+1) or page < 0:
         return render(request, "rateMyCourse/index.html")
-    for ctcnt in range((page - 1) * 10, page * 10):
+    for ctcnt in range((page - 1) * 10, min(page * 10, cuct_count)):
         if(courses_count == 0 or ctcnt >= len(courseTeacherList)):
             break
         ct = courseTeacherList[ctcnt]
@@ -472,15 +468,6 @@ def signIn(request):
         request.session['username'] = u.username
         request.session['is_login'] = True
         if len(AdminUser.objects.filter(userId=u.id)) == 1:
-            cucts = CommentUserCourseTeacher.objects.all().order_by("-commentId__time")
-            all_comments = []
-            for cuct in cucts:
-                comment = {}
-                comment['username'] = cuct.userId.username
-                comment['time'] = cuct.commentId.time
-                comment['coursename'] = cuct.courseId.name
-                comment['teachername'] = cuct.teacherId.name
-            # todo: make data
             return HttpResponse(json.dumps({
                 'statCode': 1,
                 'username': u.username,
@@ -759,6 +746,7 @@ def userInfo(request):
             'teacher': teacher.name,
             'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
+            'commentId': cmt.id
             })
     school = School.objects.get(name='北京航空航天大学')
     department_set = SchoolCourse.objects.filter(schoolId=school.id).values("courseId__department").distinct()
@@ -834,6 +822,7 @@ def saveUserPic(request):
             'teacher': teacher.name,
             'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
+            'commentId': cmt.id
         })
 
     return render(request, "rateMyCourse/userInfo.html", {
@@ -877,6 +866,7 @@ def saveUserInfo(request):
             'teacher': teacher.name,
             'rate': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction],
             'time': cmt.time.strftime('%y/%m/%d'),
+            'commentId': cmt.id
         })
     return render(request, "rateMyCourse/userInfo.html", {
         'username': username,
@@ -1057,6 +1047,7 @@ def resetPWD(request):
         }))
 
 
+@timeit
 def userDeleteComment(request):
     try:
         commentId = request.POST['commentId']
@@ -1101,6 +1092,7 @@ def userDeleteComment(request):
         }))
 
 
+@timeit
 def adminDeleteComment(request):
     try:
         commentId = request.POST['comment']
@@ -1165,3 +1157,39 @@ def getMailNum(request):
         return HttpResponse(json.dumps({
             'mail_num': -1,
         }))
+
+
+@timeit
+def adminPage(request):
+    try:
+        username = request.session.get('username')
+        page = int(request.GET['page'])
+    except:
+        return render(request, "rateMyCourse/index.html")
+    try:
+        AdminUser.objects.get(userId__username=username)
+        cucts = CommentUserCourseTeacher.objects.filter(commentId__status=0).order_by("-commentId__time")
+        cuct_count = len(cucts)
+        if cuct_count != 0 and page > ((cuct_count - 1) / 10 + 1) or page < 0:
+            return render(request, "rateMyCourse/index.html")
+        all_comments = []
+        for cuctcnt in range((page - 1) * 10, min(page * 10, cuct_count)):
+            cuct = cucts[cuctcnt]
+            comment = {}
+            comment['username'] = cuct.userId.username
+            comment['time'] = cuct.commentId.time
+            comment['coursename'] = cuct.courseId.name
+            comment['teachercourseId'] = CourseTeacher.objects.get(courseId=cuct.courseId, teacherId=cuct.teacherId).id
+            comment['teachername'] = cuct.teacherId.name
+            comment['teacherId'] = cuct.teacherId.id
+            comment['content'] = cuct.commentId.content
+            comment['commentId'] = cuct.commentId.id
+            comment['scores'] = [cuct.commentId.homework, cuct.commentId.difficulty, cuct.commentId.knowledge, cuct.commentId.satisfaction]
+            all_comments.append(comment)
+        if cuctcnt % 10 == 0:
+            pn = int(cuctcnt / 10)
+        else:
+            pn = int(cuctcnt / 10) + 1
+        return render(request, "rateMyCourse/admin.html", {'all_comments': all_comments, 'count': len(all_comments), 'pages': pn})
+    except:
+        return render(request, "rateMyCourse/index.html")
