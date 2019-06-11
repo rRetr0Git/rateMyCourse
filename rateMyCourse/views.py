@@ -654,7 +654,7 @@ def submitComment(request):
                 'statCode': -1,
                 'errormessage': '评论内容不合法，请勿包含\'<\'或\'>\'',
             }))
-    preComment = CommentUserCourseTeacher.objects.filter(userId=user,courseId=course,teacherId=teacher)
+    preComment = CommentUserCourseTeacher.objects.filter(userId=user,courseId=course,teacherId=teacher, commentId__status=0)
     if(len(preComment)==0):
         comment = Comment(
             anonymous=True if anonymous == 'true' else False,
@@ -686,7 +686,7 @@ def submitComment(request):
         rate2=comment.difficulty
         rate3=comment.knowledge
         rate4=comment.satisfaction
-        Comment.objects.filter(id=comment.id).update(
+        Comment.objects.filter(id=comment.id, status=0).update(
             anonymous=True if anonymous == 'true' else False,
             content=content,
             time=timezone.now(),
