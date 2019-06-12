@@ -760,7 +760,7 @@ def userInfo(request):
             'course': cuct_deleted.courseId.name,
             'courseTeacher': CourseTeacher.objects.get(courseId=cuct_deleted.courseId, teacherId=cuct_deleted.teacherId).id,
             'teacher': cuct_deleted.teacherId.name,
-            'comment_text': cuct_deleted.commentId.content[0:4] + "..",
+            'comment_text': cuct_deleted.commentId.content[0:10] + "..",
             'time': adcr.time.strftime('%y/%m/%d'),
             'state': '未读' if adcr.status == 0 else '已读'
         })
