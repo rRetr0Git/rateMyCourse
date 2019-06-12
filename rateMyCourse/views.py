@@ -573,10 +573,7 @@ def getComment(request):
             'goodTimes': cmt.like,
             'badTimes': cmt.dislike,
             'commentId': str(cmt.id),
-            'homework': cmt.homework,
-            'difficulty': cmt.difficulty,
-            'knowledge': cmt.knowledge,
-            'satisfaction': cmt.satisfaction
+            'scores': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction]
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -753,7 +750,7 @@ def userInfo(request):
     departments = [ds['courseId__department'] for ds in department_set]
 
     deleteCommentList = []
-    adcrs = AdminDeleteCommentRecord.objects.all().order_by("-time")
+    adcrs = AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId__username=name).order_by("-time")
     for adcr in adcrs:
         cuct_deleted = CommentUserCourseTeacher.objects.get(id=adcr.CommentUserCourseTeacherID.id)
         deleteCommentList.append({
