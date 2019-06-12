@@ -143,7 +143,7 @@
     </div>
 
     <div class="row clearfix">
-        <div class="col-md-5 column">
+        <div class="col-md-4 column">
             <p class="text-center">
                 <strong>昵称：</strong><strong id="nickName">{{username}}</strong>
             </p>
@@ -176,7 +176,7 @@
                 <strong>学院：{{departmentName}}</strong>
             </p>
         </div>
-        <div class="col-md-7 column">
+        <div class="col-md-8 column">
             <p class="text-center">
                 <strong>近期点评</strong>
             </p>
@@ -184,13 +184,14 @@
             <table id="hor-minimalist-b">
                 <colgroup>
                     <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
-                    <col style="width: 35%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 30%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                     <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                     <col style="width: 20%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
-                    <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 10%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 10%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                 </colgroup>
                 <thead>
-                    <tr><th>时间</th><th>课程</th><th>教师</th><th>评分</th><th>评论详情</th></tr>
+                    <tr><th>时间</th><th>课程</th><th>教师</th><th>评分</th><th>详情</th><th>操作</th></tr>
                 </thead>
             </table>
             </div>
@@ -198,15 +199,22 @@
             <table id="hor-minimalist-b">
                 <colgroup>
                     <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
-                    <col style="width: 35%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 30%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                     <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                     <col style="width: 20%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
-                    <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 10%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 10%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                 </colgroup>
                 <tbody>
-                    {% for item in commentList %}
-                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{item.rate}}</td><td><a href="/course/{{item.courseTeacher}}">详情</a><button class="btn btn-sm btn-primary" onclick="Func_userDeleteComment('{{item.commentId}}')">删除</button></td></tr>
-                    {% endfor %}
+                    {% if request.session.username == username %}
+                        {% for item in commentList %}
+                    <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{item.rate}}</td><td><a href="/course/{{item.courseTeacher}}">详情</a></td><td><button class="btn btn-sm btn-primary" onclick="Func_userDeleteComment('{{item.commentId}}')">删除</button></td></tr>
+                        {% endfor %}
+                    {% else %}
+                        {% for item in commentList %}
+                            <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{item.rate}}</td><td><a href="/course/{{item.courseTeacher}}">详情</a></td><td></td></tr>
+                        {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
             </div>
@@ -220,13 +228,14 @@
             <table id="hor-minimalist-b">
                 <colgroup>
                     <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
-                    <col style="width: 35%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
-                    <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                     <col style="width: 20%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                     <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 30%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 10%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 10%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                 </colgroup>
                 <thead>
-                    <tr><th>时间</th><th>课程</th><th>教师</th><th>评论内容</th><th>状态</th></tr>
+                    <tr><th>时间</th><th>课程</th><th>教师</th><th>评论内容</th><th>状态</th><th>详情</th></tr>
                 </thead>
             </table>
             </div>
@@ -234,14 +243,15 @@
             <table id="hor-minimalist-b">
                 <colgroup>
                     <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
-                    <col style="width: 35%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
-                    <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                     <col style="width: 20%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                     <col style="width: 15%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 30%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 10%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
+                    <col style="width: 10%;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" />
                 </colgroup>
                 <tbody>
                     {% for item in deleteCommentList %}
-                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{ item.comment_text }}</td><td>{{ item.state }}</td></tr>
+                        <tr><td>{{item.time}}</td><td>{{item.course}}</td><td>{{item.teacher}}</td><td>{{ item.comment_text }}</td><td>{{ item.state }}</td><td>被删除</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
