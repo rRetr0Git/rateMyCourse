@@ -120,7 +120,7 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
 
     // insert scores
     divTags[6].setAttribute("class","col-md-2 column")
-    var scoresnode = document.createTextNode('[' + scores.homework.toString() + ',' + scores.difficulty.toString() + ',' + scores.knowledge.toString() + ',' + scores.satisfaction.toString() + ']');
+    var scoresnode = document.createTextNode('[' + scores + ']');
     pTags[1].appendChild(scoresnode);
 
     var buttonTag = commentGrid.getElementsByTagName("button");
