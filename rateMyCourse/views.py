@@ -750,9 +750,9 @@ def userInfo(request):
     departments = [ds['courseId__department'] for ds in department_set]
 
     deleteCommentList = []
-    adcrs = AdminDeleteCommentRecord.objects.filter(userId=user).order_by("-time")
+    adcrs = AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId=user).order_by("-time")
     for adcr in adcrs:
-        cuct_deleted = CommentUserCourseTeacher.objects.get(commentId=adcr.commentId, userId=adcr.userId, courseId=adcr.courseId, teacherId=adcr.teacherId)
+        cuct_deleted = CommentUserCourseTeacher.objects.get(id=adcr.CommentUserCourseTeacherID.id)
         deleteCommentList.append({
             'course': cuct_deleted.courseId.name,
             'courseTeacher': CourseTeacher.objects.get(courseId=cuct_deleted.courseId, teacherId=cuct_deleted.teacherId).id,
@@ -1128,7 +1128,7 @@ def adminDeleteComment(request):
         teacher.save()
         comment.save()
         ct.save()
-        new_record = AdminDeleteCommentRecord(commentId=cuct.commentId, userId=cuct.userId, courseId=cuct.courseId, teacherId=cuct.teacherId, time=timezone.now(), status=0)
+        new_record = AdminDeleteCommentRecord(CommentUserCourseTeacherID=cuct, time=timezone.now(), status=0)
         new_record.save()
         return HttpResponse(json.dumps({
             'statCode': 0
@@ -1145,7 +1145,7 @@ def getMailNum(request):
     if request.session.get('is_login', False):
         username = request.session.get('username', False)
         u = User.objects.get(username=username)
-        deleteCommentListNum = len(AdminDeleteCommentRecord.objects.filter(userId=u, status=0))
+        deleteCommentListNum = len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId=u, status=0))
         return HttpResponse(json.dumps({
             'mail_num': deleteCommentListNum,
         }))
