@@ -573,10 +573,7 @@ def getComment(request):
             'goodTimes': cmt.like,
             'badTimes': cmt.dislike,
             'commentId': str(cmt.id),
-            'homework': cmt.homework,
-            'difficulty': cmt.difficulty,
-            'knowledge': cmt.knowledge,
-            'satisfaction': cmt.satisfaction
+            'scores': [cmt.homework,  cmt.difficulty, cmt.knowledge, cmt.satisfaction]
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
@@ -753,14 +750,14 @@ def userInfo(request):
     departments = [ds['courseId__department'] for ds in department_set]
 
     deleteCommentList = []
-    adcrs = AdminDeleteCommentRecord.objects.all().order_by("-time")
+    adcrs = AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId=user).order_by("-time")
     for adcr in adcrs:
         cuct_deleted = CommentUserCourseTeacher.objects.get(id=adcr.CommentUserCourseTeacherID.id)
         deleteCommentList.append({
             'course': cuct_deleted.courseId.name,
             'courseTeacher': CourseTeacher.objects.get(courseId=cuct_deleted.courseId, teacherId=cuct_deleted.teacherId).id,
             'teacher': cuct_deleted.teacherId.name,
-            'comment_text': cuct_deleted.commentId.content[0:4] + "..",
+            'comment_text': cuct_deleted.commentId.content[0:10] + "..",
             'time': adcr.time.strftime('%y/%m/%d'),
             'state': '未读' if adcr.status == 0 else '已读'
         })
@@ -1148,7 +1145,7 @@ def getMailNum(request):
     if request.session.get('is_login', False):
         username = request.session.get('username', False)
         u = User.objects.get(username=username)
-        deleteCommentListNum = len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId__username=u.username, status=0))
+        deleteCommentListNum = len(AdminDeleteCommentRecord.objects.filter(CommentUserCourseTeacherID__userId=u, status=0))
         return HttpResponse(json.dumps({
             'mail_num': deleteCommentListNum,
         }))
