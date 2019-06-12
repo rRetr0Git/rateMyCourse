@@ -40,7 +40,7 @@ function fixBr(text){
 }
 
 
-function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTimes, commentId) {
+function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTimes, commentId, scores) {
     var ScreenGridHtml =
         `
         <div>
@@ -51,6 +51,9 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
                     </div>
                     <div>
                         <a></a>
+                    </div>
+                    <div>
+                        <p></p>
                     </div>
                     <div>
                         <p></p>
@@ -103,7 +106,7 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     imageTag[0].height = "35";
 
     // insert user name
-    divTags[4].setAttribute("class","col-md-4 column");
+    divTags[4].setAttribute("class","col-md-2 column");
     var userNameNode = document.createTextNode(userName);
     aTags[0].appendChild(userNameNode);
     if (userid !== '') {
@@ -115,36 +118,41 @@ function generateGrid(imageUrls, userName, userid, text, time, goodTimes, badTim
     var timenode = document.createTextNode(time);
     pTags[0].appendChild(timenode);
 
+    // insert scores
+    divTags[6].setAttribute("class","col-md-2 column")
+    var scoresnode = document.createTextNode('[' + scores + ']');
+    pTags[1].appendChild(scoresnode);
+
     var buttonTag = commentGrid.getElementsByTagName("button");
     // insert vote-up
-    divTags[6].setAttribute("class","col-md-1 column")
+    divTags[7].setAttribute("class","col-md-1 column")
     buttonTag[0].type = "button";
     buttonTag[0].setAttribute("class","btn btn-sm btn-success");
     buttonTag[0].setAttribute("onclick", "this.disabled=true;Func_addLike('"+commentId+"')");
     buttonTag[0].innerHTML = "👍";
-    divTags[7].setAttribute("class","col-md-1 column")
-    pTags[1].setAttribute("id","goodTime"+commentId+"");
-    pTags[1].appendChild(document.createTextNode(goodTimes));
+    divTags[8].setAttribute("class","col-md-1 column")
+    pTags[2].setAttribute("id","goodTime"+commentId+"");
+    pTags[2].appendChild(document.createTextNode(goodTimes));
 
     // insert vote-down
-    divTags[8].setAttribute("class","col-md-1 column")
+    divTags[9].setAttribute("class","col-md-1 column")
     buttonTag[1].type = "button";
     buttonTag[1].setAttribute("class","btn btn-sm btn-danger");
     buttonTag[1].setAttribute("onclick", "this.disabled=true;Func_addDislike('"+commentId+"')");
     buttonTag[1].innerHTML = "👎";
-    divTags[9].setAttribute("class","col-md-1 column")
+    divTags[10].setAttribute("class","col-md-1 column")
     var badnode = document.createTextNode(badTimes);
-    pTags[2].setAttribute("id","badTime"+commentId+"");
-    pTags[2].appendChild(badnode);
-    divTags[10].setAttribute("class","list-group-item");
-    divTags[11].setAttribute("class","col-md-12 column");
-    divTags[12].setAttribute("class","row clearfix");
+    pTags[3].setAttribute("id","badTime"+commentId+"");
+    pTags[3].appendChild(badnode);
+    divTags[11].setAttribute("class","list-group-item");
+    divTags[12].setAttribute("class","col-md-12 column");
+    divTags[13].setAttribute("class","row clearfix");
 
     // insert comment
-    divTags[13].setAttribute("class","col-md-12 column")
-    pTags[3].innerHTML = fixBr(htmlEscape(text));
-    pTags[3].setAttribute("style","word-wrap:break-word")
-    pTags[3].setAttribute("class", "text-left")
+    divTags[14].setAttribute("class","col-md-12 column")
+    pTags[4].innerHTML = fixBr(htmlEscape(text));
+    pTags[4].setAttribute("style","word-wrap:break-word")
+    pTags[4].setAttribute("class", "text-left")
 
     return commentGrid;
 }
@@ -162,7 +170,7 @@ function setComments() {//get comments list from service
         for(var i=0; i<data.comments.length; i++){
             //generate a new row
             var cmt = data.comments[i];
-            var Grid = generateGrid(cmt.avator, cmt.userName, cmt.userid, cmt.text, cmt.time, cmt.goodTimes, cmt.badTimes, cmt.commentId);
+            var Grid = generateGrid(cmt.avator, cmt.userName, cmt.userid, cmt.text, cmt.time, cmt.goodTimes, cmt.badTimes, cmt.commentId, cmt.scores);
             //insert this new row
             parents.appendChild(Grid);
         }
