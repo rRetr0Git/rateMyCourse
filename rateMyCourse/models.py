@@ -189,8 +189,20 @@ class EmailVerifyRecord(models.Model):
 
 
 class AdminDeleteCommentRecord(models.Model):
-    CommentUserCourseTeacherID = models.ForeignKey(
-        CommentUserCourseTeacher,
+    commentId = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+    )
+    userId = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+    courseId = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+    )
+    teacherId = models.ForeignKey(
+        Teacher,
         on_delete=models.CASCADE,
     )
     time = models.DateTimeField(default=timezone.now())
