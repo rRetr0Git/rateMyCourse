@@ -573,7 +573,7 @@ def getComment(request):
             'goodTimes': cmt.like,
             'badTimes': cmt.dislike,
             'commentId': str(cmt.id),
-            'scores': [cmt.homework, cmt.difficulty, cmt.knowledge, cmt.satisfaction]
+            'scores': {'homework': cmt.homework, 'difficulty': cmt.difficulty, 'knowledge': cmt.knowledge, 'satisfaction': cmt.satisfaction}
             })
     return HttpResponse(json.dumps({
         'statCode': 0,
