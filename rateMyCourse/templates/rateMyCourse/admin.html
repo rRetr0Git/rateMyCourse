@@ -15,9 +15,22 @@
             <list class="list-group">
                 {% for comment in all_comments %}
                     <ul class="list-group-item">
-                        <div class="col-md-12 column">
+                        <div class="col-md-12 column list-group-item">
                             <div class="row clearfix">
-                                <div class="col-md-4 column">
+                                <div class="col-md-1 column">
+                                </div>
+                                <div class="col-md-5 column" align="left">
+                                    课程名: <a href="/course/{{comment.teachercourseId}}/">{{comment.coursename}}</a>
+                                </div>
+                                <div class="col-md-6 column" align="left">
+                                    授课老师：<a href="/teacher/{{comment.teacherId}}/">{{comment.teachername}}</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row clearfix">
+                                <div class="col-md-1 column">
+                                </div>
+                                <div class="col-md-3 column" align="left">
                                     用户：<a href="/userInfo/?name={{ comment.username }}">{{comment.username}}</a>
                                 </div>
                                 <div class="col-md-4 column">
@@ -27,26 +40,26 @@
                                     评分: {{ comment.scores }}
                                 </div>
                             </div>
-                            <br>
+
+
+                        </div>
+                        <div class="col-md-12 column list-group-item">
                             <div class="row clearfix">
-                                <div class="col-md-6 column">
-                                    课程名: <a href="/course/{{comment.teachercourseId}}/">{{comment.coursename}}</a>
+                                <div class="col-md-1 column">
                                 </div>
-                                <div class="col-md-6 column">
-                                    授课老师：<a href="/teacher/{{comment.teacherId}}/">{{comment.teachername}}</a>
-                                </div>
-                            </div>
-                            <div class="row clearfix">
-                                <div class="col-md-12 column">
+                                <div class="col-md-10 column" align="left">
                                     {{ comment.content }}
                                 </div>
+                                <div class="col-md-1 column">
+                                </div>
                             </div>
-                            <div class="row clearfix">
-                                <div class="col-md-10 column">
-                                </div>
-                                <div class="col-md-2 column">
-                                    <a class="btn btn-lg btn-danger" onclick="Func_adminDeleteComment('{{comment.commentId}}')" href="javascript:void(0)">删除</a>
-                                </div>
+                        </div>
+                        <br>
+                        <div class="row clearfix">
+                            <div class="col-md-10 column">
+                            </div>
+                            <div class="col-md-2 column">
+                                <a class="btn btn-lg btn-danger" onclick="Func_adminDeleteComment('{{comment.commentId}}')" href="javascript:void(0)">删除</a>
                             </div>
                         </div>
                     </ul>
