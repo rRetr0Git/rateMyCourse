@@ -750,7 +750,6 @@ def userInfo(request):
     departments = [ds['courseId__department'] for ds in department_set]
 
     deleteCommentList = []
-    user = User.objects.get(username=name)
     adcrs = AdminDeleteCommentRecord.objects.filter(userId=user).order_by("-time")
     for adcr in adcrs:
         cuct_deleted = CommentUserCourseTeacher.objects.get(commentId=adcr.commentId, userId=adcr.userId, courseId=adcr.courseId, teacherId=adcr.teacherId)
